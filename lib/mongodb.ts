@@ -9,6 +9,8 @@ const options = {
   maxPoolSize: 10,
   serverSelectionTimeoutMS: 5000,
   socketTimeoutMS: 45000,
+  connectTimeoutMS: 10000,
+  maxIdleTimeMS: 30000,
 }
 
 let client: MongoClient
@@ -43,9 +45,14 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
     const db = client.db("gratis-theorie")
     cachedDb = db
 
+    // Test the connection
+    await db.admin().ping()
+    console.log("MongoDB connection successful")
+
     return { client, db }
   } catch (error) {
     console.error("Failed to connect to MongoDB:", error)
+    cachedDb = null // Reset cache on error
     throw error
   }
 }
