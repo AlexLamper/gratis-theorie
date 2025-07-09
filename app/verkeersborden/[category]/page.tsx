@@ -1,13 +1,14 @@
 "use client"
 
-import { useState, useEffect, SetStateAction } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { ArrowLeft, Search, Filter, Car, Bike, BikeIcon as Motorcycle } from "lucide-react"
+import { Search, Filter, Car, Bike, BikeIcon as Motorcycle } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
+import Footer from "@/components/footer"
 
 interface TrafficSign {
   _id: string
@@ -15,7 +16,7 @@ interface TrafficSign {
   description: string
   meaning: string
   category: string
-  type: "gebod" | "verbod" | "waarschuwing" | "voorrang" | "informatie"
+  type: "gebod" | "verbod" | "waarschuwing" | "voorrang" | "informatie" | "snelheid" | "rijrichting" | "parkeren"
   shape: "rond" | "driehoek" | "vierkant" | "achthoek" | "ruit"
   color: string
   image: string
@@ -32,6 +33,12 @@ export default function CategoryTrafficSignsPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState<string>("all")
+  const [mounted, setMounted] = useState(false)
+
+  // Fix hydration mismatch by ensuring client-side rendering
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const categoryInfo = {
     auto: {
@@ -55,6 +62,13 @@ export default function CategoryTrafficSignsPage() {
       bgColor: "bg-red-50",
       description: "Verkeersborden voor motorfietsbestuurders",
     },
+    alle: {
+      name: "Alle Verkeersborden",
+      icon: Car,
+      color: "text-purple-600",
+      bgColor: "bg-purple-50",
+      description: "Alle Nederlandse verkeersborden in één overzicht",
+    },
   }
 
   const currentCategory = categoryInfo[category as keyof typeof categoryInfo]
@@ -62,36 +76,62 @@ export default function CategoryTrafficSignsPage() {
 
   const signTypes = [
     { id: "all", name: "Alle Borden", count: 0 },
-    { id: "gebod", name: "Gebodsborden", count: 0 },
-    { id: "verbod", name: "Verbodsborden", count: 0 },
     { id: "waarschuwing", name: "Waarschuwingsborden", count: 0 },
+    { id: "snelheid", name: "Snelheidsborden", count: 0 },
     { id: "voorrang", name: "Voorrangsborden", count: 0 },
     { id: "informatie", name: "Informatieborden", count: 0 },
+    { id: "verbod", name: "Verbodsborden", count: 0 },
+    { id: "rijrichting", name: "Rijrichtingen", count: 0 },
+    { id: "parkeren", name: "Parkeren", count: 0 },
   ]
 
   // Fetch traffic signs
   useEffect(() => {
     const fetchSigns = async () => {
+      if (!mounted) return
+
       try {
         setLoading(true)
+        console.log(`Fetching signs for category: ${category}`)
+
         const response = await fetch(`/api/traffic-signs?category=${category}`)
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`)
+        }
+
+        const contentType = response.headers.get("content-type")
+        if (!contentType || !contentType.includes("application/json")) {
+          const text = await response.text()
+          console.error("Non-JSON response:", text.substring(0, 200))
+          throw new Error("Server returned non-JSON response")
+        }
+
         const data = await response.json()
+        console.log(`Received ${data.signs?.length || 0} signs from ${data.source || "unknown"}`)
+
         setSigns(data.signs || [])
         setFilteredSigns(data.signs || [])
       } catch (error) {
         console.error("Error fetching traffic signs:", error)
+
+        // Set empty state on error
+        setSigns([])
+        setFilteredSigns([])
       } finally {
         setLoading(false)
       }
     }
 
-    if (category) {
+    if (category && mounted) {
       fetchSigns()
     }
-  }, [category])
+  }, [category, mounted])
 
   // Filter signs based on search and type
   useEffect(() => {
+    if (!mounted) return
+
     let filtered = signs
 
     if (searchTerm) {
@@ -108,7 +148,7 @@ export default function CategoryTrafficSignsPage() {
     }
 
     setFilteredSigns(filtered)
-  }, [signs, searchTerm, selectedType])
+  }, [signs, searchTerm, selectedType, mounted])
 
   // Update sign type counts
   const updatedSignTypes = signTypes.map((type) => ({
@@ -118,13 +158,16 @@ export default function CategoryTrafficSignsPage() {
 
   const getTypeColor = (type: string) => {
     const colors = {
-      gebod: "bg-blue-100 text-blue-800",
-      verbod: "bg-red-100 text-red-800",
-      waarschuwing: "bg-yellow-100 text-yellow-800",
-      voorrang: "bg-purple-100 text-purple-800",
-      informatie: "bg-green-100 text-green-800",
+      gebod: "bg-blue-50 text-blue-700 border-blue-200",
+      verbod: "bg-red-50 text-red-700 border-red-200",
+      waarschuwing: "bg-yellow-50 text-yellow-700 border-yellow-200",
+      voorrang: "bg-purple-50 text-purple-700 border-purple-200",
+      informatie: "bg-green-50 text-green-700 border-green-200",
+      snelheid: "bg-orange-50 text-orange-700 border-orange-200",
+      rijrichting: "bg-indigo-50 text-indigo-700 border-indigo-200",
+      parkeren: "bg-gray-50 text-gray-700 border-gray-200",
     }
-    return colors[type as keyof typeof colors] || "bg-gray-100 text-gray-800"
+    return colors[type as keyof typeof colors] || "bg-gray-50 text-gray-700 border-gray-200"
   }
 
   const getShapeIcon = (shape: string) => {
@@ -138,6 +181,27 @@ export default function CategoryTrafficSignsPage() {
     return shapes[shape as keyof typeof shapes] || "⬜"
   }
 
+  // Fix scroll to top on page load
+  useEffect(() => {
+    if (mounted) {
+      window.scrollTo(0, 0)
+    }
+  }, [mounted, category])
+
+  // Don't render until mounted to prevent hydration mismatch
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <div className="container mx-auto px-4 py-8">
+          <div className="text-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600">Laden...</p>
+          </div>
+        </div>
+      </div>
+    )
+  }
+
   if (!currentCategory) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -147,7 +211,7 @@ export default function CategoryTrafficSignsPage() {
             <CardDescription>De opgevraagde categorie bestaat niet.</CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Button asChild>
+            <Button asChild className="border border-blue-700/80">
               <Link href="/verkeersborden">Terug naar Overzicht</Link>
             </Button>
           </CardContent>
@@ -158,29 +222,13 @@ export default function CategoryTrafficSignsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/verkeersborden" className="flex items-center space-x-2 text-blue-600 hover:text-blue-700">
-              <ArrowLeft className="h-5 w-5" />
-              <span>Terug naar Overzicht</span>
-            </Link>
-            <div className="flex items-center space-x-2">
-              <IconComponent className={`h-5 w-5 ${currentCategory.color}`} />
-              <h1 className="text-xl font-semibold text-gray-900">{currentCategory.name}</h1>
-            </div>
-          </div>
-        </div>
-      </header>
-
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
         <div className={`${currentCategory.bgColor} rounded-lg p-6 mb-8`}>
           <div className="flex items-center space-x-4">
             <IconComponent className={`h-12 w-12 ${currentCategory.color}`} />
             <div>
-              <h2 className="text-2xl font-bold text-gray-900">{currentCategory.name}</h2>
+              <h1 className="text-2xl font-bold text-gray-900">{currentCategory.name}</h1>
               <p className="text-gray-600">{currentCategory.description}</p>
             </div>
           </div>
@@ -193,7 +241,7 @@ export default function CategoryTrafficSignsPage() {
             <Input
               placeholder="Zoek verkeersborden..."
               value={searchTerm}
-              onChange={(e: { target: { value: SetStateAction<string> } }) => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)}
               className="pl-10"
             />
           </div>
@@ -210,7 +258,9 @@ export default function CategoryTrafficSignsPage() {
               key={type.id}
               onClick={() => setSelectedType(type.id)}
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                selectedType === type.id ? "bg-blue-600 text-white" : "bg-white text-gray-600 hover:bg-gray-50 border"
+                selectedType === type.id
+                  ? "bg-blue-600 text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-300"
               }`}
             >
               {type.name} ({type.count})
@@ -226,7 +276,7 @@ export default function CategoryTrafficSignsPage() {
           </div>
         )}
 
-        {/* Traffic Signs Grid */}
+        {/* Traffic Signs Grid - Professional Design */}
         {!loading && (
           <>
             <div className="mb-4 text-sm text-gray-600">
@@ -242,76 +292,69 @@ export default function CategoryTrafficSignsPage() {
                       setSearchTerm("")
                       setSelectedType("all")
                     }}
+                    className="border border-blue-700/80"
                   >
                     Filters Wissen
                   </Button>
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {filteredSigns.map((sign) => (
-                  <Card key={sign._id} className="hover:shadow-lg transition-shadow">
-                    <CardHeader className="pb-4">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="text-lg mb-2">{sign.name}</CardTitle>
-                          <div className="flex items-center space-x-2 mb-2">
-                            <Badge className={getTypeColor(sign.type)} variant="secondary">
-                              {sign.type.charAt(0).toUpperCase() + sign.type.slice(1)}
-                            </Badge>
-                            <span className="text-lg" title={`Vorm: ${sign.shape}`}>
-                              {getShapeIcon(sign.shape)}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                    </CardHeader>
-
-                    <CardContent className="space-y-4">
+                  <Card
+                    key={sign._id}
+                    className="group bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200"
+                  >
+                    <CardContent className="p-6">
                       {/* Sign Image */}
-                      <div className="bg-white border-2 border-gray-200 rounded-lg p-4 text-center">
-                        <div className="w-20 h-20 mx-auto bg-gray-100 rounded-lg flex items-center justify-center text-2xl">
-                          🚦
+                      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-4 text-center group-hover:bg-gray-100 transition-colors">
+                        <img
+                          src={sign.image || "/placeholder.svg?height=160&width=160"}
+                          alt={sign.name}
+                          className="w-32 h-32 mx-auto object-contain"
+                          onError={(e) => {
+                            e.currentTarget.src = "/placeholder.svg?height=160&width=160"
+                          }}
+                        />
+                      </div>
+
+                      {/* Sign Info */}
+                      <div className="space-y-3">
+                        <div className="flex items-start justify-between">
+                          <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 flex-1">
+                            {sign.name}
+                          </h3>
+                          <span className="text-lg ml-2 flex-shrink-0" title={`Vorm: ${sign.shape}`}>
+                            {getShapeIcon(sign.shape)}
+                          </span>
                         </div>
-                        <p className="text-xs text-gray-500 mt-2">Verkeersbord illustratie</p>
-                      </div>
 
-                      {/* Description */}
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">Beschrijving:</h4>
-                        <p className="text-sm text-gray-600">{sign.description}</p>
-                      </div>
+                        <Badge className={`${getTypeColor(sign.type)} text-xs font-medium border`} variant="outline">
+                          {sign.type.charAt(0).toUpperCase() + sign.type.slice(1)}
+                        </Badge>
 
-                      {/* Meaning */}
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">Betekenis:</h4>
-                        <p className="text-sm text-gray-600">{sign.meaning}</p>
-                      </div>
+                        <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{sign.description}</p>
 
-                      {/* Examples */}
-                      {sign.examples && sign.examples.length > 0 && (
-                        <div>
-                          <h4 className="font-semibold text-gray-900 mb-1">Voorbeelden:</h4>
-                          <ul className="text-sm text-gray-600 space-y-1">
-                            {sign.examples.map((example, index) => (
-                              <li key={index} className="flex items-start space-x-1">
-                                <span>•</span>
-                                <span>{example}</span>
-                              </li>
-                            ))}
-                          </ul>
+                        <div className="pt-2 border-t border-gray-100">
+                          <p className="text-xs font-medium text-gray-900 mb-1">Betekenis:</p>
+                          <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{sign.meaning}</p>
                         </div>
-                      )}
 
-                      {/* Applicable For */}
-                      <div>
-                        <h4 className="font-semibold text-gray-900 mb-1">Van toepassing op:</h4>
                         <div className="flex flex-wrap gap-1">
-                          {sign.applicableFor.map((vehicle, index) => (
-                            <Badge key={index} variant="outline" className="text-xs">
+                          {sign.applicableFor.slice(0, 2).map((vehicle, index) => (
+                            <Badge
+                              key={index}
+                              variant="outline"
+                              className="text-xs bg-gray-50 text-gray-600 border-gray-200"
+                            >
                               {vehicle}
                             </Badge>
                           ))}
+                          {sign.applicableFor.length > 2 && (
+                            <Badge variant="outline" className="text-xs bg-gray-50 text-gray-600 border-gray-200">
+                              +{sign.applicableFor.length - 2}
+                            </Badge>
+                          )}
                         </div>
                       </div>
                     </CardContent>
@@ -323,7 +366,7 @@ export default function CategoryTrafficSignsPage() {
         )}
 
         {/* Study Tips */}
-        <Card className="mt-12">
+        <Card className="mt-12 border border-gray-300/70">
           <CardHeader>
             <CardTitle>Studietips voor Verkeersborden</CardTitle>
           </CardHeader>
@@ -349,6 +392,7 @@ export default function CategoryTrafficSignsPage() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   )
 }

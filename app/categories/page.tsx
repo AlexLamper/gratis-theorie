@@ -1,8 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Car, Bike, BikeIcon as Motorcycle, BookOpen, Trophy } from "lucide-react"
+import { Car, Bike, BikeIcon as Motorcycle, BookOpen, Trophy } from "lucide-react"
 import Link from "next/link"
+import Footer from "@/components/footer"
 
 export default function CategoriesPage() {
   const categories = [
@@ -67,23 +68,10 @@ export default function CategoriesPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2 text-blue-600 hover:text-blue-700">
-              <ArrowLeft className="h-5 w-5" />
-              <span>Terug naar Home</span>
-            </Link>
-            <h1 className="text-xl font-semibold text-gray-900">Alle Categorieën</h1>
-          </div>
-        </div>
-      </header>
-
       <div className="container mx-auto px-4 py-12">
         {/* Page Header */}
         <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold text-gray-900 mb-4">Kies je Rijbewijscategorie</h2>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Kies je Rijbewijscategorie</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
             Elke categorie heeft zijn eigen theorie-examen met specifieke vragen en regels. Kies de categorie die bij
             jouw gewenste rijbewijs hoort.
@@ -103,7 +91,7 @@ export default function CategoriesPage() {
                     className={`${category.bgColor} p-8 md:w-1/3 flex flex-col items-center justify-center text-center`}
                   >
                     <IconComponent className={`h-16 w-16 ${category.color} mb-4`} />
-                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{category.name}</h3>
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{category.name}</h2>
                     <p className="text-gray-600 mb-4">{category.description}</p>
                     <div className="flex space-x-2">
                       <Badge variant="secondary">{category.stats.questions}+ vragen</Badge>
@@ -116,7 +104,7 @@ export default function CategoriesPage() {
                     <div className="grid md:grid-cols-2 gap-8">
                       {/* Requirements */}
                       <div>
-                        <h4 className="text-lg font-semibold text-gray-900 mb-4">Vereisten & Kenmerken</h4>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Vereisten & Kenmerken</h3>
                         <ul className="space-y-2">
                           {category.details.map((detail, index) => (
                             <li key={index} className="flex items-start space-x-2">
@@ -129,7 +117,7 @@ export default function CategoriesPage() {
 
                       {/* Stats and Actions */}
                       <div>
-                        <h4 className="text-lg font-semibold text-gray-900 mb-4">Oefenmateriaal</h4>
+                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Oefenmateriaal</h3>
                         <div className="space-y-3 mb-6">
                           <div className="flex justify-between">
                             <span className="text-gray-600">Totaal vragen:</span>
@@ -146,13 +134,13 @@ export default function CategoriesPage() {
                         </div>
 
                         <div className="space-y-3">
-                          <Button asChild className="w-full">
+                          <Button asChild className="w-full border border-blue-700/80">
                             <Link href={`/practice?category=${category.id}`}>
                               <BookOpen className="h-4 w-4 mr-2" />
                               Start Oefenen
                             </Link>
                           </Button>
-                          <Button asChild variant="outline" className="w-full bg-transparent">
+                          <Button asChild variant="outline" className="w-full bg-transparent border border-gray-300/80">
                             <Link href={`/exams?category=${category.id}`}>
                               <Trophy className="h-4 w-4 mr-2" />
                               Doe Proefexamen
@@ -197,6 +185,7 @@ export default function CategoriesPage() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   )
 }

@@ -1,299 +1,294 @@
-"use client"
-
-import { useState, useEffect } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import { ArrowLeft, ArrowRight, RotateCcw, CheckCircle, XCircle, BookOpen } from "lucide-react"
+import { BookOpen, Target, Brain, Clock, Trophy, ArrowRight, Zap, Star } from "lucide-react"
 import Link from "next/link"
-import { useSearchParams } from "next/navigation"
+import Footer from "@/components/footer"
+import type { Metadata } from "next"
 
-interface Question {
-  _id: string
-  question: string
-  options: string[]
-  correctAnswer: number
-  explanation: string
-  category: string
-  difficulty: "easy" | "medium" | "hard"
-  image?: string
+export const metadata: Metadata = {
+  title: "Oefenen - Gratis Theorie-examen Vragen",
+  description:
+    "Oefen gratis voor je theorie-examen met actuele vragen. Kies uit verschillende onderwerpen en moeilijkheidsgraden. Auto, scooter en motor theorie.",
+  openGraph: {
+    title: "Oefenen - Gratis Theorie-examen Vragen",
+    description:
+      "Oefen gratis voor je theorie-examen met actuele vragen. Verschillende onderwerpen en moeilijkheidsgraden.",
+  },
 }
 
 export default function PracticePage() {
-  const searchParams = useSearchParams()
-  const category = searchParams.get("category") || "auto"
+  const categories = [
+    {
+      id: "auto",
+      name: "Auto (B)",
+      description: "Personenauto's en lichte bedrijfsvoertuigen",
+      color: "blue",
+      questions: 500,
+      topics: [
+        "Verkeersborden en -regels",
+        "Voorrang en kruispunten",
+        "Snelheid en afstand",
+        "Parkeren en stilstaan",
+        "Alcohol en drugs",
+        "Milieu en zuinig rijden",
+      ],
+    },
+    {
+      id: "scooter",
+      name: "Scooter (AM)",
+      description: "Bromfietsen en lichte quadricycles",
+      color: "green",
+      questions: 300,
+      topics: [
+        "Verkeersborden",
+        "Voorrangsregels",
+        "Snelheid en veiligheid",
+        "Helm en bescherming",
+        "Fietspad gebruik",
+        "Technische eisen",
+      ],
+    },
+    {
+      id: "motor",
+      name: "Motor (A)",
+      description: "Motorfietsen en zware quadricycles",
+      color: "red",
+      questions: 400,
+      topics: [
+        "Verkeersborden en -regels",
+        "Voorrang en kruispunten",
+        "Snelheid en remmen",
+        "Bochten en inhalen",
+        "Beschermende kleding",
+        "Motorspecifieke regels",
+      ],
+    },
+  ]
 
-  const [questions, setQuestions] = useState<Question[]>([])
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0)
-  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null)
-  const [showResult, setShowResult] = useState(false)
-  const [score, setScore] = useState({ correct: 0, total: 0 })
-  const [loading, setLoading] = useState(true)
-
-  // Fetch questions from API
-  useEffect(() => {
-    const fetchQuestions = async () => {
-      try {
-        setLoading(true)
-        const response = await fetch(`/api/questions?category=${category}&limit=20`)
-        const data = await response.json()
-        setQuestions(data.questions || [])
-      } catch (error) {
-        console.error("Error fetching questions:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchQuestions()
-  }, [category])
-
-  const currentQuestion = questions[currentQuestionIndex]
-  const progress = questions.length > 0 ? ((currentQuestionIndex + 1) / questions.length) * 100 : 0
-
-  const handleAnswerSelect = (answerIndex: number) => {
-    if (showResult) return
-    setSelectedAnswer(answerIndex)
-  }
-
-  const handleSubmitAnswer = () => {
-    if (selectedAnswer === null) return
-
-    setShowResult(true)
-    const isCorrect = selectedAnswer === currentQuestion.correctAnswer
-
-    setScore((prev) => ({
-      correct: prev.correct + (isCorrect ? 1 : 0),
-      total: prev.total + 1,
-    }))
-  }
-
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex((prev) => prev + 1)
-      setSelectedAnswer(null)
-      setShowResult(false)
-    }
-  }
-
-  const handlePreviousQuestion = () => {
-    if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex((prev) => prev - 1)
-      setSelectedAnswer(null)
-      setShowResult(false)
-    }
-  }
-
-  const resetPractice = () => {
-    setCurrentQuestionIndex(0)
-    setSelectedAnswer(null)
-    setShowResult(false)
-    setScore({ correct: 0, total: 0 })
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <BookOpen className="h-12 w-12 text-blue-600 mx-auto mb-4 animate-pulse" />
-          <p className="text-lg text-gray-600">Vragen laden...</p>
-        </div>
-      </div>
-    )
-  }
-
-  if (questions.length === 0) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="max-w-md">
-          <CardHeader className="text-center">
-            <CardTitle>Geen vragen beschikbaar</CardTitle>
-            <CardDescription>Er zijn momenteel geen vragen beschikbaar voor deze categorie.</CardDescription>
-          </CardHeader>
-          <CardContent className="text-center">
-            <Button asChild>
-              <Link href="/">Terug naar Home</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
+  const practiceTypes = [
+    {
+      id: "mixed",
+      title: "Gemengd Oefenen",
+      description: "Willekeurige vragen uit alle onderwerpen",
+      icon: Brain,
+      color: "bg-purple-500",
+      recommended: true,
+    },
+    {
+      id: "topic",
+      title: "Per Onderwerp",
+      description: "Focus op specifieke onderwerpen",
+      icon: Target,
+      color: "bg-blue-500",
+    },
+    {
+      id: "difficulty",
+      title: "Per Moeilijkheid",
+      description: "Oefen op jouw niveau",
+      icon: Star,
+      color: "bg-green-500",
+    },
+    {
+      id: "mistakes",
+      title: "Foutieve Vragen",
+      description: "Herhaal vragen die je fout had",
+      icon: Zap,
+      color: "bg-orange-500",
+    },
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white border-b">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="/" className="flex items-center space-x-2 text-blue-600 hover:text-blue-700">
-              <ArrowLeft className="h-5 w-5" />
-              <span>Terug naar Home</span>
-            </Link>
-            <div className="flex items-center space-x-4">
-              <Badge variant="outline" className="capitalize">
-                {category}
-              </Badge>
-              <div className="text-sm text-gray-600">
-                Vraag {currentQuestionIndex + 1} van {questions.length}
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="container mx-auto px-4 py-8">
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-sm font-medium text-gray-700">Voortgang</span>
-            <span className="text-sm text-gray-500">
-              {score.total > 0 && `${Math.round((score.correct / score.total) * 100)}% correct`}
-            </span>
-          </div>
-          <Progress value={progress} className="h-2" />
+      <div className="container mx-auto px-4 py-12">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <BookOpen className="h-16 w-16 text-blue-600 mx-auto mb-4" />
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Oefenen voor je Theorie-examen</h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Kies je voertuigcategorie en begin met oefenen. Alle vragen zijn gebaseerd op de nieuwste CBR richtlijnen.
+          </p>
         </div>
 
-        {/* Question Card */}
-        <Card className="max-w-4xl mx-auto">
-          <CardHeader>
-            <div className="flex items-center justify-between">
-              <Badge
-                variant={
-                  currentQuestion.difficulty === "easy"
-                    ? "secondary"
-                    : currentQuestion.difficulty === "medium"
-                      ? "default"
-                      : "destructive"
-                }
-              >
-                {currentQuestion.difficulty === "easy"
-                  ? "Makkelijk"
-                  : currentQuestion.difficulty === "medium"
-                    ? "Gemiddeld"
-                    : "Moeilijk"}
-              </Badge>
-              <div className="text-sm text-gray-500">
-                Score: {score.correct}/{score.total}
-              </div>
-            </div>
-            <CardTitle className="text-xl leading-relaxed">{currentQuestion.question}</CardTitle>
-          </CardHeader>
-
-          <CardContent className="space-y-4">
-            {/* Question Image (if available) */}
-            {currentQuestion.image && (
-              <div className="mb-6">
-                <img
-                  src={currentQuestion.image || "/placeholder.svg"}
-                  alt="Vraag illustratie"
-                  className="max-w-full h-auto rounded-lg border"
-                />
-              </div>
-            )}
-
-            {/* Answer Options */}
-            <div className="space-y-3">
-              {currentQuestion.options.map((option, index) => {
-                let buttonClass = "w-full text-left p-4 border-2 rounded-lg transition-all hover:border-blue-300"
-
-                if (showResult) {
-                  if (index === currentQuestion.correctAnswer) {
-                    buttonClass += " border-green-500 bg-green-50 text-green-800"
-                  } else if (index === selectedAnswer && index !== currentQuestion.correctAnswer) {
-                    buttonClass += " border-red-500 bg-red-50 text-red-800"
-                  } else {
-                    buttonClass += " border-gray-200 text-gray-500"
-                  }
-                } else if (selectedAnswer === index) {
-                  buttonClass += " border-blue-500 bg-blue-50"
-                } else {
-                  buttonClass += " border-gray-200 hover:border-blue-300"
-                }
-
-                return (
-                  <button
-                    key={index}
-                    onClick={() => handleAnswerSelect(index)}
-                    className={buttonClass}
-                    disabled={showResult}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span>{option}</span>
-                      {showResult && index === currentQuestion.correctAnswer && (
-                        <CheckCircle className="h-5 w-5 text-green-600" />
-                      )}
-                      {showResult && index === selectedAnswer && index !== currentQuestion.correctAnswer && (
-                        <XCircle className="h-5 w-5 text-red-600" />
-                      )}
+        {/* Practice Types */}
+        <div className="mb-16">
+          <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Hoe wil je oefenen?</h2>
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {practiceTypes.map((type) => {
+              const IconComponent = type.icon
+              return (
+                <Card
+                  key={type.id}
+                  className={`hover:shadow-lg transition-all cursor-pointer border-2 ${type.recommended ? "border-purple-200 bg-purple-50" : "hover:border-gray-300"}`}
+                >
+                  <CardContent className="p-6 text-center">
+                    {type.recommended && <Badge className="mb-3 bg-purple-100 text-purple-800">Aanbevolen</Badge>}
+                    <div
+                      className={`${type.color} w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4`}
+                    >
+                      <IconComponent className="h-6 w-6 text-white" />
                     </div>
-                  </button>
-                )
-              })}
-            </div>
+                    <h3 className="font-semibold text-gray-900 mb-2">{type.title}</h3>
+                    <p className="text-sm text-gray-600">{type.description}</p>
+                  </CardContent>
+                </Card>
+              )
+            })}
+          </div>
+        </div>
 
-            {/* Explanation */}
-            {showResult && (
-              <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                <h4 className="font-semibold text-blue-900 mb-2">Uitleg:</h4>
-                <p className="text-blue-800">{currentQuestion.explanation}</p>
+        {/* Categories */}
+        <div className="space-y-8">
+          <h2 className="text-2xl font-bold text-gray-900 text-center">Kies je Categorie</h2>
+
+          {categories.map((category) => (
+            <Card
+              key={category.id}
+              className="overflow-hidden hover:shadow-xl transition-all border-2 hover:border-blue-200"
+            >
+              <div className="md:flex">
+                {/* Left side - Category info */}
+                <div
+                  className={`p-8 md:w-1/3 bg-gradient-to-br ${
+                    category.color === "blue"
+                      ? "from-blue-50 to-blue-100"
+                      : category.color === "green"
+                        ? "from-green-50 to-green-100"
+                        : "from-red-50 to-red-100"
+                  }`}
+                >
+                  <div className="text-center">
+                    <h3 className="text-2xl font-bold text-gray-900 mb-2">{category.name}</h3>
+                    <p className="text-gray-600 mb-4">{category.description}</p>
+                    <Badge variant="secondary" className="mb-4">
+                      {category.questions}+ vragen
+                    </Badge>
+
+                    <div className="space-y-2">
+                      <Button
+                        asChild
+                        className={`w-full ${
+                          category.color === "blue"
+                            ? "bg-blue-600 hover:bg-blue-700 border border-blue-700/80"
+                            : category.color === "green"
+                              ? "bg-green-600 hover:bg-green-700 border border-green-700/80"
+                              : "bg-red-600 hover:bg-red-700 border border-red-700/80"
+                        }`}
+                      >
+                        <Link href={`/practice/mixed?category=${category.id}`}>
+                          <Brain className="mr-2 h-4 w-4" />
+                          Start Gemengd Oefenen
+                        </Link>
+                      </Button>
+
+                      <Button asChild variant="outline" className="w-full bg-transparent border border-gray-300/80">
+                        <Link href={`/practice/topics?category=${category.id}`}>
+                          <Target className="mr-2 h-4 w-4" />
+                          Kies Onderwerp
+                        </Link>
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Right side - Topics */}
+                <div className="p-8 md:w-2/3">
+                  <h4 className="text-lg font-semibold text-gray-900 mb-4">Beschikbare Onderwerpen:</h4>
+                  <div className="grid md:grid-cols-2 gap-3">
+                    {category.topics.map((topic, index) => (
+                      <div
+                        key={index}
+                        className="flex items-center space-x-2 p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                      >
+                        <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0" />
+                        <span className="text-gray-700 text-sm">{topic}</span>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+                    <div className="flex items-center space-x-2 mb-2">
+                      <Trophy className="h-5 w-5 text-blue-600" />
+                      <span className="font-medium text-blue-900">Proefexamen beschikbaar</span>
+                    </div>
+                    <p className="text-blue-800 text-sm mb-3">
+                      Test je kennis met een volledig proefexamen (40 vragen, 30 minuten)
+                    </p>
+                    <Button
+                      asChild
+                      variant="outline"
+                      size="sm"
+                      className="border-blue-200 text-blue-700 hover:bg-blue-100 bg-transparent border border-blue-200/80"
+                    >
+                      <Link href={`/exams?category=${category.id}`}>
+                        <Clock className="mr-2 h-4 w-4" />
+                        Start Proefexamen
+                      </Link>
+                    </Button>
+                  </div>
+                </div>
               </div>
-            )}
+            </Card>
+          ))}
+        </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-between items-center pt-6">
-              <Button variant="outline" onClick={handlePreviousQuestion} disabled={currentQuestionIndex === 0}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Vorige
-              </Button>
-
-              <div className="flex space-x-2">
-                <Button variant="outline" onClick={resetPractice}>
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  Opnieuw
-                </Button>
-
-                {!showResult ? (
-                  <Button onClick={handleSubmitAnswer} disabled={selectedAnswer === null}>
-                    Controleer Antwoord
-                  </Button>
-                ) : (
-                  <Button onClick={handleNextQuestion} disabled={currentQuestionIndex === questions.length - 1}>
-                    Volgende
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </Button>
-                )}
+        {/* Tips Section */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle className="flex items-center space-x-2">
+              <Target className="h-5 w-5 text-blue-600" />
+              <span>Tips voor Effectief Oefenen</span>
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid md:grid-cols-2 gap-8">
+              <div>
+                <h4 className="font-semibold mb-3 text-gray-900">Studietips:</h4>
+                <ul className="space-y-2 text-gray-600">
+                  <li className="flex items-start space-x-2">
+                    <ArrowRight className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Oefen dagelijks 15-30 minuten voor de beste resultaten</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <ArrowRight className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Begin met gemengd oefenen, focus daarna op zwakke punten</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <ArrowRight className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Lees de uitleg bij verkeerde antwoorden altijd goed door</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <ArrowRight className="h-4 w-4 text-blue-600 mt-0.5 flex-shrink-0" />
+                    <span>Doe regelmatig proefexamens om je voortgang te meten</span>
+                  </li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-3 text-gray-900">Examen Tips:</h4>
+                <ul className="space-y-2 text-gray-600">
+                  <li className="flex items-start space-x-2">
+                    <ArrowRight className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span>Je hebt 70% nodig om te slagen voor het echte examen</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <ArrowRight className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span>Verkeersborden vormen een groot deel van het examen</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <ArrowRight className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span>Neem de tijd om vragen goed te lezen</span>
+                  </li>
+                  <li className="flex items-start space-x-2">
+                    <ArrowRight className="h-4 w-4 text-green-600 mt-0.5 flex-shrink-0" />
+                    <span>Blijf kalm en vertrouw op je voorbereiding</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </CardContent>
         </Card>
-
-        {/* Final Score */}
-        {currentQuestionIndex === questions.length - 1 && showResult && (
-          <Card className="max-w-2xl mx-auto mt-8">
-            <CardHeader className="text-center">
-              <CardTitle className="text-2xl">Oefensessie Voltooid!</CardTitle>
-              <CardDescription>Je hebt alle vragen beantwoord</CardDescription>
-            </CardHeader>
-            <CardContent className="text-center space-y-4">
-              <div className="text-4xl font-bold text-blue-600">{Math.round((score.correct / score.total) * 100)}%</div>
-              <p className="text-lg">
-                {score.correct} van de {score.total} vragen correct
-              </p>
-              <div className="flex justify-center space-x-4">
-                <Button onClick={resetPractice}>
-                  <RotateCcw className="h-4 w-4 mr-2" />
-                  Opnieuw Oefenen
-                </Button>
-                <Button asChild variant="outline">
-                  <Link href="/exams">Doe een Proefexamen</Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
+      <Footer />
     </div>
   )
 }

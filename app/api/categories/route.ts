@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server"
 import { connectToDatabase } from "@/lib/mongodb"
 
-export const runtime = "nodejs"
-
 export async function GET() {
   try {
     const { db } = await connectToDatabase()
