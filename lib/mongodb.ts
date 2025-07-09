@@ -1,24 +1,40 @@
-import mongoose from "mongoose"
+import { MongoClient, type Db } from "mongodb"
 
-const connectMongoDB = async (): Promise<void> => {
+process.env.MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/gratis-theorie"
+
+const uri = process.env.MONGODB_URI
+const options = {}
+
+let client: MongoClient
+let clientPromise: Promise<MongoClient>
+
+if (process.env.NODE_ENV === "development") {
+  // In development mode, use a global variable so that the value
+  // is preserved across module reloads caused by HMR (Hot Module Replacement).
+  const globalWithMongo = global as typeof globalThis & {
+    _mongoClientPromise?: Promise<MongoClient>
+  }
+
+  if (!globalWithMongo._mongoClientPromise) {
+    client = new MongoClient(uri, options)
+    globalWithMongo._mongoClientPromise = client.connect()
+  }
+  clientPromise = globalWithMongo._mongoClientPromise
+} else {
+  // In production mode, it's best to not use a global variable.
+  client = new MongoClient(uri, options)
+  clientPromise = client.connect()
+}
+
+export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
   try {
-    if (mongoose.connection.readyState === 0) {
-      const mongoURI = process.env.MONGODB_URI
-      if (!mongoURI) {
-        throw new Error("MongoDB URI is not defined in environment variables.")
-      }
-      await mongoose.connect(mongoURI, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-      } as any)
-      console.log("MongoDB connected successfully")
-    } else {
-      console.log("MongoDB is already connected")
-    }
+    const client = await clientPromise
+    const db = client.db("gratis-theorie") // Database name
+    return { client, db }
   } catch (error) {
-    console.error("MongoDB connection error:", error)
+    console.error("Failed to connect to MongoDB:", error)
     throw error
   }
 }
 
-export default connectMongoDB
+export default clientPromise
