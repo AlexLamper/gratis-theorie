@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Search, Filter, Car, Bike, BikeIcon as Motorcycle, AlertTriangle, RefreshCw } from "lucide-react"
+import { Search, Filter, Car, Bike, BikeIcon as Motorcycle, AlertTriangle, RefreshCw, Info } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import Footer from "@/components/footer"
@@ -26,17 +26,9 @@ interface TrafficSign {
   examples?: string[]
 }
 
-// Create a simple SVG placeholder as data URI
-const createPlaceholderSVG = (width = 160, height = 160) => {
-  const svg = `
-    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
-      <rect width="100%" height="100%" fill="#f3f4f6"/>
-      <circle cx="${width / 2}" cy="${height / 2}" r="${Math.min(width, height) / 3}" fill="#d1d5db" stroke="#9ca3af" strokeWidth="2"/>
-      <text x="${width / 2}" y="${height / 2 + 5}" textAnchor="middle" fill="#6b7280" fontFamily="Arial, sans-serif" fontSize="14">?</text>
-    </svg>
-  `
-  return `data:image/svg+xml;base64,${btoa(svg)}`
-}
+// Simple placeholder SVG as data URI
+const PLACEHOLDER_SVG =
+  "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYwIiBoZWlnaHQ9IjE2MCIgdmlld0JveD0iMCAwIDE2MCAxNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0iI2YzZjRmNiIvPjxjaXJjbGUgY3g9IjgwIiBjeT0iODAiIHI9IjUwIiBmaWxsPSIjZDFkNWRiIiBzdHJva2U9IiM5Y2EzYWYiIHN0cm9rZS13aWR0aD0iMiIvPjx0ZXh0IHg9IjgwIiB5PSI4NSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzZiNzI4MCIgZm9udC1mYW1pbHk9IkFyaWFsLCBzYW5zLXNlcmlmIiBmb250LXNpemU9IjEyIj4/PC90ZXh0Pjwvc3ZnPg=="
 
 export default function CategoryTrafficSignsPage() {
   const params = useParams()
@@ -50,6 +42,7 @@ export default function CategoryTrafficSignsPage() {
   const [selectedType, setSelectedType] = useState<string>("all")
   const [mounted, setMounted] = useState(false)
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
+  const [dataSource, setDataSource] = useState<string>("")
 
   // Fix hydration mismatch by ensuring client-side rendering
   useEffect(() => {
@@ -106,7 +99,7 @@ export default function CategoryTrafficSignsPage() {
     if (!imageErrors.has(signId)) {
       setImageErrors((prev) => new Set(prev).add(signId))
       const img = event.currentTarget
-      img.src = createPlaceholderSVG(160, 160)
+      img.src = PLACEHOLDER_SVG
     }
   }
 
@@ -131,6 +124,7 @@ export default function CategoryTrafficSignsPage() {
       if (data.signs && Array.isArray(data.signs)) {
         setSigns(data.signs)
         setFilteredSigns(data.signs)
+        setDataSource(data.source || "unknown")
       } else {
         throw new Error("Invalid response format")
       }
@@ -141,6 +135,7 @@ export default function CategoryTrafficSignsPage() {
       // Set empty state on error
       setSigns([])
       setFilteredSigns([])
+      setDataSource("error")
     } finally {
       setLoading(false)
     }
@@ -251,6 +246,31 @@ export default function CategoryTrafficSignsPage() {
             </div>
           </div>
         </div>
+
+        {/* Data Source Info */}
+        {dataSource && dataSource !== "database" && (
+          <Card className="mb-6 border-blue-200 bg-blue-50">
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-3">
+                <Info className="h-5 w-5 text-blue-600" />
+                <div className="text-sm">
+                  {dataSource === "sample" && (
+                    <p className="text-blue-800">
+                      <strong>Demo modus:</strong> Er worden voorbeeldgegevens getoond. De volledige database wordt
+                      binnenkort beschikbaar gesteld.
+                    </p>
+                  )}
+                  {dataSource === "emergency" && (
+                    <p className="text-blue-800">
+                      <strong>Beperkte modus:</strong> Er is een tijdelijk probleem met de server. Probeer het later
+                      opnieuw.
+                    </p>
+                  )}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Search and Filter */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
@@ -364,7 +384,7 @@ export default function CategoryTrafficSignsPage() {
                       {/* Sign Image */}
                       <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-4 text-center group-hover:bg-gray-100 transition-colors">
                         <img
-                          src={imageErrors.has(sign._id) ? createPlaceholderSVG(160, 160) : sign.image}
+                          src={imageErrors.has(sign._id) ? PLACEHOLDER_SVG : sign.image}
                           alt={sign.name}
                           className="w-32 h-32 mx-auto object-contain"
                           onError={(e) => handleImageError(sign._id, e)}
