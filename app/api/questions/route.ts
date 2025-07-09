@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import connectToDatabase from "@/lib/mongoose"
+import connectMongoDB from "@/lib/mongodb"
 import Question from "@/models/Question"
 
 // Cache for frequently accessed data
@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Connect to database
-    await connectToDatabase()
+    await connectMongoDB()
 
     // Build query filter
     const filter: any = { category }
@@ -41,6 +41,7 @@ export async function GET(request: NextRequest) {
       .select("question options correctAnswer explanation category difficulty topic image")
       .lean() // Returns plain JavaScript objects for better performance
 
+
     // If no questions found, return sample data
     if (questions.length === 0) {
       const sampleQuestions = getSampleQuestions(category, limit)
@@ -48,7 +49,6 @@ export async function GET(request: NextRequest) {
         questions: sampleQuestions,
         total: sampleQuestions.length,
         category,
-        source: "sample",
       }
 
       // Cache the response
@@ -64,7 +64,6 @@ export async function GET(request: NextRequest) {
       questions,
       total: questions.length,
       category,
-      source: "database",
     }
 
     // Cache the response
@@ -86,8 +85,6 @@ export async function GET(request: NextRequest) {
       questions: sampleQuestions,
       total: sampleQuestions.length,
       category,
-      source: "sample",
-      error: "Database error occurred",
     })
   }
 }

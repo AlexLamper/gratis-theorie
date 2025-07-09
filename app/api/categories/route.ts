@@ -1,14 +1,13 @@
 import { NextResponse } from "next/server"
-import { connectToDatabase } from "@/lib/mongodb"
+import connectMongoDB from "@/lib/mongodb"
+import Question from "@/models/Question"
 
 export async function GET() {
   try {
-    const { db } = await connectToDatabase()
+    await connectMongoDB()
 
     // Get categories with question counts
-    const categories = await db
-      .collection("questions")
-      .aggregate([
+    const categories = await Question.aggregate([
         {
           $group: {
             _id: "$category",
@@ -25,7 +24,6 @@ export async function GET() {
           },
         },
       ])
-      .toArray()
 
     // If no categories found, return default categories
     if (categories.length === 0) {
