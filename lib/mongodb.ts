@@ -1,7 +1,7 @@
 import { MongoClient, type Db } from "mongodb"
 
 if (!process.env.MONGODB_URI) {
-  throw new Error("Please add your MongoDB URI to .env.local")
+  console.warn("MongoDB URI not found in environment variables")
 }
 
 const uri = process.env.MONGODB_URI
@@ -13,43 +13,57 @@ const options = {
   maxIdleTimeMS: 30000,
 }
 
-let client: MongoClient
-let clientPromise: Promise<MongoClient>
+let client: MongoClient | null = null
+let clientPromise: Promise<MongoClient> | null = null
 
-if (process.env.NODE_ENV === "development") {
-  const globalWithMongo = global as typeof globalThis & {
-    _mongoClientPromise?: Promise<MongoClient>
-  }
+// Only create client if URI is available
+if (uri) {
+  if (process.env.NODE_ENV === "development") {
+    const globalWithMongo = global as typeof globalThis & {
+      _mongoClientPromise?: Promise<MongoClient>
+    }
 
-  if (!globalWithMongo._mongoClientPromise) {
+    if (!globalWithMongo._mongoClientPromise) {
+      client = new MongoClient(uri, options)
+      globalWithMongo._mongoClientPromise = client.connect()
+    }
+    clientPromise = globalWithMongo._mongoClientPromise
+  } else {
     client = new MongoClient(uri, options)
-    globalWithMongo._mongoClientPromise = client.connect()
+    clientPromise = client.connect()
   }
-  clientPromise = globalWithMongo._mongoClientPromise
-} else {
-  client = new MongoClient(uri, options)
-  clientPromise = client.connect()
 }
 
 // Cache for database connections
 let cachedDb: Db | null = null
 
 export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db }> {
+  if (!uri) {
+    throw new Error("MongoDB URI is not configured")
+  }
+
+  if (!clientPromise) {
+    throw new Error("MongoDB client is not initialized")
+  }
+
   try {
-    if (cachedDb) {
-      const client = await clientPromise
+    if (cachedDb && client) {
+      // Test if connection is still alive
+      await cachedDb.admin().ping()
       return { client, db: cachedDb }
     }
 
-    const client = await clientPromise
-    const db = client.db("gratis-theorie")
-    cachedDb = db
+    const connectedClient = await clientPromise
+    const db = connectedClient.db("gratis-theorie")
 
     // Test the connection
     await db.admin().ping()
     console.log("MongoDB connection successful")
 
-    return { client, db }
+    cachedDb = db
+    client = connectedClient
+
+    return { client: connectedClient, db }
   } catch (error) {
     console.error("Failed to connect to MongoDB:", error)
     cachedDb = null // Reset cache on error

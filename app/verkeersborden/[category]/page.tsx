@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Search, Filter, Car, Bike, BikeIcon as Motorcycle, AlertTriangle } from "lucide-react"
+import { Search, Filter, Car, Bike, BikeIcon as Motorcycle, AlertTriangle, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import Footer from "@/components/footer"
@@ -45,6 +45,7 @@ export default function CategoryTrafficSignsPage() {
   const [signs, setSigns] = useState<TrafficSign[]>([])
   const [filteredSigns, setFilteredSigns] = useState<TrafficSign[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState<string>("all")
   const [mounted, setMounted] = useState(false)
@@ -109,44 +110,44 @@ export default function CategoryTrafficSignsPage() {
     }
   }
 
-  // Fetch traffic signs
-  useEffect(() => {
-    const fetchSigns = async () => {
-      if (!mounted) return
+  // Fetch traffic signs with better error handling
+  const fetchSigns = async () => {
+    if (!mounted) return
 
-      try {
-        setLoading(true)
-        console.log(`Fetching signs for category: ${category}`)
+    try {
+      setLoading(true)
+      setError(null)
+      console.log(`Fetching signs for category: ${category}`)
 
-        const response = await fetch(`/api/traffic-signs?category=${category}&limit=50`)
+      const response = await fetch(`/api/traffic-signs?category=${category}&limit=50`)
 
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`)
-        }
-
-        const contentType = response.headers.get("content-type")
-        if (!contentType || !contentType.includes("application/json")) {
-          const text = await response.text()
-          console.error("Non-JSON response:", text.substring(0, 200))
-          throw new Error("Server returned non-JSON response")
-        }
-
-        const data = await response.json()
-        console.log(`Received ${data.signs?.length || 0} signs from ${data.source || "unknown"}`)
-
-        setSigns(data.signs || [])
-        setFilteredSigns(data.signs || [])
-      } catch (error) {
-        console.error("Error fetching traffic signs:", error)
-
-        // Set empty state on error
-        setSigns([])
-        setFilteredSigns([])
-      } finally {
-        setLoading(false)
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`)
       }
-    }
 
+      const data = await response.json()
+      console.log(`Received ${data.signs?.length || 0} signs from ${data.source || "unknown"}`)
+
+      if (data.signs && Array.isArray(data.signs)) {
+        setSigns(data.signs)
+        setFilteredSigns(data.signs)
+      } else {
+        throw new Error("Invalid response format")
+      }
+    } catch (error) {
+      console.error("Error fetching traffic signs:", error)
+      setError(error instanceof Error ? error.message : "Er is een fout opgetreden")
+
+      // Set empty state on error
+      setSigns([])
+      setFilteredSigns([])
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  // Initial fetch
+  useEffect(() => {
     if (category && mounted) {
       fetchSigns()
     }
@@ -204,13 +205,6 @@ export default function CategoryTrafficSignsPage() {
     }
     return shapes[shape as keyof typeof shapes] || "⬜"
   }
-
-  // Fix scroll to top on page load
-  useEffect(() => {
-    if (mounted) {
-      window.scrollTo(0, 0)
-    }
-  }, [mounted, category])
 
   // Don't render until mounted to prevent hydration mismatch
   if (!mounted) {
@@ -292,6 +286,30 @@ export default function CategoryTrafficSignsPage() {
           ))}
         </div>
 
+        {/* Error State */}
+        {error && (
+          <Card className="mb-8 border-red-200 bg-red-50">
+            <CardContent className="p-6">
+              <div className="flex items-center space-x-3">
+                <AlertTriangle className="h-6 w-6 text-red-600" />
+                <div>
+                  <h3 className="font-semibold text-red-900">Er is een probleem opgetreden</h3>
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
+                <Button
+                  onClick={fetchSigns}
+                  variant="outline"
+                  size="sm"
+                  className="ml-auto border-red-300 text-red-700 hover:bg-red-100 bg-transparent"
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Opnieuw proberen
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+
         {/* Loading State */}
         {loading && (
           <div className="text-center py-12">
@@ -300,7 +318,7 @@ export default function CategoryTrafficSignsPage() {
           </div>
         )}
 
-        {/* Traffic Signs Grid - Professional Design */}
+        {/* Traffic Signs Grid */}
         {!loading && (
           <>
             <div className="mb-4 text-sm text-gray-600">
@@ -311,16 +329,28 @@ export default function CategoryTrafficSignsPage() {
               <Card className="text-center py-12">
                 <CardContent>
                   <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-4">Geen verkeersborden gevonden voor je zoekopdracht.</p>
-                  <Button
-                    onClick={() => {
-                      setSearchTerm("")
-                      setSelectedType("all")
-                    }}
-                    className="border border-blue-700/80"
-                  >
-                    Filters Wissen
-                  </Button>
+                  <p className="text-gray-600 mb-4">
+                    {signs.length === 0
+                      ? "Er zijn momenteel geen verkeersborden beschikbaar."
+                      : "Geen verkeersborden gevonden voor je zoekopdracht."}
+                  </p>
+                  {signs.length > 0 && (
+                    <Button
+                      onClick={() => {
+                        setSearchTerm("")
+                        setSelectedType("all")
+                      }}
+                      className="border border-blue-700/80"
+                    >
+                      Filters Wissen
+                    </Button>
+                  )}
+                  {signs.length === 0 && (
+                    <Button onClick={fetchSigns} className="border border-blue-700/80">
+                      <RefreshCw className="h-4 w-4 mr-2" />
+                      Opnieuw laden
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ) : (
