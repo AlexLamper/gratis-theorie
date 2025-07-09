@@ -310,10 +310,10 @@ export default function TermsOfServicePage() {
           {/* Changes */}
           <Card>
             <CardHeader>
-              <CardTitle className="flex items-center space-x-2">
-                <FileText className="h-5 w-5 text-blue-600" />
-                <span>10. Wijzigingen in de Voorwaarden</span>
-              </CardTitle>
+                <CardTitle className="flex items-center space-x-2">
+                  <FileText className="h-5 w-5 text-blue-600" />
+                  <span>10. Wijzigingen in de Voorwaarden</span>
+                </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
               <p className="text-gray-600">
@@ -332,8 +332,8 @@ export default function TermsOfServicePage() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Contact */}
-          <Card>
-            <CardHeader>
-              <CardTitle\
+        </div>
+      </div>
+    </div>
+  )
+}
