@@ -35,7 +35,7 @@ export async function GET(request: NextRequest) {
       // Build query filter
       const filter: any = {}
 
-      // Filter by applicable vehicles
+      // Filter by applicable vehicles - improved for "alle" category
       if (category === "auto") {
         filter.applicableFor = { $in: ["auto", "alle voertuigen"] }
       } else if (category === "bromfiets") {
@@ -43,7 +43,7 @@ export async function GET(request: NextRequest) {
       } else if (category === "motor") {
         filter.applicableFor = { $in: ["motor", "alle voertuigen"] }
       }
-      // For category "alle", no filter is applied
+      // For category "alle", no applicableFor filter is applied
 
       if (type && type !== "all") {
         filter.type = type
@@ -136,8 +136,18 @@ export async function GET(request: NextRequest) {
   }
 }
 
-// Sample traffic signs data as fallback
+// Enhanced sample traffic signs data as fallback
 function getSampleTrafficSigns(category: string, type: string | null, limit: number) {
+  // Create SVG data URI for placeholder
+  const createSVGPlaceholder = (text: string, bgColor = "#f3f4f6") => {
+    const svg = `<svg width="160" height="160" viewBox="0 0 160 160" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="${bgColor}"/>
+      <circle cx="80" cy="80" r="50" fill="#d1d5db" stroke="#9ca3af" stroke-width="2"/>
+      <text x="80" y="85" text-anchor="middle" fill="#6b7280" font-family="Arial, sans-serif" font-size="12">${text}</text>
+    </svg>`
+    return `data:image/svg+xml;base64,${btoa(svg)}`
+  }
+
   const allSigns = [
     {
       _id: "sample-1",
@@ -148,7 +158,7 @@ function getSampleTrafficSigns(category: string, type: string | null, limit: num
       type: "waarschuwing" as const,
       shape: "driehoek" as const,
       color: "rood-wit",
-      image: "/placeholder.svg?height=160&width=160",
+      image: createSVGPlaceholder("⚠️"),
       applicableFor: ["auto", "bromfiets", "motor", "alle voertuigen"],
       examples: ["Wegwerkzaamheden", "Smalle bruggen", "Verkeerseilanden"],
     },
@@ -161,7 +171,7 @@ function getSampleTrafficSigns(category: string, type: string | null, limit: num
       type: "waarschuwing" as const,
       shape: "driehoek" as const,
       color: "rood-wit",
-      image: "/placeholder.svg?height=160&width=160",
+      image: createSVGPlaceholder("👶"),
       applicableFor: ["auto", "bromfiets", "motor", "alle voertuigen"],
       examples: ["Bij scholen", "Speelplaatsen", "Woonwijken"],
     },
@@ -174,7 +184,7 @@ function getSampleTrafficSigns(category: string, type: string | null, limit: num
       type: "voorrang" as const,
       shape: "achthoek" as const,
       color: "rood-wit",
-      image: "/placeholder.svg?height=160&width=160",
+      image: createSVGPlaceholder("STOP", "#dc2626"),
       applicableFor: ["auto", "bromfiets", "motor", "alle voertuigen"],
       examples: ["Gevaarlijke kruispunten", "Spoorwegovergangen", "Slechte zichtlijnen"],
     },
@@ -187,7 +197,7 @@ function getSampleTrafficSigns(category: string, type: string | null, limit: num
       type: "informatie" as const,
       shape: "vierkant" as const,
       color: "blauw-wit",
-      image: "/placeholder.svg?height=160&width=160",
+      image: createSVGPlaceholder("🚲", "#2563eb"),
       applicableFor: ["bromfiets", "fiets"],
       examples: ["Fietspaden", "Gescheiden fietsbanen", "Recreatieve routes"],
     },
@@ -200,9 +210,48 @@ function getSampleTrafficSigns(category: string, type: string | null, limit: num
       type: "parkeren" as const,
       shape: "rond" as const,
       color: "rood-wit",
-      image: "/placeholder.svg?height=160&width=160",
+      image: createSVGPlaceholder("🚫P"),
       applicableFor: ["auto"],
       examples: ["Hoofdwegen", "Bushaltes", "Kruispunten"],
+    },
+    {
+      _id: "sample-6",
+      name: "Maximum snelheid 50",
+      description: "Maximumsnelheid van 50 km/h",
+      meaning: "Je mag niet harder rijden dan 50 km/h",
+      category: "snelheid",
+      type: "snelheid" as const,
+      shape: "rond" as const,
+      color: "rood-wit",
+      image: createSVGPlaceholder("50"),
+      applicableFor: ["auto", "bromfiets", "motor", "alle voertuigen"],
+      examples: ["Bebouwde kom", "Schoolzones", "Woonwijken"],
+    },
+    {
+      _id: "sample-7",
+      name: "Voorrang verlenen",
+      description: "Je moet voorrang verlenen",
+      meaning: "Stop of vertraag om voorrang te verlenen aan ander verkeer",
+      category: "voorrang",
+      type: "voorrang" as const,
+      shape: "driehoek" as const,
+      color: "rood-wit",
+      image: createSVGPlaceholder("△"),
+      applicableFor: ["auto", "bromfiets", "motor", "alle voertuigen"],
+      examples: ["Kruispunten", "Invoegstroken", "Zijwegen"],
+    },
+    {
+      _id: "sample-8",
+      name: "Eenrichtingsweg",
+      description: "Eenrichtingsverkeer",
+      meaning: "Je mag alleen in de aangegeven richting rijden",
+      category: "rijrichting",
+      type: "rijrichting" as const,
+      shape: "rond" as const,
+      color: "blauw-wit",
+      image: createSVGPlaceholder("→", "#2563eb"),
+      applicableFor: ["auto", "bromfiets", "motor", "alle voertuigen"],
+      examples: ["Stadscentra", "Smalle straten", "Verkeerscirculatie"],
     },
   ]
 

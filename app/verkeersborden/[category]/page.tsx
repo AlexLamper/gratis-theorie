@@ -1,11 +1,13 @@
 "use client"
 
+import type React from "react"
+
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
-import { Search, Filter, Car, Bike, BikeIcon as Motorcycle } from "lucide-react"
+import { Search, Filter, Car, Bike, BikeIcon as Motorcycle, AlertTriangle } from "lucide-react"
 import Link from "next/link"
 import { useParams } from "next/navigation"
 import Footer from "@/components/footer"
@@ -24,6 +26,18 @@ interface TrafficSign {
   examples?: string[]
 }
 
+// Create a simple SVG placeholder as data URI
+const createPlaceholderSVG = (width = 160, height = 160) => {
+  const svg = `
+    <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
+      <rect width="100%" height="100%" fill="#f3f4f6"/>
+      <circle cx="${width / 2}" cy="${height / 2}" r="${Math.min(width, height) / 3}" fill="#d1d5db" stroke="#9ca3af" strokeWidth="2"/>
+      <text x="${width / 2}" y="${height / 2 + 5}" textAnchor="middle" fill="#6b7280" fontFamily="Arial, sans-serif" fontSize="14">?</text>
+    </svg>
+  `
+  return `data:image/svg+xml;base64,${btoa(svg)}`
+}
+
 export default function CategoryTrafficSignsPage() {
   const params = useParams()
   const category = params.category as string
@@ -34,6 +48,7 @@ export default function CategoryTrafficSignsPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedType, setSelectedType] = useState<string>("all")
   const [mounted, setMounted] = useState(false)
+  const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
 
   // Fix hydration mismatch by ensuring client-side rendering
   useEffect(() => {
@@ -85,6 +100,15 @@ export default function CategoryTrafficSignsPage() {
     { id: "parkeren", name: "Parkeren", count: 0 },
   ]
 
+  // Handle image error with proper fallback
+  const handleImageError = (signId: string, event: React.SyntheticEvent<HTMLImageElement>) => {
+    if (!imageErrors.has(signId)) {
+      setImageErrors((prev) => new Set(prev).add(signId))
+      const img = event.currentTarget
+      img.src = createPlaceholderSVG(160, 160)
+    }
+  }
+
   // Fetch traffic signs
   useEffect(() => {
     const fetchSigns = async () => {
@@ -94,7 +118,7 @@ export default function CategoryTrafficSignsPage() {
         setLoading(true)
         console.log(`Fetching signs for category: ${category}`)
 
-        const response = await fetch(`/api/traffic-signs?category=${category}`)
+        const response = await fetch(`/api/traffic-signs?category=${category}&limit=50`)
 
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`)
@@ -286,6 +310,7 @@ export default function CategoryTrafficSignsPage() {
             {filteredSigns.length === 0 ? (
               <Card className="text-center py-12">
                 <CardContent>
+                  <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
                   <p className="text-gray-600 mb-4">Geen verkeersborden gevonden voor je zoekopdracht.</p>
                   <Button
                     onClick={() => {
@@ -309,12 +334,11 @@ export default function CategoryTrafficSignsPage() {
                       {/* Sign Image */}
                       <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-4 text-center group-hover:bg-gray-100 transition-colors">
                         <img
-                          src={sign.image || "/placeholder.svg?height=160&width=160"}
+                          src={imageErrors.has(sign._id) ? createPlaceholderSVG(160, 160) : sign.image}
                           alt={sign.name}
                           className="w-32 h-32 mx-auto object-contain"
-                          onError={(e) => {
-                            e.currentTarget.src = "/placeholder.svg?height=160&width=160"
-                          }}
+                          onError={(e) => handleImageError(sign._id, e)}
+                          loading="lazy"
                         />
                       </div>
 
