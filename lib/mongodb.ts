@@ -1,8 +1,6 @@
 import { MongoClient, type Db } from "mongodb"
 
-if (!process.env.MONGODB_URI) {
-  throw new Error("Please add your MongoDB URI to .env.local")
-}
+process.env.MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/gratis-theorie"
 
 const uri = process.env.MONGODB_URI
 const options = {}
