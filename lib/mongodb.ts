@@ -11,6 +11,11 @@ const options = {
   socketTimeoutMS: 45000,
   connectTimeoutMS: 10000,
   maxIdleTimeMS: 30000,
+  // SSL/TLS configuration for Vercel
+  ssl: true,
+  tls: true,
+  tlsAllowInvalidCertificates: true,
+  tlsAllowInvalidHostnames: true,
 }
 
 let client: MongoClient | null = null
@@ -48,16 +53,23 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
 
   try {
     if (cachedDb && client) {
-      // Test if connection is still alive
-      await cachedDb.admin().ping()
+      // Test if connection is still alive with timeout
+      const pingPromise = cachedDb.admin().ping()
+      const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Ping timeout")), 3000))
+
+      await Promise.race([pingPromise, timeoutPromise])
       return { client, db: cachedDb }
     }
 
+    console.log("Establishing new MongoDB connection...")
     const connectedClient = await clientPromise
     const db = connectedClient.db("gratis-theorie")
 
-    // Test the connection
-    await db.admin().ping()
+    // Test the connection with timeout
+    const pingPromise = db.admin().ping()
+    const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error("Connection timeout")), 5000))
+
+    await Promise.race([pingPromise, timeoutPromise])
     console.log("MongoDB connection successful")
 
     cachedDb = db
@@ -67,6 +79,20 @@ export async function connectToDatabase(): Promise<{ client: MongoClient; db: Db
   } catch (error) {
     console.error("Failed to connect to MongoDB:", error)
     cachedDb = null // Reset cache on error
+
+    // More specific error handling
+    if (error instanceof Error) {
+      if (error.message.includes("SSL") || error.message.includes("TLS")) {
+        throw new Error("SSL/TLS connection error. Please check MongoDB Atlas configuration.")
+      }
+      if (error.message.includes("authentication")) {
+        throw new Error("Authentication failed. Please check username and password.")
+      }
+      if (error.message.includes("timeout")) {
+        throw new Error("Connection timeout. Please check network access settings.")
+      }
+    }
+
     throw error
   }
 }
