@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server"
-import connectToDatabase from "@/lib/mongoose"
+import connectMongoDB from "@/lib/mongodb"
 import Question from "@/models/Question"
 import TrafficSign from "@/models/TrafficSign"
 
@@ -15,7 +15,7 @@ export async function GET() {
     }
 
     // Try to connect to database using Mongoose
-    await connectToDatabase()
+    await connectMongoDB()
     console.log("Mongoose connection successful")
 
     // Count documents in collections using Mongoose models

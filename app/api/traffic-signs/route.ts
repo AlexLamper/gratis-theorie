@@ -1,5 +1,5 @@
 import { type NextRequest, NextResponse } from "next/server"
-import connectToDatabase from "@/lib/mongoose"
+import connectMongoDB from "@/lib/mongodb"
 import TrafficSign from "@/models/TrafficSign"
 
 // Simple placeholder image as base64 data URI (small 1x1 pixel)
@@ -235,7 +235,7 @@ function getSampleTrafficSigns(category: string, type: string | null, limit: num
 }
 
 export async function GET(request: NextRequest) {
-  try {
+   try {
     // Parse URL parameters safely
     const url = new URL(request.url)
     const category = url.searchParams.get("category") || "auto"
@@ -246,7 +246,7 @@ export async function GET(request: NextRequest) {
 
     // Try database connection
     try {
-      await connectToDatabase()
+      await connectMongoDB()
       console.log("[API] Database connection successful")
 
       // Build query filter

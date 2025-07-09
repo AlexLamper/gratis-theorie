@@ -25,3 +25,5 @@ export const connectDB = async (): Promise<void> => {
     throw new Error((error as Error).message)
   }
 }
+
+export default connectDB
