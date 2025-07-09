@@ -1,4 +1,7 @@
 import { NextResponse } from "next/server"
+import connectToDatabase from "@/lib/mongoose"
+import Question from "@/models/Question"
+import TrafficSign from "@/models/TrafficSign"
 
 export async function GET() {
   try {
@@ -11,33 +14,40 @@ export async function GET() {
       })
     }
 
-    // Try to connect to database
-    const { connectToDatabase } = await import("@/lib/mongodb")
-    const { db } = await connectToDatabase()
+    // Try to connect to database using Mongoose
+    await connectToDatabase()
+    console.log("Mongoose connection successful")
 
-    // Test the connection
-    await db.admin().ping()
+    // Count documents in collections using Mongoose models
+    const questionsCount = await Question.countDocuments()
+    const trafficSignsCount = await TrafficSign.countDocuments()
 
-    // Count documents in collections
-    const questionsCount = await db.collection("questions").countDocuments()
-    const trafficSignsCount = await db.collection("traffic_signs").countDocuments()
+    // Test a simple query
+    const sampleQuestion = await Question.findOne().lean()
+    const sampleSign = await TrafficSign.findOne().lean()
 
     return NextResponse.json({
       status: "success",
-      message: "Database connection successful",
+      message: "Mongoose connection successful",
       hasEnvVar: true,
+      driver: "Mongoose",
       collections: {
         questions: questionsCount,
         traffic_signs: trafficSignsCount,
       },
+      samples: {
+        hasQuestions: !!sampleQuestion,
+        hasTrafficSigns: !!sampleSign,
+      },
       timestamp: new Date().toISOString(),
     })
   } catch (error) {
-    console.error("Database test error:", error)
+    console.error("Mongoose test error:", error)
     return NextResponse.json({
       status: "error",
       message: error instanceof Error ? error.message : "Unknown database error",
       hasEnvVar: !!process.env.MONGODB_URI,
+      driver: "Mongoose",
       error: error instanceof Error ? error.name : "UnknownError",
     })
   }

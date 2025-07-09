@@ -1,4 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server"
+import connectToDatabase from "@/lib/mongoose"
+import TrafficSign from "@/models/TrafficSign"
 
 // Simple placeholder image as base64 data URI (small 1x1 pixel)
 const PLACEHOLDER_IMAGE =
@@ -242,78 +244,55 @@ export async function GET(request: NextRequest) {
 
     console.log(`[API] Traffic Signs Request: category=${category}, type=${type}, limit=${limit}`)
 
-    // Always generate sample data first as fallback
-    const sampleSigns = getSampleTrafficSigns(category, type, limit)
-    console.log(`[API] Generated ${sampleSigns.length} sample signs`)
+    // Try database connection
+    try {
+      await connectToDatabase()
+      console.log("[API] Database connection successful")
 
-    // Try database only if MongoDB URI is configured
-    if (process.env.MONGODB_URI) {
-      try {
-        // Import MongoDB connection dynamically
-        const { connectToDatabase } = await import("@/lib/mongodb")
-        const { db } = await connectToDatabase()
+      // Build query filter
+      const filter: Record<string, any> = {}
 
-        console.log("[API] Database connection successful")
-
-        // Build query filter
-        const filter: Record<string, any> = {}
-
-        // Filter by applicable vehicles for specific categories
-        if (category !== "alle") {
-          if (category === "auto") {
-            filter.applicableFor = { $in: ["auto", "alle voertuigen"] }
-          } else if (category === "bromfiets") {
-            filter.applicableFor = { $in: ["bromfiets", "fiets", "alle voertuigen"] }
-          } else if (category === "motor") {
-            filter.applicableFor = { $in: ["motor", "alle voertuigen"] }
-          }
+      // Filter by applicable vehicles for specific categories
+      if (category !== "alle") {
+        if (category === "auto") {
+          filter.applicableFor = { $in: ["auto", "alle voertuigen"] }
+        } else if (category === "bromfiets") {
+          filter.applicableFor = { $in: ["bromfiets", "fiets", "alle voertuigen"] }
+        } else if (category === "motor") {
+          filter.applicableFor = { $in: ["motor", "alle voertuigen"] }
         }
-
-        if (type && type !== "all") {
-          filter.type = type
-        }
-
-        console.log("[API] Database filter:", JSON.stringify(filter))
-
-        // Query database
-        const signs = await db
-          .collection("traffic_signs")
-          .find(filter)
-          .limit(limit)
-          .project({
-            name: 1,
-            description: 1,
-            meaning: 1,
-            type: 1,
-            category: 1,
-            shape: 1,
-            color: 1,
-            applicableFor: 1,
-            image: 1,
-            examples: 1,
-          })
-          .toArray()
-
-        if (signs && signs.length > 0) {
-          console.log(`[API] Found ${signs.length} signs from database`)
-          return NextResponse.json({
-            signs,
-            total: signs.length,
-            category,
-            source: "database",
-          })
-        } else {
-          console.log("[API] No signs found in database, using sample data")
-        }
-      } catch (dbError) {
-        console.error("[API] Database error:", dbError)
-        // Continue to sample data fallback
       }
-    } else {
-      console.log("[API] No MongoDB URI configured")
+
+      if (type && type !== "all") {
+        filter.type = type
+      }
+
+      console.log("[API] Database filter:", JSON.stringify(filter))
+
+      // Query database using Mongoose
+      const signs = await TrafficSign.find(filter)
+        .limit(limit)
+        .select("name description meaning type category shape color applicableFor image examples")
+        .lean() // Returns plain JavaScript objects for better performance
+
+      if (signs && signs.length > 0) {
+        console.log(`[API] Found ${signs.length} signs from database`)
+        return NextResponse.json({
+          signs,
+          total: signs.length,
+          category,
+          source: "database",
+        })
+      } else {
+        console.log("[API] No signs found in database, using sample data")
+      }
+    } catch (dbError) {
+      console.error("[API] Database error:", dbError)
+      // Continue to sample data fallback
     }
 
     // Return sample data as fallback
+    const sampleSigns = getSampleTrafficSigns(category, type, limit)
     console.log(`[API] Returning ${sampleSigns.length} sample signs`)
     return NextResponse.json({
       signs: sampleSigns,
@@ -324,7 +303,7 @@ export async function GET(request: NextRequest) {
   } catch (error) {
     console.error("[API] Unexpected error:", error)
 
-    // Emergency fallback - return minimal sample data
+    // Emergency fallback
     const emergencyData = [
       {
         _id: "emergency-1",
