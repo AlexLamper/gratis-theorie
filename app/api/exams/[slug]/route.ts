@@ -2,15 +2,11 @@ import { NextRequest, NextResponse } from "next/server"
 import connectMongoDB from "@/libs/mongodb"
 import Exam from "@/models/Exam"
 
-// Explicitly define the type of context
-type Params = {
-  params: {
-    slug: string
-  }
-}
-
-export async function GET(req: NextRequest, { params }: Params) {
-  const { slug } = params
+export async function GET(
+  req: NextRequest,
+  context: { params: { slug: string } }
+) {
+  const { slug } = context.params
 
   try {
     await connectMongoDB()

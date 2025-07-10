@@ -113,7 +113,7 @@ export default async function ExamsPage() {
         </div>
 
         {/* Categories */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
           {categories.map((category) => {
             const IconComponent = category.icon;
             const exams = examsByCategory[category.id] || [];
@@ -131,46 +131,40 @@ export default async function ExamsPage() {
             return (
               <Card
                 key={category.id}
-                className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm hover:shadow-md transition-shadow bg-white flex flex-col"
+                className="group relative overflow-hidden bg-white border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 p-0"
               >
-                {/* Header / Icon / Metadata */}
-                <div className={`p-6 ${category.bgColor} ${category.borderColor} border-b flex flex-col items-center text-center`}>
-                  <IconComponent className={`h-12 w-12 ${category.color} mb-3`} />
-                  <h2 className="text-lg font-semibold text-gray-900 mb-1">{category.name}</h2>
-                  <p className="text-gray-700 text-sm mb-4">{category.description}</p>
+                {/* Top background + Icon */}
+                <div className="relative w-full" style={{ height: "12rem" }}>
+                  {/* Colored background span */}
+                  <div
+                    className={`absolute top-0 left-0 w-full h-full ${category.bgColor} opacity-90`}
+                    style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
+                  ></div>
 
-                  <div className="flex flex-wrap justify-center gap-3 text-sm text-gray-700">
-                    <div className="flex items-center gap-1">
-                      <Clock className="h-4 w-4" />
-                      <span>{category.timeLimit} min</span>
+                  {/* Blurred decorations */}
+                  <div className="absolute top-4 right-4 w-20 h-20 bg-white/20 rounded-full blur-xl"></div>
+                  <div className="absolute bottom-4 left-4 w-16 h-16 bg-white/10 rounded-full blur-lg"></div>
+
+                  {/* Content area */}
+                  <div className="relative h-full flex flex-col items-center justify-center text-center p-6">
+                    <div className="mb-4 relative">
+                      <div className="absolute inset-0 bg-white/30 rounded-full blur-md scale-110"></div>
+                      <IconComponent
+                        className={`relative h-14 w-14 ${category.color} group-hover:scale-125 transition-transform duration-500 drop-shadow-lg`}
+                      />
                     </div>
-                    <div className="flex items-center gap-1">
-                      <Target className="h-4 w-4" />
-                      <span>{category.questions} vragen</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <Trophy className="h-4 w-4" />
-                      <span>{category.passRate}%</span>
-                    </div>
+                    <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-gray-800 transition-colors">
+                      {category.name}
+                    </h3>
+                    <p className="text-sm text-gray-700">{category.description}</p>
                   </div>
                 </div>
 
-                {/* Features & Exams */}
-                <div className="p-6 flex flex-col flex-grow justify-between">
-                  {/* <div className="mb-6">
-                    <h3 className="text-base font-medium text-gray-900 mb-3">Wat kun je verwachten?</h3>
-                    <ul className="space-y-2 text-sm text-gray-700">
-                      {category.features.map((feature, index) => (
-                        <li key={index} className="flex items-start gap-2">
-                          <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
-                          <span>{feature}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div> */}
-
+                {/* Content Section */}
+                <CardContent className="p-6 bg-white">
+                  {/* Exams if available */}
                   {exams.length > 0 ? (
-                    <div className="space-y-2">
+                    <div className="mb-6 space-y-2">
                       {exams.map((exam) => (
                         <Button
                           asChild
@@ -186,9 +180,25 @@ export default async function ExamsPage() {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500 text-center">Geen examens beschikbaar</p>
+                    <p className="text-sm text-gray-500 mb-4 text-center">Geen examens beschikbaar</p>
                   )}
-                </div>
+
+                  {/* Features Section (optional) */}
+                  <div className="text-sm text-gray-700 space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-gray-500" />
+                      <span>{category.timeLimit} minuten</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Target className="h-4 w-4 text-gray-500" />
+                      <span>{category.questions} vragen</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Trophy className="h-4 w-4 text-gray-500" />
+                      <span>{category.passRate}% vereist</span>
+                    </div>
+                  </div>
+                </CardContent>
               </Card>
             );
           })}
