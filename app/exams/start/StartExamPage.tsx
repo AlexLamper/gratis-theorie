@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/progress"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 interface Question {
   _id: string
@@ -91,7 +92,6 @@ export default function StartExamPage() {
   const questions = exam.questions
 
   if (result) {
-
     const toggleExpand = (index: number) => {
       setExpandedIndex(prev => prev === index ? null : index)
     }
@@ -99,7 +99,7 @@ export default function StartExamPage() {
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-12">
-          <Card className="max-w-2xl mx-auto">
+          <Card className="max-w-5xl mx-auto">
             <CardHeader className="text-center border-b pb-4">
               <CardTitle className={`text-2xl font-bold ${result.passed ? "text-green-700" : "text-red-700"}`}>
                 {result.passed ? "🎉 Geslaagd!" : "❌ Niet Geslaagd"}
@@ -115,46 +115,33 @@ export default function StartExamPage() {
                 <p className="text-sm">Tijd: <strong>{Math.floor(result.duration / 60)}:{String(result.duration % 60).padStart(2, "0")}</strong></p>
               </div>
 
-              {/* Question Blocks */}
-              <div className="space-y-3">
+              {/* Question Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-4">
                 {questions.map((q, i) => {
                   const isCorrect = answers[i] === q.correctAnswer
-                  const isOpen = expandedIndex === i
 
                   return (
-                    <div
-                      key={q._id}
-                      onClick={() => toggleExpand(i)}
-                      className={`cursor-pointer rounded-lg border transition-all duration-200 shadow-sm ${
-                        isCorrect
-                          ? "border-green-300 bg-green-50 hover:bg-green-100"
-                          : "border-red-300 bg-red-50 hover:bg-red-100"
-                      }`}
-                    >
-                      {/* Compact view */}
-                      <div className="p-4 flex items-center justify-between">
-                        <span className="font-medium text-gray-900">
-                          Vraag {i + 1}
-                        </span>
-                        <span className="text-sm text-gray-600">
-                          {isOpen ? "▼" : "▶"}
-                        </span>
-                      </div>
-
-                      {/* Expanded view */}
-                      {isOpen && (
-                        <div className="px-4 pb-4 space-y-1 text-sm text-gray-700">
-                          <p className="text-gray-900 font-medium">{q.question}</p>
-                          <p>Jouw antwoord: <strong>{answers[i] !== -1 ? q.options[answers[i]] : "Geen"}</strong></p>
-                          {!isCorrect && (
-                            <>
-                              <p>Correct: <strong>{q.options[q.correctAnswer]}</strong></p>
-                              <p className="text-gray-500 italic">{q.explanation}</p>
-                            </>
-                          )}
-                        </div>
-                      )}
-                    </div>
+                    <DropdownMenu key={q._id}>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          className={`w-full aspect-square rounded-md font-medium text-sm flex items-center justify-center border transition-colors duration-200 shadow-sm text-gray-900 hover:shadow-md ${
+                            isCorrect ? "bg-green-100 border-green-300 hover:bg-green-200" : "bg-red-100 border-red-300 hover:bg-red-200"
+                          }`}
+                        >
+                          {i + 1}
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-72 p-4 text-sm text-gray-700 z-50 bg-white">
+                        <p className="font-semibold text-gray-900 mb-1">{q.question}</p>
+                        <p>Jouw antwoord: <strong>{answers[i] !== -1 ? q.options[answers[i]] : "Geen"}</strong></p>
+                        {!isCorrect && (
+                          <>
+                            <p>Correct: <strong>{q.options[q.correctAnswer]}</strong></p>
+                            <p className="text-gray-500 italic mt-1">{q.explanation}</p>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )
                 })}
               </div>
@@ -174,8 +161,6 @@ export default function StartExamPage() {
       </div>
     )
   }
-
-
 
   const q = questions[current]
   const minutes = Math.floor(timeLeft / 60)
@@ -215,7 +200,7 @@ export default function StartExamPage() {
                   key={idx}
                   onClick={() => selectAnswer(idx)}
                   variant={answers[current] === idx ? "default" : "outline"}
-                  className={`w-full text-left py-3 px-4 rounded-lg transition-all duration-150 ${
+                  className={`w-full text-left py-3 px-4 hover:cursor-pointer rounded-lg transition-all duration-150 ${
                     answers[current] === idx
                       ? "bg-blue-600 hover:bg-blue-700 text-white"
                       : "bg-white hover:bg-gray-50 border-gray-300 text-gray-800"
@@ -234,7 +219,7 @@ export default function StartExamPage() {
             onClick={prevQuestion}
             disabled={current === 0}
             variant="outline"
-            className="px-6 py-2 text-sm sm:text-base disabled:opacity-50"
+            className="px-6 py-2 text-sm sm:text-base disabled:opacity-50 hover:cursor-pointer"
           >
             ← Vorige
           </Button>
@@ -242,7 +227,7 @@ export default function StartExamPage() {
           {current === questions.length - 1 ? (
             <Button
               onClick={finishExam}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 text-sm sm:text-base shadow-md"
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 text-sm sm:text-base shadow-md hover:cursor-pointer"
             >
               Exam Inleveren
             </Button>
@@ -250,7 +235,7 @@ export default function StartExamPage() {
             <Button
               onClick={nextQuestion}
               disabled={answers[current] === -1}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 text-sm sm:text-base shadow-md"
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 text-sm sm:text-base shadow-md hover:cursor-pointer"
             >
               Volgende →
             </Button>

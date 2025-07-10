@@ -85,9 +85,9 @@ export default async function ExamsPage() {
         {/* Page Header */}
         <div className="text-center mb-16">
           <Trophy className="h-16 w-16 text-yellow-600 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Theorie Oefenexamens</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Theorie Proefexamens</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Test je kennis met volledige oefenexamens die identiek zijn aan het echte CBR theorie-examen. 40 vragen, 30
+            Test je kennis met volledige proefexamens die identiek zijn aan het echte CBR theorie-examen. 40 vragen, 30
             minuten tijd, en je hebt 70% nodig om te slagen.
           </p>
 
@@ -112,108 +112,79 @@ export default async function ExamsPage() {
           </div>
         </div>
 
-        {/* Important Info Banner */}
-        <Card className="mb-12 border-l-4 border-l-blue-500 bg-blue-50">
-          <CardContent className="p-6">
-            <div className="flex items-start space-x-4">
-              <AlertCircle className="h-6 w-6 text-blue-600 mt-1 flex-shrink-0" />
-              <div>
-                <h3 className="font-semibold text-blue-900 mb-2">Belangrijk voor je Proefexamen</h3>
-                <ul className="text-blue-800 space-y-1 text-sm">
-                  <li>• Zorg voor een rustige omgeving zonder afleiding</li>
-                  <li>• Neem de tijd om elke vraag goed te lezen</li>
-                  <li>• Je kunt teruggaan naar eerdere vragen</li>
-                  <li>• Het examen wordt automatisch ingeleverd na 30 minuten</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Categories */}
-        <div className="space-y-8">
+        <div className="grid gap-10">
           {categories.map((category) => {
             const IconComponent = category.icon
 
             return (
               <Card
                 key={category.id}
-                className={`overflow-hidden hover:shadow-xl transition-all border-2 ${category.borderColor}`}
+                className={`overflow-hidden rounded-xl border-2 ${category.borderColor} hover:shadow-lg transition-all`}
               >
-                <div className="lg:flex">
+                <div className="flex flex-col lg:flex-row">
                   {/* Left side - Category info */}
-                  <div className={`${category.bgColor} p-8 lg:w-1/3`}>
-                    <div className="text-center">
-                      <IconComponent className={`h-16 w-16 ${category.color} mx-auto mb-4`} />
-                      <h2 className="text-2xl font-bold text-gray-900 mb-2">{category.name}</h2>
-                      <p className="text-gray-600 mb-6">{category.description}</p>
+                  <div
+                    className={`${category.bgColor} ${category.borderColor} lg:border-r p-8 flex flex-col items-center text-center lg:w-1/3`}
+                  >
+                    <IconComponent className={`h-16 w-16 ${category.color} mb-4`} />
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{category.name}</h2>
+                    <p className="text-gray-600 mb-4">{category.description}</p>
 
-                      <div className="space-y-3 mb-6">
-                        <div className="flex items-center justify-center space-x-2">
-                          <Clock className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm text-gray-600">{category.timeLimit} minuten tijd</span>
-                        </div>
-                        <div className="flex items-center justify-center space-x-2">
-                          <Target className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm text-gray-600">{category.questions} vragen</span>
-                        </div>
-                        <div className="flex items-center justify-center space-x-2">
-                          <Trophy className="h-4 w-4 text-gray-500" />
-                          <span className="text-sm text-gray-600">{category.passRate}% om te slagen</span>
-                        </div>
+                    <div className="flex flex-wrap items-center justify-center gap-4 text-sm text-gray-600 mb-6">
+                      <div className="flex items-center gap-1">
+                        <Clock className="h-4 w-4" />
+                        <span>{category.timeLimit} min</span>
                       </div>
-
-                      {examsByCategory[category.id]?.length ? (
-                        <div className="space-y-3">
-                          {examsByCategory[category.id].map((exam) => (
-                            <Button
-                              asChild
-                              key={exam.slug}
-                              size="lg"
-                              className={`w-full ${
-                                category.color === "text-blue-600"
-                                  ? "bg-blue-600 hover:bg-blue-700 border border-blue-700/80"
-                                  : category.color === "text-green-600"
-                                    ? "bg-green-600 hover:bg-green-700 border border-green-700/80"
-                                    : "bg-red-600 hover:bg-red-700 border border-red-700/80"
-                              }`}
-                            >
-                              <Link href={`/exams/start?exam=${exam.slug}`}>
-                                <Trophy className="h-4 w-4 mr-2" />
-                                {exam.title}
-                              </Link>
-                            </Button>
-                          ))}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-gray-500">Geen examens beschikbaar</p>
-                      )}
+                      <div className="flex items-center gap-1">
+                        <Target className="h-4 w-4" />
+                        <span>{category.questions} vragen</span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Trophy className="h-4 w-4" />
+                        <span>{category.passRate}%</span>
+                      </div>
                     </div>
+
+                    {examsByCategory[category.id]?.length ? (
+                      <div className="w-full space-y-3">
+                        {examsByCategory[category.id].map((exam) => (
+                          <Button
+                            asChild
+                            key={exam.slug}
+                            size="lg"
+                            className={`w-full ${
+                              category.color === "text-blue-600"
+                                ? "bg-blue-600 hover:bg-blue-700 border border-blue-700/80 text-white"
+                                : category.color === "text-green-600"
+                                  ? "bg-green-600 hover:bg-green-700 border border-green-700/80 text-white"
+                                  : "bg-red-600 hover:bg-red-700 border border-red-700/80 text-white"
+                            }`}
+                          >
+                            <Link href={`/exams/start?exam=${exam.slug}`}>
+                              <Trophy className="h-4 w-4 mr-2" />
+                              {exam.title}
+                            </Link>
+                          </Button>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="text-sm text-gray-500">Geen examens beschikbaar</p>
+                    )}
                   </div>
 
                   {/* Right side - Features and info */}
                   <div className="p-8 lg:w-2/3">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-6">Wat kun je verwachten?</h3>
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4">Wat kun je verwachten?</h3>
 
-                    <div className="grid md:grid-cols-2 gap-6 mb-8">
+                    <ul className="grid sm:grid-cols-2 gap-3 mb-6 text-sm text-gray-700">
                       {category.features.map((feature, index) => (
-                        <div key={index} className="flex items-start space-x-3">
-                          <CheckCircle className="h-5 w-5 text-green-600 mt-0.5 flex-shrink-0" />
-                          <span className="text-gray-700">{feature}</span>
-                        </div>
+                        <li key={index} className="flex items-start gap-2">
+                          <CheckCircle className="h-4 w-4 text-green-600 mt-0.5" />
+                          <span>{feature}</span>
+                        </li>
                       ))}
-                    </div>
-
-                    <div className="bg-gray-50 rounded-lg p-6">
-                      <h4 className="font-semibold text-gray-900 mb-3">Examen Voorbereiding Tips:</h4>
-                      <ul className="space-y-2 text-sm text-gray-600">
-                        <li>• Oefen eerst voldoende met losse vragen</li>
-                        <li>• Zorg dat je alle onderwerpen beheerst</li>
-                        <li>• Doe het examen in één keer, zonder pauzes</li>
-                        <li>• Lees elke vraag zorgvuldig door</li>
-                        <li>• Gebruik de vraag navigator om je voortgang te volgen</li>
-                      </ul>
-                    </div>
+                    </ul>
                   </div>
                 </div>
               </Card>
@@ -221,32 +192,8 @@ export default async function ExamsPage() {
           })}
         </div>
 
-        {/* Success Statistics */}
-        <Card className="mt-12 bg-gradient-to-r from-green-50 to-blue-50">
-          <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Slagingspercentages</CardTitle>
-            <CardDescription>Resultaten van gebruikers die ons platform hebben gebruikt</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid md:grid-cols-3 gap-8 text-center">
-              <div>
-                <div className="text-4xl font-bold text-green-600 mb-2">87%</div>
-                <div className="text-gray-600">Slaagt na voorbereiding met ons platform</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold text-blue-600 mb-2">92%</div>
-                <div className="text-gray-600">Voelt zich goed voorbereid</div>
-              </div>
-              <div>
-                <div className="text-4xl font-bold text-purple-600 mb-2">15k+</div>
-                <div className="text-gray-600">Geslaagde gebruikers</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Call to Action */}
-        <Card className="mt-12 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+        <Card className="mt-12 bg-gradient-to-r from-blue-600/80 to-indigo-700/80 text-white">
           <CardContent className="p-8 text-center">
             <Users className="h-12 w-12 mx-auto mb-4 opacity-90" />
             <h3 className="text-2xl font-bold mb-4">Nog niet klaar voor een proefexamen?</h3>
@@ -262,6 +209,7 @@ export default async function ExamsPage() {
           </CardContent>
         </Card>
       </div>
+      <Footer />
     </div>
   )
 }
