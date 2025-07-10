@@ -61,7 +61,7 @@ export default function Navbar() {
             ) : (
               <Link href="/" className="flex items-center space-x-2">
                 <BookOpen className="h-8 w-8 text-blue-600" />
-                <h1 className="text-2xl font-bold text-gray-900">Gratis Theorie</h1>
+                <h1 className="text-2xl font-bold text-gray-800">Gratis Theorie</h1>
               </Link>
             )}
 

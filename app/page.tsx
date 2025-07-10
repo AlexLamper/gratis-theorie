@@ -265,42 +265,42 @@ export default function HomePage() {
                   <div className="grid grid-cols-3 gap-6">
                     {/* Sample traffic signs */}
                     <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="w-16 h-16 mx-auto bg-red-500 rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 lg:w-16 lg:h-16 mx-auto bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-xs lg:text-base">
                         STOP
                       </div>
                       <p className="text-xs text-center mt-2 text-gray-600">Stopbord</p>
                     </div>
 
                     <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="w-16 h-16 mx-auto bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-2xl">
+                      <div className="w-10 h-10 lg:w-16 lg:h-16 mx-auto bg-blue-500 rounded-full flex items-center justify-center text-white font-bold text-xs lg:text-2xl ">
                         P
                       </div>
                       <p className="text-xs text-center mt-2 text-gray-600">Parkeren</p>
                     </div>
 
                     <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="w-16 h-16 mx-auto bg-red-500 rounded-full border-4 border-white flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 lg:w-16 lg:h-16 mx-auto bg-red-500 rounded-full border-4 border-white flex items-center justify-center text-white font-bold text-xs lg:text-base">
                         50
                       </div>
                       <p className="text-xs text-center mt-2 text-gray-600">Max 50</p>
                     </div>
 
                     <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="w-16 h-16 mx-auto bg-yellow-400 transform rotate-45 flex items-center justify-center">
+                      <div className="w-10 h-10 lg:w-16 lg:h-16 mx-auto bg-yellow-400 transform rotate-45 flex items-center justify-center text-xs lg:text-base">
                         <div className="transform -rotate-45 w-8 h-1 bg-white"></div>
                       </div>
                       <p className="text-xs text-center mt-2 text-gray-600">Voorrang</p>
                     </div>
 
                     <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="w-16 h-16 mx-auto bg-white border-4 border-red-500 rounded-full flex items-center justify-center">
-                        <div className="w-8 h-1 bg-red-500"></div>
+                      <div className="w-10 h-10 lg:w-16 lg:h-16 mx-auto bg-white border-4 border-red-500 rounded-full flex items-center justify-center text-xs lg:text-base">
+                        <div className="w-4 lg:w-8 h-1 bg-red-500"></div>
                       </div>
                       <p className="text-xs text-center mt-2 text-gray-600">Verboden</p>
                     </div>
 
                     <div className="bg-white rounded-lg p-4 shadow-sm">
-                      <div className="w-16 h-16 mx-auto bg-blue-500 rounded-full flex items-center justify-center text-white">
+                      <div className="w-10 h-10 lg:w-16 lg:h-16 mx-auto bg-blue-500 rounded-full flex items-center justify-center text-white text-xs lg:text-base">
                         <ArrowRight className="h-8 w-8" />
                       </div>
                       <p className="text-xs text-center mt-2 text-gray-600">Richting</p>
