@@ -16,35 +16,49 @@ interface Question {
 
 export default function StartExamPage() {
   const searchParams = useSearchParams()
-  const category = searchParams.get("category") || "auto"
+  const slug = searchParams.get("exam") || ""
 
-  const [questions, setQuestions] = useState<Question[]>([])
+  const [exam, setExam] = useState<{
+    title: string
+    category: string
+    questions: Question[]
+    timeLimit: number
+    passRate: number
+  } | null>(null)
+
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState<number[]>([])
-  const [result, setResult] = useState<{ score: number; passed: boolean } | null>(null)
-  const [timeLeft, setTimeLeft] = useState(30 * 60)
+  const [result, setResult] = useState<{ score: number; passed: boolean; duration: number } | null>(null)
+  const [timeLeft, setTimeLeft] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      const res = await fetch(`/api/exam-questions?category=${category}`)
+    const fetchExam = async () => {
+      if (!slug) return
+      const res = await fetch(`/api/exams/${slug}`)
       const data = await res.json()
-      setQuestions(data.questions)
-      setAnswers(Array(data.questions.length).fill(-1))
+      setExam(data.exam)
+      setAnswers(Array(data.exam.questions.length).fill(-1))
+      setTimeLeft(data.exam.timeLimit * 60)
     }
-    fetchQuestions()
-  }, [category])
+    fetchExam()
+  }, [slug])
 
   useEffect(() => {
-    if (!questions.length || result) return
-    const id = setInterval(() => setTimeLeft((t) => t - 1), 1000)
+    if (!exam || result) return
+    const id = setInterval(() => {
+      setTimeLeft((t) => t - 1)
+      setDuration((d) => d + 1)
+    }, 1000)
     return () => clearInterval(id)
-  }, [questions, result])
+  }, [exam, result])
 
   useEffect(() => {
-    if (timeLeft === 0 && !result) {
+    if (timeLeft === 0 && exam && !result) {
       finishExam()
     }
-  }, [timeLeft, result])
+  }, [timeLeft, exam, result])
 
   const selectAnswer = (idx: number) => {
     const updated = [...answers]
@@ -52,43 +66,116 @@ export default function StartExamPage() {
     setAnswers(updated)
   }
 
-  const nextQuestion = () => setCurrent((c) => Math.min(c + 1, questions.length - 1))
+  const nextQuestion = () => {
+    if (answers[current] === -1) return
+    setCurrent((c) => Math.min(c + 1, exam!.questions.length - 1))
+  }
   const prevQuestion = () => setCurrent((c) => Math.max(c - 1, 0))
 
   const finishExam = () => {
-    const correct = questions.reduce(
+    if (!exam) return
+    const correct = exam.questions.reduce(
       (acc, q, i) => acc + (answers[i] === q.correctAnswer ? 1 : 0),
       0
     )
-    const score = (correct / questions.length) * 100
-    setResult({ score, passed: score >= 70 })
+    const score = (correct / exam.questions.length) * 100
+    setResult({ score, passed: score >= exam.passRate, duration })
   }
 
-  if (!questions.length) {
+  if (!exam) {
     return (
       <div className="min-h-screen flex items-center justify-center">Laden...</div>
     )
   }
 
+  const questions = exam.questions
+
   if (result) {
+
+    const toggleExpand = (index: number) => {
+      setExpandedIndex(prev => prev === index ? null : index)
+    }
+
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-12">
-          <Card className="max-w-xl mx-auto text-center">
-            <CardHeader>
-              <CardTitle>{result.passed ? "Geslaagd!" : "Niet Geslaagd"}</CardTitle>
+          <Card className="max-w-2xl mx-auto">
+            <CardHeader className="text-center border-b pb-4">
+              <CardTitle className={`text-2xl font-bold ${result.passed ? "text-green-700" : "text-red-700"}`}>
+                {result.passed ? "🎉 Geslaagd!" : "❌ Niet Geslaagd"}
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p>Je score: {Math.round(result.score)}%</p>
-              <Button onClick={() => location.reload()} className="border border-blue-700/80">
-                Opnieuw
-              </Button>
+
+            <CardContent className="space-y-6">
+              {/* Result Overview */}
+              <div className="text-center space-y-1 text-gray-800">
+                <p className="text-lg font-semibold">{exam.title}</p>
+                <p className="text-sm">Je score: <strong>{Math.round(result.score)}%</strong></p>
+                <p className="text-sm">Benodigd: <strong>{exam.passRate}%</strong></p>
+                <p className="text-sm">Tijd: <strong>{Math.floor(result.duration / 60)}:{String(result.duration % 60).padStart(2, "0")}</strong></p>
+              </div>
+
+              {/* Question Blocks */}
+              <div className="space-y-3">
+                {questions.map((q, i) => {
+                  const isCorrect = answers[i] === q.correctAnswer
+                  const isOpen = expandedIndex === i
+
+                  return (
+                    <div
+                      key={q._id}
+                      onClick={() => toggleExpand(i)}
+                      className={`cursor-pointer rounded-lg border transition-all duration-200 shadow-sm ${
+                        isCorrect
+                          ? "border-green-300 bg-green-50 hover:bg-green-100"
+                          : "border-red-300 bg-red-50 hover:bg-red-100"
+                      }`}
+                    >
+                      {/* Compact view */}
+                      <div className="p-4 flex items-center justify-between">
+                        <span className="font-medium text-gray-900">
+                          Vraag {i + 1}
+                        </span>
+                        <span className="text-sm text-gray-600">
+                          {isOpen ? "▼" : "▶"}
+                        </span>
+                      </div>
+
+                      {/* Expanded view */}
+                      {isOpen && (
+                        <div className="px-4 pb-4 space-y-1 text-sm text-gray-700">
+                          <p className="text-gray-900 font-medium">{q.question}</p>
+                          <p>Jouw antwoord: <strong>{answers[i] !== -1 ? q.options[answers[i]] : "Geen"}</strong></p>
+                          {!isCorrect && (
+                            <>
+                              <p>Correct: <strong>{q.options[q.correctAnswer]}</strong></p>
+                              <p className="text-gray-500 italic">{q.explanation}</p>
+                            </>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-center gap-4 pt-6">
+                <Button onClick={() => location.reload()} className="border border-blue-700/80">
+                  Opnieuw
+                </Button>
+                <Button asChild variant="outline">
+                  <a href="/exams">Terug naar Overzicht</a>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
       </div>
     )
   }
+
+
 
   const q = questions[current]
   const minutes = Math.floor(timeLeft / 60)
@@ -97,6 +184,7 @@ export default function StartExamPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <div className="container max-w-3xl mx-auto px-4 py-10 sm:py-16">
+        <h2 className="text-center text-2xl font-bold mb-6">{exam.title}</h2>
         {/* Voortgang & Timer */}
         <div className="mb-8 flex items-center gap-4">
           <Progress
@@ -161,6 +249,7 @@ export default function StartExamPage() {
           ) : (
             <Button
               onClick={nextQuestion}
+              disabled={answers[current] === -1}
               className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 text-sm sm:text-base shadow-md"
             >
               Volgende →

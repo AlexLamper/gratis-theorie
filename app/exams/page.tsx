@@ -4,7 +4,7 @@ import { Clock, Trophy, Car, Bike, BikeIcon as Motorcycle, CheckCircle, AlertCir
 import Link from "next/link"
 import Footer from "@/components/footer"
 
-export default function ExamsPage() {
+export default async function ExamsPage() {
   const categories = [
     {
       id: "auto",
@@ -68,15 +68,26 @@ export default function ExamsPage() {
     },
   ]
 
+  const examsByCategory: Record<string, any[]> = {}
+  for (const cat of categories) {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL ?? ''}/api/exams?category=${cat.id}`, { cache: 'no-store' })
+      const data = await res.json()
+      examsByCategory[cat.id] = data.exams
+    } catch (e) {
+      examsByCategory[cat.id] = []
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-12">
         {/* Page Header */}
         <div className="text-center mb-16">
           <Trophy className="h-16 w-16 text-yellow-600 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">CBR Proefexamens</h1>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">Theorie Oefenexamens</h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Test je kennis met volledige proefexamens die identiek zijn aan het echte CBR theorie-examen. 40 vragen, 30
+            Test je kennis met volledige oefenexamens die identiek zijn aan het echte CBR theorie-examen. 40 vragen, 30
             minuten tijd, en je hebt 70% nodig om te slagen.
           </p>
 
@@ -152,22 +163,31 @@ export default function ExamsPage() {
                         </div>
                       </div>
 
-                      <Button
-                        asChild
-                        size="lg"
-                        className={`w-full ${
-                          category.color === "text-blue-600"
-                            ? "bg-blue-600 hover:bg-blue-700 border border-blue-700/80"
-                            : category.color === "text-green-600"
-                              ? "bg-green-600 hover:bg-green-700 border border-green-700/80"
-                              : "bg-red-600 hover:bg-red-700 border border-red-700/80"
-                        }`}
-                      >
-                        <Link href={`/exams/start?category=${category.id}`}>
-                          <Trophy className="h-4 w-4 mr-2" />
-                          Start Proefexamen
-                        </Link>
-                      </Button>
+                      {examsByCategory[category.id]?.length ? (
+                        <div className="space-y-3">
+                          {examsByCategory[category.id].map((exam) => (
+                            <Button
+                              asChild
+                              key={exam.slug}
+                              size="lg"
+                              className={`w-full ${
+                                category.color === "text-blue-600"
+                                  ? "bg-blue-600 hover:bg-blue-700 border border-blue-700/80"
+                                  : category.color === "text-green-600"
+                                    ? "bg-green-600 hover:bg-green-700 border border-green-700/80"
+                                    : "bg-red-600 hover:bg-red-700 border border-red-700/80"
+                              }`}
+                            >
+                              <Link href={`/exams/start?exam=${exam.slug}`}>
+                                <Trophy className="h-4 w-4 mr-2" />
+                                {exam.title}
+                              </Link>
+                            </Button>
+                          ))}
+                        </div>
+                      ) : (
+                        <p className="text-sm text-gray-500">Geen examens beschikbaar</p>
+                      )}
                     </div>
                   </div>
 

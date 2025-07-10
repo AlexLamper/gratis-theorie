@@ -78,11 +78,11 @@ export default function HomePage() {
           {/* Stats */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
             <div className="text-center">
-              <div className="text-2xl font-bold text-blue-600">1000+</div>
+              <div className="text-2xl font-bold text-blue-600">300+</div>
               <div className="text-sm text-gray-600">Oefenvragen</div>
             </div>
             <div className="text-center">
-              <div className="text-2xl font-bold text-green-600">300+</div>
+              <div className="text-2xl font-bold text-green-600">90+</div>
               <div className="text-sm text-gray-600">Verkeersborden</div>
             </div>
             <div className="text-center">
@@ -216,7 +216,7 @@ export default function HomePage() {
                       <Shield className="h-6 w-6 text-blue-600" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900">300+ Verkeersborden</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">90+ Verkeersborden</h3>
                       <p className="text-gray-600">Alle officiële Nederlandse verkeersborden</p>
                     </div>
                   </div>
@@ -226,7 +226,7 @@ export default function HomePage() {
                       <Target className="h-6 w-6 text-green-600" />
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-gray-900">5 Categorieën</h3>
+                      <h3 className="text-xl font-semibold text-gray-900">7 Categorieën</h3>
                       <p className="text-gray-600">Georganiseerd per type en betekenis</p>
                     </div>
                   </div>
@@ -309,7 +309,7 @@ export default function HomePage() {
 
                   <div className="text-center mt-6">
                     <Badge className="bg-white text-blue-600 border border-blue-200">
-                      En nog 294+ meer verkeersborden
+                      En nog 84+ meer verkeersborden
                     </Badge>
                   </div>
                 </div>
