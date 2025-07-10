@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/progress"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 interface Question {
   _id: string
@@ -16,35 +17,53 @@ interface Question {
 
 export default function StartExamPage() {
   const searchParams = useSearchParams()
-  const category = searchParams.get("category") || "auto"
+  const slug = searchParams.get("exam") || ""
 
-  const [questions, setQuestions] = useState<Question[]>([])
+  const [exam, setExam] = useState<{
+    title: string
+    category: string
+    questions: Question[]
+    timeLimit: number
+    passRate: number
+  } | null>(null)
+
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState<number[]>([])
-  const [result, setResult] = useState<{ score: number; passed: boolean } | null>(null)
-  const [timeLeft, setTimeLeft] = useState(30 * 60)
+  const [result, setResult] = useState<{ score: number; passed: boolean; duration: number } | null>(null)
+  const [timeLeft, setTimeLeft] = useState(0)
+  const [duration, setDuration] = useState(0)
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
 
   useEffect(() => {
-    const fetchQuestions = async () => {
-      const res = await fetch(`/api/exam-questions?category=${category}`)
+    window.scrollTo({ top: 0, behavior: "instant" })
+  }, [])
+
+  useEffect(() => {
+    const fetchExam = async () => {
+      if (!slug) return
+      const res = await fetch(`/api/exams/${slug}`)
       const data = await res.json()
-      setQuestions(data.questions)
-      setAnswers(Array(data.questions.length).fill(-1))
+      setExam(data.exam)
+      setAnswers(Array(data.exam.questions.length).fill(-1))
+      setTimeLeft(data.exam.timeLimit * 60)
     }
-    fetchQuestions()
-  }, [category])
+    fetchExam()
+  }, [slug])
 
   useEffect(() => {
-    if (!questions.length || result) return
-    const id = setInterval(() => setTimeLeft((t) => t - 1), 1000)
+    if (!exam || result) return
+    const id = setInterval(() => {
+      setTimeLeft((t) => t - 1)
+      setDuration((d) => d + 1)
+    }, 1000)
     return () => clearInterval(id)
-  }, [questions, result])
+  }, [exam, result])
 
   useEffect(() => {
-    if (timeLeft === 0 && !result) {
+    if (timeLeft === 0 && exam && !result) {
       finishExam()
     }
-  }, [timeLeft, result])
+  }, [timeLeft, exam, result])
 
   const selectAnswer = (idx: number) => {
     const updated = [...answers]
@@ -52,37 +71,94 @@ export default function StartExamPage() {
     setAnswers(updated)
   }
 
-  const nextQuestion = () => setCurrent((c) => Math.min(c + 1, questions.length - 1))
+  const nextQuestion = () => {
+    if (answers[current] === -1) return
+    setCurrent((c) => Math.min(c + 1, exam!.questions.length - 1))
+  }
   const prevQuestion = () => setCurrent((c) => Math.max(c - 1, 0))
 
   const finishExam = () => {
-    const correct = questions.reduce(
+    if (!exam) return
+    const correct = exam.questions.reduce(
       (acc, q, i) => acc + (answers[i] === q.correctAnswer ? 1 : 0),
       0
     )
-    const score = (correct / questions.length) * 100
-    setResult({ score, passed: score >= 70 })
+    const score = (correct / exam.questions.length) * 100
+    setResult({ score, passed: score >= exam.passRate, duration })
   }
 
-  if (!questions.length) {
+  if (!exam) {
     return (
       <div className="min-h-screen flex items-center justify-center">Laden...</div>
     )
   }
 
+  const questions = exam.questions
+
   if (result) {
+    const toggleExpand = (index: number) => {
+      setExpandedIndex(prev => prev === index ? null : index)
+    }
+
     return (
       <div className="min-h-screen bg-gray-50">
         <div className="container mx-auto px-4 py-12">
-          <Card className="max-w-xl mx-auto text-center">
-            <CardHeader>
-              <CardTitle>{result.passed ? "Geslaagd!" : "Niet Geslaagd"}</CardTitle>
+          <Card className="max-w-5xl mx-auto">
+            <CardHeader className="text-center border-b pb-4">
+              <CardTitle className={`text-2xl font-bold ${result.passed ? "text-green-700" : "text-red-700"}`}>
+                {result.passed ? "🎉 Geslaagd!" : "❌ Niet Geslaagd"}
+              </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <p>Je score: {Math.round(result.score)}%</p>
-              <Button onClick={() => location.reload()} className="border border-blue-700/80">
-                Opnieuw
-              </Button>
+
+            <CardContent className="space-y-6">
+              {/* Result Overview */}
+              <div className="text-center space-y-1 text-gray-800">
+                <p className="text-lg font-semibold">{exam.title}</p>
+                <p className="text-sm">Je score: <strong>{Math.round(result.score)}%</strong></p>
+                <p className="text-sm">Benodigd: <strong>{exam.passRate}%</strong></p>
+                <p className="text-sm">Tijd: <strong>{Math.floor(result.duration / 60)}:{String(result.duration % 60).padStart(2, "0")}</strong></p>
+              </div>
+
+              {/* Question Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-8 gap-4">
+                {questions.map((q, i) => {
+                  const isCorrect = answers[i] === q.correctAnswer
+
+                  return (
+                    <DropdownMenu key={q._id}>
+                      <DropdownMenuTrigger asChild>
+                        <button
+                          className={`w-full aspect-square rounded-md font-medium text-sm flex items-center justify-center border transition-colors duration-200 shadow-sm text-gray-900 hover:shadow-md ${
+                            isCorrect ? "bg-green-100 border-green-300 hover:bg-green-200" : "bg-red-100 border-red-300 hover:bg-red-200"
+                          }`}
+                        >
+                          {i + 1}
+                        </button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent className="w-72 p-4 text-sm text-gray-700 z-50 bg-white">
+                        <p className="font-semibold text-gray-900 mb-1">{q.question}</p>
+                        <p>Jouw antwoord: <strong>{answers[i] !== -1 ? q.options[answers[i]] : "Geen"}</strong></p>
+                        {!isCorrect && (
+                          <>
+                            <p>Correct: <strong>{q.options[q.correctAnswer]}</strong></p>
+                            <p className="text-gray-500 italic mt-1">{q.explanation}</p>
+                          </>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  )
+                })}
+              </div>
+
+              {/* Actions */}
+              <div className="flex justify-center gap-4 pt-6">
+                <Button onClick={() => location.reload()} className="border border-blue-700/80">
+                  Opnieuw
+                </Button>
+                <Button asChild variant="outline">
+                  <a href="/exams">Terug naar Overzicht</a>
+                </Button>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -97,6 +173,7 @@ export default function StartExamPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <div className="container max-w-3xl mx-auto px-4 py-10 sm:py-16">
+        <h2 className="text-center text-2xl font-bold mb-6">{exam.title}</h2>
         {/* Voortgang & Timer */}
         <div className="mb-8 flex items-center gap-4">
           <Progress
@@ -110,7 +187,7 @@ export default function StartExamPage() {
 
         {/* Vraag */}
         <Card className="mb-8 shadow-md border border-gray-200 rounded-xl">
-          <CardHeader className="bg-blue-50/60 rounded-t-xl px-6 py-4 border-b">
+          <CardHeader className="rounded-t-xl px-6 py-2 border-b">
             <CardTitle className="text-lg sm:text-xl font-semibold text-blue-900">
               Vraag {current + 1} van {questions.length}
             </CardTitle>
@@ -127,7 +204,7 @@ export default function StartExamPage() {
                   key={idx}
                   onClick={() => selectAnswer(idx)}
                   variant={answers[current] === idx ? "default" : "outline"}
-                  className={`w-full text-left py-3 px-4 rounded-lg transition-all duration-150 ${
+                  className={`w-full text-left py-3 px-4 hover:cursor-pointer rounded-lg transition-all duration-150 ${
                     answers[current] === idx
                       ? "bg-blue-600 hover:bg-blue-700 text-white"
                       : "bg-white hover:bg-gray-50 border-gray-300 text-gray-800"
@@ -146,7 +223,7 @@ export default function StartExamPage() {
             onClick={prevQuestion}
             disabled={current === 0}
             variant="outline"
-            className="px-6 py-2 text-sm sm:text-base disabled:opacity-50"
+            className="px-6 py-2 text-sm sm:text-base disabled:opacity-50 hover:cursor-pointer"
           >
             ← Vorige
           </Button>
@@ -154,14 +231,15 @@ export default function StartExamPage() {
           {current === questions.length - 1 ? (
             <Button
               onClick={finishExam}
-              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 text-sm sm:text-base shadow-md"
+              className="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-2 text-sm sm:text-base shadow-md hover:cursor-pointer"
             >
               Exam Inleveren
             </Button>
           ) : (
             <Button
               onClick={nextQuestion}
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 text-sm sm:text-base shadow-md"
+              disabled={answers[current] === -1}
+              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-2 text-sm sm:text-base shadow-md hover:cursor-pointer"
             >
               Volgende →
             </Button>

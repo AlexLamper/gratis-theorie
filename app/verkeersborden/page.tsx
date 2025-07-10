@@ -16,7 +16,7 @@ export default function VerkeersbordensPage() {
       borderColor: "border-blue-200",
       hoverColor: "hover:border-blue-300",
       description: "Alle verkeersborden die relevant zijn voor autobestuurders",
-      count: 120,
+      count: 90,
       sections: ["Gebodsborden", "Verbodsborden", "Waarschuwingsborden", "Voorrangsborden", "Informatieborden"],
     },
     {
@@ -28,7 +28,7 @@ export default function VerkeersbordensPage() {
       borderColor: "border-green-200",
       hoverColor: "hover:border-green-300",
       description: "Verkeersborden specifiek voor bromfiets- en scooterbestuurders",
-      count: 85,
+      count: 30,
       sections: ["Verbodsborden", "Gebodsborden", "Waarschuwingsborden", "Informatieborden"],
     },
     {
@@ -40,7 +40,7 @@ export default function VerkeersbordensPage() {
       borderColor: "border-red-200",
       hoverColor: "hover:border-red-300",
       description: "Verkeersborden voor motorfietsbestuurders en alle categorieën",
-      count: 110,
+      count: 45,
       sections: ["Gebodsborden", "Verbodsborden", "Waarschuwingsborden", "Voorrangsborden", "Informatieborden"],
     },
   ]
@@ -81,7 +81,7 @@ export default function VerkeersbordensPage() {
 
                       <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-6">
                         <Badge className="bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 transition-colors">
-                          300+ Borden
+                          90+ Borden
                         </Badge>
                         <Badge className="bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 transition-colors">
                           7 Categorieën
