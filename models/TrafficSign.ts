@@ -16,9 +16,8 @@ const TrafficSignSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
-    collection: "trafficsigns", // 👈 force Mongoose to use correct collection
+    collection: "trafficsigns",
   }
 )
 
-// ✅ Avoid model cache conflicts in dev
 export default mongoose.models[schemaName] || mongoose.model(schemaName, TrafficSignSchema)
