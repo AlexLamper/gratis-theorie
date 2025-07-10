@@ -110,7 +110,7 @@ export default function StartExamPage() {
 
         {/* Vraag */}
         <Card className="mb-8 shadow-md border border-gray-200 rounded-xl">
-          <CardHeader className="bg-blue-50/60 rounded-t-xl px-6 py-4 border-b">
+          <CardHeader className="rounded-t-xl px-6 py-2 border-b">
             <CardTitle className="text-lg sm:text-xl font-semibold text-blue-900">
               Vraag {current + 1} van {questions.length}
             </CardTitle>
