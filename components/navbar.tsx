@@ -45,7 +45,7 @@ export default function Navbar() {
   ]
 
   return (
-    <header className="border-b bg-white/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
+    <header className="border-b-gray-700/30 bg-white/95 backdrop-blur-sm sticky top-0 z-50 shadow-sm">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           {/* Left side - Logo/Back button */}

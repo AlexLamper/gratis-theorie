@@ -38,7 +38,7 @@ export default function HomePage() {
       {/* Hero Section */}
       <section className="py-20 px-4 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         <div className="container mx-auto text-center">
-          <Badge className="mb-6 bg-green-100 text-green-800 hover:bg-green-100 text-sm px-4 py-2">
+          <Badge className="mb-6 bg-green-100 text-green-800 hover:bg-green-100 text-xs sm:text-sm px-3 sm:px-4 py-2 max-w-full text-center break-words">
             ✨ 100% Gratis • Geen Registratie Vereist • Altijd Up-to-date
           </Badge>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
@@ -98,7 +98,7 @@ export default function HomePage() {
       </section>
 
       {/* Categories Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-gray-50 to-blue-50">
+      <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Kies je Categorie</h2>
@@ -107,7 +107,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <Card className="rounded-xl overflow-hidden border shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
+            <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
               <Link href="/practice?category=auto" className="block h-full">
                 <div className="bg-gradient-to-b from-blue-50 to-blue-100">
                   <CardHeader className="text-center pb-4 pt-0 m-0">
@@ -129,14 +129,14 @@ export default function HomePage() {
                       <div>• 8 passagiers</div>
                     </div>
                   </div>
-                  <Button className="w-full bg-blue-600 text-white group-hover:bg-blue-700 border border-blue-700/80 sm:mb-6">
+                  <Button className="w-full bg-blue-600 text-white group-hover:bg-blue-700 border border-blue-700/80 mb-6">
                     Begin Oefenen
                   </Button>
                 </CardContent>
               </Link>
             </Card>
 
-            <Card className="rounded-xl overflow-hidden border shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
+            <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
               <Link href="/practice?category=scooter" className="block h-full">
                 <div className="bg-gradient-to-b from-green-50 to-green-100">
                   <CardHeader className="text-center pb-4 pt-0 m-0">
@@ -158,14 +158,14 @@ export default function HomePage() {
                       <div>• Max 50cc</div>
                     </div>
                   </div>
-                  <Button className="w-full bg-green-600 text-white hover:bg-green-700 border border-green-700/80 sm:mb-6">
+                  <Button className="w-full bg-green-600 text-white hover:bg-green-700 border border-green-700/80 mb-6">
                     Begin Oefenen
                   </Button>
                 </CardContent>
               </Link>
             </Card>
 
-            <Card className="rounded-xl overflow-hidden border shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
+            <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
               <Link href="/practice?category=motor" className="block h-full">
                 <div className="bg-gradient-to-b from-red-50 to-red-100">
                   <CardHeader className="text-center pb-4 pt-0 m-0">
@@ -187,7 +187,7 @@ export default function HomePage() {
                       <div>• Progressief</div>
                     </div>
                   </div>
-                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 border border-red-700/80 sm:mb-6">
+                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 border border-red-700/80 mb-6">
                     Begin Oefenen
                   </Button>
                 </CardContent>
@@ -197,7 +197,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Leer Alle Verkeersborden</h2>
@@ -320,7 +320,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-orange-50 to-yellow-50">
+      <section className="py-20 px-4">
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Waarom Gratis Theorie?</h2>
@@ -329,28 +329,28 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <Card className="text-center border-2 hover:border-green-200 hover:shadow-lg transition-all bg-white">
+            <Card className="text-center border-gray-600/30 hover:border-green-200 hover:shadow-lg transition-all bg-white">
               <CardContent className="pt-8">
                 <CheckCircle className="h-16 w-16 text-green-600 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3 text-gray-900">100% Gratis</h3>
                 <p className="text-gray-600">Geen verborgen kosten, abonnementen of premium features</p>
               </CardContent>
             </Card>
-            <Card className="text-center border-2 hover:border-blue-200 hover:shadow-lg transition-all bg-white">
+            <Card className="text-center border-gray-600/30 hover:border-blue-200 hover:shadow-lg transition-all bg-white">
               <CardContent className="pt-8">
                 <Users className="h-16 w-16 text-blue-600 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3 text-gray-900">Geen Registratie</h3>
                 <p className="text-gray-600">Direct beginnen zonder account aanmaken of persoonlijke gegevens</p>
               </CardContent>
             </Card>
-            <Card className="text-center border-2 hover:border-purple-200 hover:shadow-lg transition-all bg-white">
+            <Card className="text-center border-gray-600/30 hover:border-purple-200 hover:shadow-lg transition-all bg-white">
               <CardContent className="pt-8">
                 <Clock className="h-16 w-16 text-purple-600 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3 text-gray-900">Altijd Beschikbaar</h3>
                 <p className="text-gray-600">24/7 toegang vanaf elk apparaat, overal waar je bent</p>
               </CardContent>
             </Card>
-            <Card className="text-center border-2 hover:border-yellow-200 hover:shadow-lg transition-all bg-white">
+            <Card className="text-center border-gray-600/30 hover:border-yellow-200 hover:shadow-lg transition-all bg-white">
               <CardContent className="pt-8">
                 <Star className="h-16 w-16 text-yellow-600 mx-auto mb-4" />
                 <h3 className="text-xl font-semibold mb-3 text-gray-900">Actuele Vragen</h3>
@@ -362,15 +362,19 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-pink-700 text-white">
+      <section className="py-20 px-4 bg-gradient-to-br from-blue-50 to-indigo-100">
         <div className="container mx-auto text-center">
           <CheckCircle className="h-16 w-16 mx-auto mb-6 opacity-90" />
-          <h2 className="text-4xl font-bold mb-6">Klaar om te Beginnen?</h2>
-          <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto">
+          <h2 className="text-4xl font-bold mb-6 text-gray-900">Klaar om te Beginnen?</h2>
+          <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto text-gray-600">
             Sluit je aan bij duizenden mensen die al succesvol hun theorie-examen hebben gehaald met ons platform!
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-4 h-auto border border-white/80">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+            <Button
+              asChild
+              size="lg"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-4 h-auto border border-blue-700/80"
+            >
               <Link href="/practice">
                 <Zap className="mr-2 h-5 w-5" />
                 Begin Nu Gratis
@@ -378,9 +382,9 @@ export default function HomePage() {
             </Button>
             <Button
               asChild
-              size="lg"
               variant="outline"
-              className="text-lg px-8 py-4 h-auto border-white/80 text-white hover:bg-white hover:text-blue-600 bg-transparent"
+              size="lg"
+              className="text-lg px-8 py-4 h-auto border-2 bg-white border-gray-300/80"
             >
               <Link href="/verkeersborden">
                 <Shield className="mr-2 h-5 w-5" />
