@@ -1,5 +1,7 @@
 import mongoose from "mongoose"
 
+const schemaName = "TrafficSign"
+
 const TrafficSignSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
@@ -11,10 +13,12 @@ const TrafficSignSchema = new mongoose.Schema(
     color: { type: String, required: true },
     image: { type: String, required: true },
     applicableFor: [{ type: String, required: true }],
-    createdAt: { type: Date, default: Date.now },
-    updatedAt: { type: Date, default: Date.now },
   },
-  { timestamps: true }
+  {
+    timestamps: true,
+    collection: "trafficsigns", // 👈 force Mongoose to use correct collection
+  }
 )
 
-export default mongoose.models.TrafficSign || mongoose.model("TrafficSign", TrafficSignSchema)
+// ✅ Avoid model cache conflicts in dev
+export default mongoose.models[schemaName] || mongoose.model(schemaName, TrafficSignSchema)

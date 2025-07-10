@@ -103,30 +103,61 @@ export default function CategoryTrafficSignsPage() {
   }
 
   const fetchSigns = async () => {
-    if (!mounted) return
+    if (!mounted) {
+      console.log("[Fetch] Skipping fetch: component not mounted yet.")
+      return
+    }
+
+    console.log(`[Fetch] Starting request to /api/traffic-signs for category: '${category}'`)
+
     try {
       setLoading(true)
       setError(null)
+
       const res = await fetch("/api/traffic-signs")
-      if (!res.ok) throw new Error("Failed to fetch traffic signs")
+
+      console.log(`[Fetch] Response status: ${res.status}`)
+
+      if (!res.ok) {
+        throw new Error(`Server responded with ${res.status}`)
+      }
+
       const data = await res.json()
-      const trafficSigns = data.trafficSigns || []
+      console.log("[Fetch] Raw response data:", data)
+
+      const trafficSigns = data?.trafficSigns
+
+      if (!Array.isArray(trafficSigns)) {
+        throw new Error("Invalid response format: 'trafficSigns' is not an array")
+      }
+
+      console.log(`[Fetch] Received ${trafficSigns.length} total traffic signs.`)
 
       const filtered = category === "alle"
         ? trafficSigns
-        : trafficSigns.filter((sign: TrafficSign) => sign.category?.toLowerCase() === category.toLowerCase())
+        : trafficSigns.filter((sign: TrafficSign) =>
+            sign.category?.toLowerCase() === category.toLowerCase()
+          )
+
+      console.log(`[Filter] After filtering for category '${category}': ${filtered.length} signs.`)
 
       setSigns(filtered)
       setFilteredSigns(filtered)
+      console.log("[State] Signs and filteredSigns updated successfully.")
     } catch (err) {
-      console.error(err)
+      const errorMsg =
+        err instanceof Error ? err.message : "Onbekende fout tijdens het ophalen van verkeersborden."
+      console.error("[Error] Verkeersborden ophalen mislukt:", errorMsg)
+
       setError("Er is een fout opgetreden bij het laden van de verkeersborden.")
       setSigns([])
       setFilteredSigns([])
     } finally {
       setLoading(false)
+      console.log("[Fetch] Done.")
     }
   }
+
 
   useEffect(() => {
     if (category && mounted) {
