@@ -250,9 +250,11 @@ export default function CategoryTrafficSignsPage() {
     <div className="min-h-screen bg-gray-50">
       <div className="container mx-auto px-4 py-8">
         {/* Page Header */}
-        <div className={`${currentCategory.bgColor} rounded-lg p-6 mb-8`}>
-          <div className="flex items-center space-x-4">
-            <IconComponent className={`h-12 w-12 ${currentCategory.color}`} />
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 mb-8">
+          <div className="flex items-center space-x-6">
+            <div className={`${currentCategory.bgColor} p-4 rounded-full`}>
+              <IconComponent className={`h-8 w-8 ${currentCategory.color}`} />
+            </div>
             <div>
               <h1 className="text-2xl font-bold text-gray-900">{currentCategory.name}</h1>
               <p className="text-gray-600">{currentCategory.description}</p>
@@ -362,19 +364,19 @@ export default function CategoryTrafficSignsPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                 {filteredSigns.map((sign) => (
                   <Card
                     key={sign._id}
                     className="group bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200"
                   >
-                    <CardContent className="p-6">
+                    <CardContent className="p-4">
                       {/* Sign Image */}
-                      <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-4 text-center group-hover:bg-gray-100 transition-colors">
+                      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-4 text-center group-hover:bg-gray-100 transition-colors">
                         <img
                           src={imageErrors.has(sign._id) ? createPlaceholderSVG(160, 160) : sign.image}
                           alt={sign.name}
-                          className="w-32 h-32 mx-auto object-contain"
+                          className="w-60 h-60 mx-auto object-contain"
                           onError={(e) => handleImageError(sign._id, e)}
                           loading="lazy"
                         />

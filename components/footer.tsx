@@ -1,4 +1,4 @@
-import { BookOpen, Mail, Phone, MapPin } from "lucide-react"
+import { BookOpen, Mail, MapPin } from "lucide-react"
 import Link from "next/link"
 
 export default function Footer() {
@@ -15,15 +15,11 @@ export default function Footer() {
             <div className="space-y-2 text-sm text-gray-400">
               <div className="flex items-center space-x-2">
                 <Mail className="h-4 w-4" />
-                <span>info@gratis-theorie.nl</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Phone className="h-4 w-4" />
-                <span>+31 (0)20 123 4567</span>
+                <span>devlamper06@gmail.com</span>
               </div>
               <div className="flex items-center space-x-2">
                 <MapPin className="h-4 w-4" />
-                <span>Amsterdam, Nederland</span>
+                <span>Zuid-Holland, Nederland</span>
               </div>
             </div>
           </div>
@@ -51,31 +47,6 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-lg">Platform</h4>
             <ul className="space-y-3 text-gray-400">
               <li>
-                <Link href="/practice" className="hover:text-white transition-colors">
-                  Oefenvragen
-                </Link>
-              </li>
-              <li>
-                <Link href="/exams" className="hover:text-white transition-colors">
-                  Proefexamens
-                </Link>
-              </li>
-              <li>
-                <Link href="/verkeersborden" className="hover:text-white transition-colors">
-                  Verkeersborden
-                </Link>
-              </li>
-              <li>
-                <Link href="/categories" className="hover:text-white transition-colors">
-                  Alle Categorieën
-                </Link>
-              </li>
-            </ul>
-          </div>
-          <div>
-            <h4 className="font-semibold mb-4 text-lg">Informatie</h4>
-            <ul className="space-y-3 text-gray-400">
-              <li>
                 <Link href="/over-ons" className="hover:text-white transition-colors">
                   Over Ons
                 </Link>
@@ -99,7 +70,7 @@ export default function Footer() {
           </div>
         </div>
         <div className="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 Gratis Theorie. Alle rechten voorbehouden.</p>
+          <p>&copy; 2025 Gratis Theorie. Alle rechten voorbehouden.</p>
         </div>
       </div>
     </footer>

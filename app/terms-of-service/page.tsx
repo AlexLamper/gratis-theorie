@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { FileText, Users, Shield, AlertTriangle, Scale } from "lucide-react"
 import type { Metadata } from "next"
+import Footer from "@/components/footer"
 
 export const metadata: Metadata = {
   title: "Algemene Voorwaarden - Gratis Theorie",
@@ -333,6 +334,7 @@ export default function TermsOfServicePage() {
           </Card>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

@@ -41,7 +41,7 @@ export default function HomePage() {
           <Badge className="mb-6 bg-green-100 text-green-800 hover:bg-green-100 text-sm px-4 py-2">
             ✨ 100% Gratis • Geen Registratie Vereist • Altijd Up-to-date
           </Badge>
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
             Slaag voor je{" "}
             <span className="text-blue-600 bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
               theorie-examen
@@ -55,7 +55,7 @@ export default function HomePage() {
             <Button
               asChild
               size="lg"
-              className="bg-blue-600 hover:bg-blue-700 text-lg px-8 py-4 h-auto border border-blue-700/80"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-4 h-auto border border-blue-700/80"
             >
               <Link href="/practice">
                 <BookOpen className="mr-2 h-6 w-6" />
@@ -76,7 +76,7 @@ export default function HomePage() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-2xl mx-auto">
             <div className="text-center">
               <div className="text-2xl font-bold text-blue-600">1000+</div>
               <div className="text-sm text-gray-600">Oefenvragen</div>
@@ -106,14 +106,18 @@ export default function HomePage() {
               Elke categorie heeft zijn eigen theorie-examen met specifieke vragen en regels
             </p>
           </div>
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 hover:border-blue-200 bg-white">
-              <Link href="/practice?category=auto">
-                <CardHeader className="text-center pb-4 bg-gradient-to-br from-blue-50 to-blue-100">
-                  <Car className="h-16 w-16 text-blue-600 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                  <CardTitle className="text-2xl text-gray-900">Auto (B)</CardTitle>
-                  <CardDescription className="text-gray-600">Theorie-examen voor personenauto's</CardDescription>
-                </CardHeader>
+          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <Card className="rounded-xl overflow-hidden border shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
+              <Link href="/practice?category=auto" className="block h-full">
+                <div className="bg-gradient-to-b from-blue-50 to-blue-100">
+                  <CardHeader className="text-center pb-4 pt-0 m-0">
+                    <div className="flex flex-col items-center justify-center min-h-0 mt-6">
+                      <Car className="h-16 w-16 text-blue-600 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                      <CardTitle className="text-2xl text-gray-900">Auto (B)</CardTitle>
+                      <CardDescription className="text-gray-600">Theorie-examen voor personenauto's</CardDescription>
+                    </div>
+                  </CardHeader>
+                </div>
                 <CardContent className="text-center pt-6">
                   <div className="space-y-3 mb-6">
                     <Badge variant="secondary" className="text-sm">
@@ -125,18 +129,24 @@ export default function HomePage() {
                       <div>• 8 passagiers</div>
                     </div>
                   </div>
-                  <Button className="w-full group-hover:bg-blue-700 border border-blue-700/80">Begin Oefenen</Button>
+                  <Button className="w-full bg-blue-600 text-white group-hover:bg-blue-700 border border-blue-700/80 sm:mb-6">
+                    Begin Oefenen
+                  </Button>
                 </CardContent>
               </Link>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 hover:border-green-200 bg-white">
-              <Link href="/practice?category=scooter">
-                <CardHeader className="text-center pb-4 bg-gradient-to-br from-green-50 to-green-100">
-                  <Bike className="h-16 w-16 text-green-600 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                  <CardTitle className="text-2xl text-gray-900">Scooter (AM)</CardTitle>
-                  <CardDescription className="text-gray-600">Theorie-examen voor bromfietsen</CardDescription>
-                </CardHeader>
+            <Card className="rounded-xl overflow-hidden border shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
+              <Link href="/practice?category=scooter" className="block h-full">
+                <div className="bg-gradient-to-b from-green-50 to-green-100">
+                  <CardHeader className="text-center pb-4 pt-0 m-0">
+                    <div className="flex flex-col items-center justify-center min-h-0 mt-6">
+                      <Bike className="h-16 w-16 text-green-600 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                      <CardTitle className="text-2xl text-gray-900">Scooter (AM)</CardTitle>
+                      <CardDescription className="text-gray-600">Theorie-examen voor bromfietsen</CardDescription>
+                    </div>
+                  </CardHeader>
+                </div>
                 <CardContent className="text-center pt-6">
                   <div className="space-y-3 mb-6">
                     <Badge variant="secondary" className="text-sm">
@@ -148,20 +158,24 @@ export default function HomePage() {
                       <div>• Max 50cc</div>
                     </div>
                   </div>
-                  <Button className="w-full bg-green-600 hover:bg-green-700 border border-green-700/80">
+                  <Button className="w-full bg-green-600 text-white hover:bg-green-700 border border-green-700/80 sm:mb-6">
                     Begin Oefenen
                   </Button>
                 </CardContent>
               </Link>
             </Card>
 
-            <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer group border-2 hover:border-red-200 bg-white">
-              <Link href="/practice?category=motor">
-                <CardHeader className="text-center pb-4 bg-gradient-to-br from-red-50 to-red-100">
-                  <Motorcycle className="h-16 w-16 text-red-600 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                  <CardTitle className="text-2xl text-gray-900">Motor (A)</CardTitle>
-                  <CardDescription className="text-gray-600">Theorie-examen voor motorfietsen</CardDescription>
-                </CardHeader>
+            <Card className="rounded-xl overflow-hidden border shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
+              <Link href="/practice?category=motor" className="block h-full">
+                <div className="bg-gradient-to-b from-red-50 to-red-100">
+                  <CardHeader className="text-center pb-4 pt-0 m-0">
+                    <div className="flex flex-col items-center justify-center min-h-0 mt-6">
+                      <Motorcycle className="h-16 w-16 text-red-600 mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                      <CardTitle className="text-2xl text-gray-900">Motor (A)</CardTitle>
+                      <CardDescription className="text-gray-600">Theorie-examen voor motorfietsen</CardDescription>
+                    </div>
+                  </CardHeader>
+                </div>
                 <CardContent className="text-center pt-6">
                   <div className="space-y-3 mb-6">
                     <Badge variant="secondary" className="text-sm">
@@ -173,7 +187,9 @@ export default function HomePage() {
                       <div>• Progressief</div>
                     </div>
                   </div>
-                  <Button className="w-full bg-red-600 hover:bg-red-700 border border-red-700/80">Begin Oefenen</Button>
+                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 border border-red-700/80 sm:mb-6">
+                    Begin Oefenen
+                  </Button>
                 </CardContent>
               </Link>
             </Card>
@@ -181,7 +197,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Verkeersborden Section - Redesigned */}
       <section className="py-20 px-4 bg-white">
         <div className="container mx-auto">
           <div className="text-center mb-16">
@@ -231,7 +246,7 @@ export default function HomePage() {
                   <Button
                     asChild
                     size="lg"
-                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 border border-blue-700/80"
+                    className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 border border-blue-700/80 text-white hover:text-white"
                   >
                     <Link href="/verkeersborden">
                       <Shield className="mr-2 h-5 w-5" />
@@ -305,7 +320,7 @@ export default function HomePage() {
       </section>
 
       {/* Features Section */}
-      <section className="py-20 px-4 bg-gradient-to-br from-green-50 to-teal-50">
+      <section className="py-20 px-4 bg-gradient-to-br from-orange-50 to-yellow-50">
         <div className="container mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 mb-4">Waarom Gratis Theorie?</h2>
@@ -347,9 +362,9 @@ export default function HomePage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 px-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white">
+      <section className="py-20 px-4 bg-gradient-to-r from-purple-600 to-pink-700 text-white">
         <div className="container mx-auto text-center">
-          <Target className="h-16 w-16 mx-auto mb-6 opacity-90" />
+          <CheckCircle className="h-16 w-16 mx-auto mb-6 opacity-90" />
           <h2 className="text-4xl font-bold mb-6">Klaar om te Beginnen?</h2>
           <p className="text-xl mb-10 opacity-90 max-w-2xl mx-auto">
             Sluit je aan bij duizenden mensen die al succesvol hun theorie-examen hebben gehaald met ons platform!
