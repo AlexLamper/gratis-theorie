@@ -35,6 +35,10 @@ export default function StartExamPage() {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
 
   useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "instant" })
+  }, [])
+
+  useEffect(() => {
     const fetchExam = async () => {
       if (!slug) return
       const res = await fetch(`/api/exams/${slug}`)
