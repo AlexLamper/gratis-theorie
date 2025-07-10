@@ -4,9 +4,9 @@ import Exam from "@/models/Exam"
 
 export async function GET(
   req: NextRequest,
-  { params }: { params: { slug: string } }
+  params: { slug: string }
 ) {
-  const { slug } = params 
+  const { slug } = params
 
   try {
     await connectMongoDB()
