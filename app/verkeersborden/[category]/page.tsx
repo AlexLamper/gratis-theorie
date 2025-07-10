@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
@@ -9,7 +8,7 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Search, Filter, Car, Bike, BikeIcon as Motorcycle, AlertTriangle, RefreshCw } from "lucide-react"
 import Link from "next/link"
-import { useParams } from "next/navigation"
+import { useParams, usePathname } from "next/navigation"
 import Footer from "@/components/footer"
 
 interface TrafficSign {
@@ -18,15 +17,16 @@ interface TrafficSign {
   description: string
   meaning: string
   category: string
-  type: "gebod" | "verbod" | "waarschuwing" | "voorrang" | "informatie" | "snelheid" | "rijrichting" | "parkeren"
-  shape: "rond" | "driehoek" | "vierkant" | "achthoek" | "ruit"
+  type: string
+  shape: string
   color: string
   image: string
   applicableFor: string[]
-  examples?: string[]
+  createdAt: string
+  updatedAt: string
 }
 
-// Create a simple SVG placeholder as data URI
+// Simple SVG fallback placeholder
 const createPlaceholderSVG = (width = 160, height = 160) => {
   const svg = `
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
@@ -41,6 +41,7 @@ const createPlaceholderSVG = (width = 160, height = 160) => {
 export default function CategoryTrafficSignsPage() {
   const params = useParams()
   const category = params.category as string
+  const pathname = usePathname()
 
   const [signs, setSigns] = useState<TrafficSign[]>([])
   const [filteredSigns, setFilteredSigns] = useState<TrafficSign[]>([])
@@ -51,7 +52,6 @@ export default function CategoryTrafficSignsPage() {
   const [mounted, setMounted] = useState(false)
   const [imageErrors, setImageErrors] = useState<Set<string>>(new Set())
 
-  // Fix hydration mismatch by ensuring client-side rendering
   useEffect(() => {
     setMounted(true)
   }, [])
@@ -91,54 +91,36 @@ export default function CategoryTrafficSignsPage() {
   const IconComponent = currentCategory?.icon || Car
 
   const signTypes = [
-    { id: "all", name: "Alle Borden", count: 0 },
-    { id: "waarschuwing", name: "Waarschuwingsborden", count: 0 },
-    { id: "snelheid", name: "Snelheidsborden", count: 0 },
-    { id: "voorrang", name: "Voorrangsborden", count: 0 },
-    { id: "informatie", name: "Informatieborden", count: 0 },
-    { id: "verbod", name: "Verbodsborden", count: 0 },
-    { id: "rijrichting", name: "Rijrichtingen", count: 0 },
-    { id: "parkeren", name: "Parkeren", count: 0 },
+    "waarschuwing", "snelheid", "voorrang", "informatie", "verbod", "rijrichting", "parkeren",
   ]
 
-  // Handle image error with proper fallback
+  // Image fallback
   const handleImageError = (signId: string, event: React.SyntheticEvent<HTMLImageElement>) => {
     if (!imageErrors.has(signId)) {
       setImageErrors((prev) => new Set(prev).add(signId))
-      const img = event.currentTarget
-      img.src = createPlaceholderSVG(160, 160)
+      event.currentTarget.src = createPlaceholderSVG(160, 160)
     }
   }
 
-  // Fetch traffic signs with better error handling
   const fetchSigns = async () => {
     if (!mounted) return
-
     try {
       setLoading(true)
       setError(null)
-      console.log(`Fetching signs for category: ${category}`)
+      const res = await fetch("/api/traffic-signs")
+      if (!res.ok) throw new Error("Failed to fetch traffic signs")
+      const data = await res.json()
+      const trafficSigns = data.trafficSigns || []
 
-      const response = await fetch(`/api/traffic-signs?category=${category}&limit=200`)
+      const filtered = category === "alle"
+        ? trafficSigns
+        : trafficSigns.filter((sign: TrafficSign) => sign.category?.toLowerCase() === category.toLowerCase())
 
-      if (!response.ok) {
-        throw new Error(`Server error: ${response.status}`)
-      }
-
-      const data = await response.json()
-      console.log(`Received ${data.signs?.length || 0} signs from ${data.source || "unknown"}`)
-
-      if (data.signs && Array.isArray(data.signs)) {
-        setSigns(data.signs)
-        setFilteredSigns(data.signs)
-      } else {
-        throw new Error("Invalid response format")
-      }
-    } catch (error) {
-      console.error("Error fetching traffic signs:", error)
-      setError(error instanceof Error ? error.message : "Er is een fout opgetreden")
-
-      // Set empty state on error
+      setSigns(filtered)
+      setFilteredSigns(filtered)
+    } catch (err) {
+      console.error(err)
+      setError("Er is een fout opgetreden bij het laden van de verkeersborden.")
       setSigns([])
       setFilteredSigns([])
     } finally {
@@ -146,25 +128,20 @@ export default function CategoryTrafficSignsPage() {
     }
   }
 
-  // Initial fetch
   useEffect(() => {
     if (category && mounted) {
       fetchSigns()
     }
   }, [category, mounted])
 
-  // Filter signs based on search and type
   useEffect(() => {
-    if (!mounted) return
-
     let filtered = signs
 
     if (searchTerm) {
-      filtered = filtered.filter(
-        (sign) =>
-          sign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          sign.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          sign.meaning.toLowerCase().includes(searchTerm.toLowerCase()),
+      filtered = filtered.filter((sign) =>
+        sign.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sign.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        sign.meaning.toLowerCase().includes(searchTerm.toLowerCase())
       )
     }
 
@@ -173,12 +150,12 @@ export default function CategoryTrafficSignsPage() {
     }
 
     setFilteredSigns(filtered)
-  }, [signs, searchTerm, selectedType, mounted])
+  }, [signs, searchTerm, selectedType])
 
-  // Update sign type counts
-  const updatedSignTypes = signTypes.map((type) => ({
-    ...type,
-    count: type.id === "all" ? signs.length : signs.filter((sign) => sign.type === type.id).length,
+  const typeCounts = ["all", ...signTypes].map((type) => ({
+    id: type,
+    name: type.charAt(0).toUpperCase() + type.slice(1),
+    count: type === "all" ? signs.length : signs.filter((s) => s.type === type).length,
   }))
 
   const getTypeColor = (type: string) => {
@@ -271,7 +248,7 @@ export default function CategoryTrafficSignsPage() {
 
         {/* Type Filter Tabs */}
         <div className="flex flex-wrap gap-2 mb-8">
-          {updatedSignTypes.map((type) => (
+          {typeCounts.map((type) => (
             <button
               key={type.id}
               onClick={() => setSelectedType(type.id)}
