@@ -4,9 +4,6 @@
   <img src="https://img.shields.io/github/license/yourusername/gratistheorie?style=for-the-badge" alt="License" />
   <img src="https://img.shields.io/github/issues/yourusername/gratistheorie?style=for-the-badge&logo=github" alt="Issues" />
   <img src="https://img.shields.io/github/contributors/yourusername/gratistheorie?style=for-the-badge&logo=github" alt="Contributors" />
-  <a href="https://www.instagram.com/gratistheorie/">
-    <img src="https://img.shields.io/badge/Volg%20@gratistheorie-E4405F?logo=instagram&logoColor=white&style=for-the-badge" alt="Instagram" />
-  </a>
 </p>
 
 **Oefen gratis en onbeperkt voor je theorie-examen auto, motor of scooter met realistische CBR-vragen.**
@@ -41,7 +38,7 @@
 
 - ![📘](https://img.shields.io/badge/📘-Oefenmodules-lightgrey?style=flat-square) **Oefenmodules** — Realistische vragen per categorie, zoals voorrang, verkeersborden, etc.  
 - ![🧪](https://img.shields.io/badge/🧪-Proefexamens-lightgrey?style=flat-square) **Proefexamens** — Ervaar hoe het echte theorie-examen voelt.  
-- ![🚧](https://img.shields.io/badge/🚧-Verkeersborden-overzicht-lightgrey?style=flat-square) **Verkeersborden** — Leer alle Nederlandse verkeersborden met visuele ondersteuning.  
+- ![🛑](https://img.shields.io/badge/🛑-Verkeersborden-lightgrey?style=flat-square) **Verkeersborden** — Leer alle Nederlandse verkeersborden met visuele ondersteuning.
 - ![📊](https://img.shields.io/badge/📊-Voortgangsmeting-lightgrey?style=flat-square) **Voortgangsmeting** — Houd je prestaties en groei bij.  
 - ![📱](https://img.shields.io/badge/📱-Responsief_design-lightgrey?style=flat-square) **Mobile-friendly** — Oefen altijd en overal, op mobiel, tablet of desktop.  
 - ![🌐](https://img.shields.io/badge/🌐-Meertalig-lightgrey?style=flat-square) **Meertalige ondersteuning** — Nederlands, Engels en meer in de toekomst.
@@ -56,7 +53,6 @@
   <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
   <img src="https://img.shields.io/badge/ShadCN_UI-000000?style=for-the-badge&logo=shadcnui&logoColor=white" alt="ShadCN UI" />
   <img src="https://img.shields.io/badge/Framer_Motion-000000?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
-  <img src="https://img.shields.io/badge/i18n-ready-yellowgreen?style=for-the-badge" alt="Internationalization" />
 </p>
 
 ## Paginastructuur
@@ -66,14 +62,6 @@
 - **Proefexamens** — Neem volledige proefexamens af zoals bij het CBR.
 - **Verkeersborden** — Alle verkeersborden overzichtelijk met uitleg.
 - **Categorieën** — Oefenmateriaal per voertuigtype (Auto, Motor, Scooter).
-
-## Roadmap
-
-- **v1.0.0** — Eerste publieke release met basisfunctionaliteiten
-- **v1.1.0** — Toevoeging van dark mode en lichte modus
-- **v1.2.0** — Meertalige ondersteuning voor Nederlands en Engels
-- **v1.3.0** — Gebruikersregistratie en persoonlijke voortgang
-- **v2.0.0** — AI-ondersteund leren en aanbevelingen
 
 ## Bijdragen
 
@@ -113,17 +101,16 @@ De vragen zijn gebaseerd op het officiële CBR-vragentype en zijn samengesteld m
 <details>
 <summary>Kan ik mijn voortgang bijhouden?</summary>
 
-Binnenkort wel! We zijn bezig met een profielmodule waarin je jouw voortgang kunt zien.
+Binnenkort wel! We zijn bezig met een module waarbij we via sessionStorage informatie opslaan zodat jij jouw voortgang kunt zien.
 
 </details>
 
 ## Contact
 
 Voor vragen, feedback of samenwerking:  
-- Open een [issue op GitHub](https://github.com/yourusername/gratistheorie/issues)  
-- Email: [support@gratistheorie.nl](mailto:support@gratistheorie.nl)  
-- Instagram: [@gratistheorie](https://instagram.com/gratistheorie)  
-- GitHub: [@yourusername](https://github.com/yourusername)
+- Open een [issue op GitHub](https://github.com/AlexLamper/gratistheorie/issues)  
+- Email: [devlamper06@gmail.com](mailto:devlamper06@gmail.com)    
+- GitHub: [@AlexLamper](https://github.com/AlexLamper)
 
 ---
 
