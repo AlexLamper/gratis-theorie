@@ -1,252 +1,130 @@
-# Gratis Theorie - Gratis Leerplatform voor Theorie-examens
+# Gratis Theorie - Oefenplatform voor het Theorie-examen
 
-Een modern, gratis leerplatform voor Nederlandse theorie-examens (auto, scooter, motor). Gebouwd met Next.js, MongoDB en Tailwind CSS.
+<p>
+  <img src="https://img.shields.io/github/license/yourusername/gratistheorie?style=for-the-badge" alt="License" />
+  <img src="https://img.shields.io/github/issues/yourusername/gratistheorie?style=for-the-badge&logo=github" alt="Issues" />
+  <img src="https://img.shields.io/github/contributors/yourusername/gratistheorie?style=for-the-badge&logo=github" alt="Contributors" />
+  <a href="https://www.instagram.com/gratistheorie/">
+    <img src="https://img.shields.io/badge/Volg%20@gratistheorie-E4405F?logo=instagram&logoColor=white&style=for-the-badge" alt="Instagram" />
+  </a>
+</p>
 
-## 🚀 Features
+**Oefen gratis en onbeperkt voor je theorie-examen auto, motor of scooter met realistische CBR-vragen.**
 
-- **100% Gratis**: Geen kosten, geen abonnementen
-- **Geen Registratie**: Direct beginnen zonder account
-- **Responsive Design**: Werkt perfect op desktop en mobiel
-- **Drie Categorieën**: Auto (B), Scooter (AM), Motor (A)
-- **Oefenmodus**: Individuele vragen met directe feedback
-- **Proefexamens**: Volledige examens met tijdslimiet
-- **Moderne UI**: Professioneel design met Tailwind CSS
-- **Snelle Performance**: Geoptimaliseerd voor snelheid
+![Gratis Theorie Screenshot](public/screenshot.png)
+<p>
+  <a href="https://gratistheorie.nl">
+    <img src="https://img.shields.io/badge/Live_Demo-▶️-blue?style=for-the-badge" alt="Live Demo" />
+  </a>
+  <a href="#aan-de-slag">
+    <img src="https://img.shields.io/badge/Aan_de_slag-🚀-green?style=for-the-badge" alt="Aan de slag" />
+  </a>
+</p>
 
-## 🛠️ Tech Stack
+## Over Gratis Theorie
 
-- **Frontend**: Next.js 14 (App Router), React, TypeScript
-- **Styling**: Tailwind CSS, shadcn/ui components
-- **Database**: MongoDB
-- **Deployment**: Vercel (recommended)
+*Gratis Theorie* is een modern, interactief leerplatform waarmee je je optimaal kunt voorbereiden op je theorie-examen voor de auto, motor of scooter. Met realistische oefenvragen, proefexamens, en een uitgebreide verkeersbordenbibliotheek is dit hét platform voor iedereen die wil slagen — gratis en zonder limieten.
 
-## 📋 Vereisten
+## Inhoudsopgave
 
-- Node.js 18+ 
-- MongoDB database (lokaal of cloud)
-- npm of yarn
+- [Functionaliteiten](#functionaliteiten)  
+- [Technologieën](#technologieën)  
+- [Paginastructuur](#paginastructuur)  
+- [Roadmap](#roadmap)  
+- [Bijdragen](#bijdragen)  
+- [Licentie](#licentie)  
+- [Versie](#versie)  
+- [FAQ](#faq)  
+- [Contact](#contact)
 
-## 🚀 Installatie
+## Functionaliteiten
 
-### 1. Clone het project
-\`\`\`bash
-git clone <repository-url>
-cd gratis-theorie
-\`\`\`
+- ![📘](https://img.shields.io/badge/📘-Oefenmodules-lightgrey?style=flat-square) **Oefenmodules** — Realistische vragen per categorie, zoals voorrang, verkeersborden, etc.  
+- ![🧪](https://img.shields.io/badge/🧪-Proefexamens-lightgrey?style=flat-square) **Proefexamens** — Ervaar hoe het echte theorie-examen voelt.  
+- ![🚧](https://img.shields.io/badge/🚧-Verkeersborden-overzicht-lightgrey?style=flat-square) **Verkeersborden** — Leer alle Nederlandse verkeersborden met visuele ondersteuning.  
+- ![📊](https://img.shields.io/badge/📊-Voortgangsmeting-lightgrey?style=flat-square) **Voortgangsmeting** — Houd je prestaties en groei bij.  
+- ![📱](https://img.shields.io/badge/📱-Responsief_design-lightgrey?style=flat-square) **Mobile-friendly** — Oefen altijd en overal, op mobiel, tablet of desktop.  
+- ![🌐](https://img.shields.io/badge/🌐-Meertalig-lightgrey?style=flat-square) **Meertalige ondersteuning** — Nederlands, Engels en meer in de toekomst.
 
-### 2. Installeer dependencies
-\`\`\`bash
-npm install
-# of
-yarn install
-\`\`\`
+## Technologieën
 
-### 3. Environment variabelen instellen
-Kopieer `.env.example` naar `.env.local`:
-\`\`\`bash
-cp .env.example .env.local
-\`\`\`
+<p>
+  <img src="https://img.shields.io/badge/Next.js-000000?style=for-the-badge&logo=nextdotjs&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/MongoDB-47A248?style=for-the-badge&logo=mongodb&logoColor=white" alt="MongoDB" />
+  <img src="https://img.shields.io/badge/TailwindCSS-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Vercel" />
+  <img src="https://img.shields.io/badge/ShadCN_UI-000000?style=for-the-badge&logo=shadcnui&logoColor=white" alt="ShadCN UI" />
+  <img src="https://img.shields.io/badge/Framer_Motion-000000?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" />
+  <img src="https://img.shields.io/badge/i18n-ready-yellowgreen?style=for-the-badge" alt="Internationalization" />
+</p>
 
-Vul je MongoDB connection string in:
-\`\`\`env
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/gratis-theorie
-\`\`\`
+## Paginastructuur
 
-### 4. Database setup
-Er zijn twee opties voor de database setup:
+- **Home** — Introductie tot het platform met duidelijke call-to-actions.
+- **Oefenen** — Selecteer categorieën en oefen per onderwerp.
+- **Proefexamens** — Neem volledige proefexamens af zoals bij het CBR.
+- **Verkeersborden** — Alle verkeersborden overzichtelijk met uitleg.
+- **Categorieën** — Oefenmateriaal per voertuigtype (Auto, Motor, Scooter).
 
-#### Optie A: MongoDB Atlas (Cloud) - Aanbevolen
-1. Ga naar [MongoDB Atlas](https://www.mongodb.com/atlas)
-2. Maak een gratis account aan
-3. Maak een nieuwe cluster aan
-4. Krijg je connection string
-5. Voeg deze toe aan `.env.local`
+## Roadmap
 
-#### Optie B: Lokale MongoDB
-1. Installeer MongoDB lokaal
-2. Start MongoDB service
-3. Gebruik: `MONGODB_URI=mongodb://localhost:27017/gratis-theorie`
+- **v1.0.0** — Eerste publieke release met basisfunctionaliteiten
+- **v1.1.0** — Toevoeging van dark mode en lichte modus
+- **v1.2.0** — Meertalige ondersteuning voor Nederlands en Engels
+- **v1.3.0** — Gebruikersregistratie en persoonlijke voortgang
+- **v2.0.0** — AI-ondersteund leren en aanbevelingen
 
-### 5. Database seeden met sample data
-Run het MongoDB setup script in MongoDB Compass of MongoDB Shell:
-\`\`\`javascript
-// Kopieer en plak de inhoud van scripts/mongodb-setup.js
-\`\`\`
+## Bijdragen
 
-Of gebruik de MongoDB CLI:
-\`\`\`bash
-mongosh "your-connection-string" --file scripts/mongodb-setup.js
-\`\`\`
+Bijdragen zijn van harte welkom! Volg deze stappen om bij te dragen:
 
-### 6. Start de development server
-\`\`\`bash
-npm run dev
-# of
-yarn dev
-\`\`\`
+1. Fork deze repository  
+2. Maak een feature branch (`git checkout -b feature/naam`)  
+3. Commit je wijzigingen met duidelijke berichten  
+4. Dien een Pull Request in
 
-Ga naar [http://localhost:3000](http://localhost:3000)
+> *Samen bouwen we aan een gratis en toegankelijk theorieplatform voor iedereen!*
 
-## 📁 Project Structuur
+## Licentie
 
-\`\`\`
-gratis-theorie/
-├── app/                    # Next.js App Router
-│   ├── api/               # API routes
-│   │   ├── questions/     # Vragen API
-│   │   └── categories/    # Categorieën API
-│   ├── practice/          # Oefenpagina
-│   ├── exams/            # Examenpagina
-│   ├── categories/       # Categorieën overzicht
-│   └── page.tsx          # Homepage
-├── components/           # React componenten
-│   └── ui/              # shadcn/ui componenten
-├── lib/                 # Utilities
-│   └── mongodb.ts       # Database connectie
-├── scripts/             # Database scripts
-└── public/             # Statische bestanden
-\`\`\`
+Dit project valt onder de [MIT Licentie](LICENSE). Bekijk het LICENSE-bestand voor de volledige tekst.
 
-## 🗄️ Database Schema
+## Versie
 
-### Questions Collection
-\`\`\`javascript
-{
-  _id: ObjectId,
-  question: String,           // De vraag
-  options: [String],          // Antwoordopties (array)
-  correctAnswer: Number,      // Index van het juiste antwoord
-  explanation: String,        // Uitleg van het antwoord
-  category: String,          // "auto", "scooter", "motor"
-  difficulty: String,        // "easy", "medium", "hard"
-  image: String,             // Optioneel: URL naar afbeelding
-  createdAt: Date
-}
-\`\`\`
+**Huidige versie:** `v1.0`
 
-### Categories Collection
-\`\`\`javascript
-{
-  _id: ObjectId,
-  id: String,                // "auto", "scooter", "motor"
-  name: String,              // Display naam
-  description: String,       // Beschrijving
-  minimumAge: Number,        // Minimum leeftijd
-  active: Boolean,           // Of categorie actief is
-  createdAt: Date
-}
-\`\`\`
+## FAQ
 
-## 🔧 Configuratie
+<details>
+<summary>Is Gratis Theorie écht gratis?</summary>
 
-### Environment Variabelen
-- `MONGODB_URI`: MongoDB connection string (verplicht)
-- `NEXT_PUBLIC_APP_URL`: Base URL van de applicatie
+Ja! Het platform is volledig gratis en zal dat altijd blijven. Er zijn geen verborgen kosten of proefperiodes.
 
-### MongoDB Indexes
-Voor optimale performance worden deze indexes automatisch aangemaakt:
-- `{ category: 1 }`
-- `{ difficulty: 1 }`
-- `{ category: 1, difficulty: 1 }`
+</details>
 
-## 📱 Features in Detail
+<details>
+<summary>Zijn de vragen gelijk aan het echte CBR-examen?</summary>
 
-### Oefenmodus (`/practice`)
-- Willekeurige vragen per categorie
-- Directe feedback met uitleg
-- Voortgangsindicator
-- Navigatie tussen vragen
-- Score tracking
+De vragen zijn gebaseerd op het officiële CBR-vragentype en zijn samengesteld met dezelfde logica, maar zijn niet exact identiek.
 
-### Proefexamens (`/exams`)
-- Volledige examens (40 vragen)
-- 30 minuten tijdslimiet
-- 70% vereist om te slagen
-- Vraag navigator
-- Eindresultaat met percentage
+</details>
 
-### Categorieën (`/categories`)
-- Overzicht van alle categorieën
-- Statistieken per categorie
-- Directe links naar oefenen/examens
+<details>
+<summary>Kan ik mijn voortgang bijhouden?</summary>
 
-## 🚀 Deployment
+Binnenkort wel! We zijn bezig met een profielmodule waarin je jouw voortgang kunt zien.
 
-### Vercel (Aanbevolen)
-1. Push code naar GitHub
-2. Verbind repository met Vercel
-3. Voeg environment variabelen toe in Vercel dashboard
-4. Deploy automatisch bij elke push
+</details>
 
-### Andere platforms
-Het project werkt op elke Node.js hosting provider:
-- Netlify
-- Railway
-- DigitalOcean App Platform
-- AWS Amplify
+## Contact
 
-## 🔄 Data Management
+Voor vragen, feedback of samenwerking:  
+- Open een [issue op GitHub](https://github.com/yourusername/gratistheorie/issues)  
+- Email: [support@gratistheorie.nl](mailto:support@gratistheorie.nl)  
+- Instagram: [@gratistheorie](https://instagram.com/gratistheorie)  
+- GitHub: [@yourusername](https://github.com/yourusername)
 
-### Nieuwe vragen toevoegen
-Voeg vragen toe via MongoDB Compass of programmatisch:
-\`\`\`javascript
-db.questions.insertOne({
-  question: "Je nieuwe vraag?",
-  options: ["Optie 1", "Optie 2", "Optie 3", "Optie 4"],
-  correctAnswer: 0,
-  explanation: "Uitleg van het juiste antwoord",
-  category: "auto",
-  difficulty: "medium",
-  createdAt: new Date()
-})
-\`\`\`
+---
 
-### Backup en Restore
-\`\`\`bash
-# Backup
-mongodump --uri="your-connection-string" --db=gratis-theorie
-
-# Restore  
-mongorestore --uri="your-connection-string" --db=gratis-theorie dump/gratis-theorie/
-\`\`\`
-
-## 🎨 Customization
-
-### Styling aanpassen
-- Wijzig kleuren in `tailwind.config.ts`
-- Pas componenten aan in `components/ui/`
-- Globale styles in `app/globals.css`
-
-### Nieuwe categorieën toevoegen
-1. Voeg categorie toe aan database
-2. Voeg vragen toe voor nieuwe categorie
-3. Update frontend componenten indien nodig
-
-## 🐛 Troubleshooting
-
-### Database connectie problemen
-- Controleer MongoDB connection string
-- Zorg dat IP-adres is whitelisted (Atlas)
-- Check firewall instellingen
-
-### Performance problemen
-- Controleer database indexes
-- Monitor API response times
-- Optimaliseer queries indien nodig
-
-### Build errors
-- Controleer TypeScript errors
-- Zorg dat alle dependencies geïnstalleerd zijn
-- Check environment variabelen
-
-## 📄 Licentie
-
-Dit project is open source en beschikbaar onder de MIT licentie.
-
-## 🤝 Bijdragen
-
-Bijdragen zijn welkom! Open een issue of submit een pull request.
-
-## 📞 Support
-
-Voor vragen of problemen, open een issue in de GitHub repository.
+Dank je wel voor het gebruiken van *Gratis Theorie* — en veel succes met je theorie-examen! 🎓🚗📚
