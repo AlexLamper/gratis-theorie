@@ -32,7 +32,7 @@ export default function Navbar() {
 
   const navigationItems = [
     { href: "/", label: "Home" },
-    { href: "/practice", label: "Oefenen" },
+    { href: "/leren", label: "Leren" },
     { href: "/exams", label: "Proefexamens" },
     { href: "/verkeersborden", label: "Verkeersborden" },
     { href: "/categories", label: "Categorieën" },

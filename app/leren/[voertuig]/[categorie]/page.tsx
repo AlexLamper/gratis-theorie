@@ -4,6 +4,14 @@ import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import LessonContent, { InhoudBlok } from "@/components/LessonContent"
 import { markeerCategorieGelezen } from "@/lib/session"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 interface LesData {
   titel: string
@@ -30,8 +38,27 @@ export default function LesPagina() {
 
   return (
     <div className="max-w-3xl mx-auto px-4 py-8">
-      <h1 className="text-2xl font-bold mb-6 text-gray-800">{les.titel}</h1>
-      <LessonContent inhoud={les.inhoud} />
+        <Breadcrumb className="mb-4">
+            <BreadcrumbList>
+                <BreadcrumbItem>
+                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                    <BreadcrumbLink href="/leren">Leren</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                    <BreadcrumbLink href={`/leren/${voertuig}`}>{voertuig}</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator />
+                <BreadcrumbItem>
+                    <BreadcrumbPage className="capitalize">{categorie}</BreadcrumbPage>
+                </BreadcrumbItem>
+            </BreadcrumbList>
+        </Breadcrumb>
+        <h1 className="text-2xl font-bold mb-6 text-gray-800">{les.titel}</h1>
+        <LessonContent inhoud={les.inhoud} />
     </div>
   )
 }
