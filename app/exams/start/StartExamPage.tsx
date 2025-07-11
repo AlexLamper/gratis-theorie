@@ -152,7 +152,7 @@ export default function StartExamPage() {
 
               {/* Actions */}
               <div className="flex justify-center gap-4 pt-6">
-                <Button onClick={() => location.reload()} className="border border-blue-700/80">
+                <Button onClick={() => location.reload()} className="border border-blue-700/80 hover:cursor-pointer">
                   Opnieuw
                 </Button>
                 <Button asChild variant="outline">

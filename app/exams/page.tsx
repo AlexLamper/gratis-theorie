@@ -170,11 +170,19 @@ export default async function ExamsPage() {
                           asChild
                           key={exam.slug}
                           size="sm"
-                          className={`w-full ${getButtonClass()}`}
+                          className={`group w-full flex items-center justify-between px-4 py-2 border-none font-medium transition-colors duration-200 ${getButtonClass()} hover:shadow-md`}
                         >
-                          <Link href={`/exams/start?exam=${exam.slug}`}>
-                            <Trophy className="h-4 w-4 mr-2" />
-                            {exam.title}
+                          <Link
+                            href={`/exams/start?exam=${exam.slug}`}
+                            className="flex items-center w-full justify-between border-none"
+                          >
+                            <span className="flex items-center">
+                              <Trophy className="h-4 w-4 mr-2" />
+                              {exam.title}
+                            </span>
+                            <span className="text-xs font-semibold transition-all duration-200">
+                              Begin nu →
+                            </span>
                           </Link>
                         </Button>
                       ))}
