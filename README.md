@@ -26,8 +26,7 @@
 
 - [Functionaliteiten](#functionaliteiten)  
 - [Technologieën](#technologieën)  
-- [Paginastructuur](#paginastructuur)  
-- [Roadmap](#roadmap)  
+- [Paginastructuur](#paginastructuur)   
 - [Bijdragen](#bijdragen)  
 - [Licentie](#licentie)  
 - [Versie](#versie)  
