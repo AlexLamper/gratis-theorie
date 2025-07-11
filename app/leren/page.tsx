@@ -49,8 +49,8 @@ export default function LerenStartPage() {
                 </BreadcrumbItem>
             </BreadcrumbList>
         </Breadcrumb>
-        <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">Kies je Voertuigtype</h1>
-        <p className="text-center text-gray-600 mb-10">Start met leren door je voertuigtype te kiezen:</p>
+        <h1 className="text-3xl font-bold mb-6 text-gray-800 text-center">Voor welk voertuigtype wil je leren?</h1>
+        <p className="text-center text-gray-600 mb-10">Kies een van de onderstaande voertuigen:</p>
 
         <div className="grid md:grid-cols-3 gap-6">
             {voertuigtypes.map(({ id, label, icon: Icon, color, beschrijving }) => (
