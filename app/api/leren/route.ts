@@ -1,23 +1,23 @@
 import { NextRequest, NextResponse } from "next/server"
+import mongoose from "mongoose"
 import connectMongoDB from "@/libs/mongodb"
 import Vehicle from "@/models/Vehicle"
 import Category from "@/models/Category"
 import Lesson from "@/models/Lesson"
 
-// (optioneel) definieer types als je die nog niet hebt
 interface VehicleDoc {
-  _id: string
+  _id: mongoose.Types.ObjectId
   name: string
   displayName: string
   icon?: string
 }
 
 interface CategoryDoc {
-  _id: string
+  _id: mongoose.Types.ObjectId
   slug: string
   title: string
   icon?: string
-  vehicleId: string
+  vehicleId: mongoose.Types.ObjectId
   order: number
 }
 
@@ -36,46 +36,50 @@ export async function GET(req: NextRequest) {
 
     console.log("[DEBUG] voertuig:", voertuig, "categorie:", categorie)
 
-    // Zoek voertuig op slug (bv. "auto")
+    // Zoek voertuig op naam
     const vehicle = await Vehicle.findOne({ name: voertuig }).lean<VehicleDoc | null>()
     if (!vehicle || !vehicle._id) {
+      console.error("[DEBUG] Geen voertuig gevonden:", voertuig)
       return NextResponse.json({ error: "Voertuig niet gevonden." }, { status: 404 })
     }
 
-    // Als categorie meegegeven is, haal lessen op binnen die categorie
+    const vehicleId = new mongoose.Types.ObjectId(vehicle._id)
+
     if (categorie) {
+      console.log("[DEBUG] Opzoeken categorie voor voertuigId:", vehicleId, "en slug:", categorie)
+
       const category = await Category.findOne({
-        vehicleId: vehicle._id,
+        vehicleId,
         slug: categorie,
       }).lean<CategoryDoc | null>()
 
-      // Bestaande data kan nog volgens het oude schema zijn opgeslagen
-      // waarbij lessen een `voertuig` en `categorie` veld hebben.
-      // Zoek daarom eerst lessen via het nieuwe schema, maar val terug
-      // op het oude schema wanneer er niets wordt gevonden.
+      console.log("[DEBUG] Gevonden categorie:", category)
 
       let lessons: any[] = []
 
       if (category && category._id) {
-        lessons = await Lesson.find({ categoryId: category._id })
-          .sort({ order: 1 })
-          .lean()
+        const categoryId = new mongoose.Types.ObjectId(category._id)
+        lessons = await Lesson.find({ categoryId }).sort({ order: 1 }).lean()
+        console.log("[DEBUG] Gevonden lessen via categoryId:", lessons.length)
       }
 
-      // Fallback naar oud schema wanneer er geen lessen zijn gevonden
+      // Fallback voor oude data
       if (lessons.length === 0) {
         lessons = await Lesson.find({ voertuig, categorie }).sort({ volgorde: 1 }).lean()
+        console.log("[DEBUG] Gevonden lessen via fallback:", lessons.length)
       }
 
       if (lessons.length === 0) {
+        console.warn("[DEBUG] Geen lessen gevonden voor categorie:", categorie)
         return NextResponse.json({ error: "Geen lessen gevonden." }, { status: 404 })
       }
 
       return NextResponse.json(lessons)
     }
 
-    // Geen categorie → geef alle categorieën voor dit voertuig
-    const categories = await Category.find({ vehicleId: vehicle._id }).sort({ order: 1 }).lean()
+    // Geen categorie? Geef alle categorieën voor dit voertuig
+    const categories = await Category.find({ vehicleId }).sort({ order: 1 }).lean()
+    console.log("[DEBUG] Gevonden categorieën:", categories.length)
     return NextResponse.json(categories)
   } catch (error) {
     console.error("[ERROR] Fout bij ophalen leerdata:", error)
