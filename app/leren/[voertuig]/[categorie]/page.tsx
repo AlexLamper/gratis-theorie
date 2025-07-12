@@ -8,6 +8,14 @@ import { markeerCategorieGelezen } from "@/lib/session"
 import { Card, CardContent } from "@/components/ui/card"
 import { ChevronDown, ChevronRight } from "lucide-react"
 import clsx from "clsx"
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb"
 
 interface LesData {
   titel: string
@@ -26,6 +34,12 @@ interface CategorieGroep {
   sublessen: Subles[]
 }
 
+interface VehicleData {
+  name: string
+  displayName: string
+  icon?: string
+}
+
 export default function LesPagina() {
   const { voertuig, categorie } = useParams()
   const searchParams = useSearchParams()
@@ -34,14 +48,28 @@ export default function LesPagina() {
   const [groepen, setGroepen] = useState<CategorieGroep[]>([])
   const [actieveGroep, setActieveGroep] = useState<string | null>(categorie as string)
   const [actieveLes, setActieveLes] = useState<LesData | null>(null)
+  const [voertuigData, setVoertuigData] = useState<VehicleData | null>(null)
 
   const lesIndexParam = searchParams.get("les")
   const lesVolgorde = parseInt(lesIndexParam || "1", 10)
 
-  // ✅ DEBUG helper
   function log(...args: any[]) {
     console.debug("[LesPagina]", ...args)
   }
+
+  useEffect(() => {
+    async function fetchVoertuigData() {
+      try {
+        const res = await fetch("/api/voertuigen")
+        const data: VehicleData[] = await res.json()
+        const gevonden = data.find((v) => v.name === voertuig)
+        setVoertuigData(gevonden || null)
+      } catch (err) {
+        console.error("Fout bij laden voertuiginfo:", err)
+      }
+    }
+    fetchVoertuigData()
+  }, [voertuig])
 
   useEffect(() => {
     async function fetchCategorieenEnSublessen() {
@@ -134,82 +162,106 @@ export default function LesPagina() {
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6">
-      <div className="max-w-6xl mx-auto flex gap-6">
-        {/* Sidebar */}
-        <aside className="w-[300px] bg-white rounded-2xl border border-gray-200 p-4">
-          {groepen.map((groep) => {
-            const actief = groep.categorie === actieveGroep
-            return (
-              <div key={groep.categorie} className="mb-4">
-                <button
-                  onClick={() =>
-                    setActieveGroep(actief ? null : groep.categorie)
-                  }
-                  className={clsx(
-                    "w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium text-sm text-left",
-                    actief ? "bg-gray-100" : "hover:bg-gray-50"
-                  )}
-                >
-                  {groep.titel}
-                  {actief ? (
-                    <ChevronDown className="h-4 w-4" />
-                  ) : (
-                    <ChevronRight className="h-4 w-4" />
-                  )}
-                </button>
-                {actief && (
-                  <ul className="pl-3 mt-2 text-sm space-y-1">
-                    {groep.sublessen.map((les, index) => {
-                      const isActiefLes =
-                        groep.categorie === categorie &&
-                        les.volgorde === lesVolgorde
-                      return (
-                        <li key={index}>
-                          <Link
-                            href={`/leren/${voertuig}/${groep.categorie}?les=${les.volgorde}`}
-                            className={clsx(
-                              "block px-2 py-1 rounded-md transition",
-                              isActiefLes
-                                ? "text-gray-900 font-medium border-l-4 border-blue-500 bg-gray-100"
-                                : "text-gray-700 hover:bg-gray-50"
-                            )}
-                          >
-                            {index + 1}. {les.titel}
-                          </Link>
-                        </li>
-                      )
-                    })}
-                  </ul>
+      <div className="max-w-6xl mx-auto">
+        <Breadcrumb className="mb-6">
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/leren">Leren</BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink href={`/leren/${voertuig}`}>
+                {voertuigData?.displayName || voertuig}
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage className="capitalize">
+                {groepen.find((g) => g.categorie === categorie)?.titel || categorie}
+              </BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
+
+        <div className="flex gap-6">
+          {/* Sidebar */}
+          <aside className="w-[300px] bg-white rounded-2xl border border-gray-200 p-4">
+            {groepen
+              .sort((a, b) => a.titel.localeCompare(b.titel))
+              .map((groep) => {
+                const actief = groep.categorie === actieveGroep
+                return (
+                  <div key={groep.categorie} className="mb-4">
+                    <button
+                      onClick={() => setActieveGroep(actief ? null : groep.categorie)}
+                      className={clsx(
+                        "w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium text-sm text-left",
+                        actief ? "bg-gray-100" : "hover:bg-gray-50"
+                      )}
+                    >
+                      {groep.titel}
+                      {actief ? (
+                        <ChevronDown className="h-4 w-4" />
+                      ) : (
+                        <ChevronRight className="h-4 w-4" />
+                      )}
+                    </button>
+                    <ul className="pl-3 mt-2 text-sm space-y-1 transition-all duration-300">
+                      {groep.sublessen.map((les, index) => {
+                        const isActiefLes =
+                          groep.categorie === categorie &&
+                          les.volgorde === lesVolgorde
+                        return (
+                          <li key={index}>
+                            <Link
+                              href={`/leren/${voertuig}/${groep.categorie}?les=${les.volgorde}`}
+                              className={clsx(
+                                "block px-2 py-1 rounded-md transition",
+                                isActiefLes
+                                  ? "text-gray-900 font-medium border-l-4 border-blue-500 bg-gray-100"
+                                  : "text-gray-700 hover:bg-gray-50"
+                              )}
+                            >
+                              {index + 1}. {les.titel}
+                            </Link>
+                          </li>
+                        )
+                      })}
+                    </ul>
+                  </div>
+                )
+              })}
+          </aside>
+
+          {/* Lesinhoud */}
+          <main className="flex-1">
+            <Card className="rounded-2xl shadow-md border border-gray-200 overflow-hidden">
+              <CardContent className="p-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-6">
+                  {actieveLes.titel}
+                </h1>
+
+                {actieveLes.inhoud[0]?.type === "afbeelding" && (
+                  <div className="rounded-xl overflow-hidden mb-6">
+                    <img
+                      src={actieveLes.inhoud[0].bron}
+                      alt={actieveLes.inhoud[0].bijschrift || "Inleidende afbeelding"}
+                      className="w-full object-cover max-h-[360px] mx-auto rounded-xl"
+                    />
+                  </div>
                 )}
-              </div>
-            )
-          })}
-        </aside>
 
-        {/* Lesinhoud */}
-        <main className="flex-1">
-          <Card className="rounded-2xl shadow-md border border-gray-200 overflow-hidden">
-            <CardContent className="p-8">
-              <h1 className="text-3xl font-bold text-gray-900 mb-6">
-                {actieveLes.titel}
-              </h1>
-
-              {actieveLes.inhoud[0]?.type === "afbeelding" && (
-                <div className="rounded-xl overflow-hidden mb-6">
-                  <img
-                    src={actieveLes.inhoud[0].bron}
-                    alt={actieveLes.inhoud[0].bijschrift || "Inleidende afbeelding"}
-                    className="w-full object-cover max-h-[360px] mx-auto rounded-xl"
-                  />
+                <div className="prose max-w-none">
+                  <LessonContent inhoud={actieveLes.inhoud} />
                 </div>
-              )}
-
-              <div className="prose max-w-none">
-                <LessonContent inhoud={actieveLes.inhoud} />
-              </div>
-            </CardContent>
-          </Card>
-        </main>
+              </CardContent>
+            </Card>
+          </main>
+        </div>
       </div>
     </div>
   )
