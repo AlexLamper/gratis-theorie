@@ -1,20 +1,17 @@
 # Gratis Theorie - Oefenplatform voor het Theorie-examen
 
 <p>
-  <img src="https://img.shields.io/github/license/yourusername/gratistheorie?style=for-the-badge" alt="License" />
-  <img src="https://img.shields.io/github/issues/yourusername/gratistheorie?style=for-the-badge&logo=github" alt="Issues" />
-  <img src="https://img.shields.io/github/contributors/yourusername/gratistheorie?style=for-the-badge&logo=github" alt="Contributors" />
+  <img src="https://img.shields.io/github/license/AlexLamper/gratis-theorie?style=for-the-badge" alt="License" />
+  <img src="https://img.shields.io/github/issues/AlexLamper/gratis-theorie?style=for-the-badge&logo=github" alt="Issues" />
+  <img src="https://img.shields.io/github/contributors/AlexLamper/gratis-theorie?style=for-the-badge&logo=github" alt="Contributors" />
 </p>
 
 **Oefen gratis en onbeperkt voor je theorie-examen auto, motor of scooter met realistische CBR-vragen.**
 
 ![Gratis Theorie Screenshot](public/screenshot.png)
 <p>
-  <a href="https://gratistheorie.nl">
-    <img src="https://img.shields.io/badge/Live_Demo-▶️-blue?style=for-the-badge" alt="Live Demo" />
-  </a>
-  <a href="#aan-de-slag">
-    <img src="https://img.shields.io/badge/Aan_de_slag-🚀-green?style=for-the-badge" alt="Aan de slag" />
+  <a href="https://gratis-theorie.com">
+    <img src="https://img.shields.io/badge/Ga naar Site-▶️-blue?style=for-the-badge" alt="Ga Naar Site" />
   </a>
 </p>
 
