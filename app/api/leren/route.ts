@@ -49,11 +49,28 @@ export async function GET(req: NextRequest) {
         slug: categorie,
       }).lean<CategoryDoc | null>()
 
-      if (!category || !category._id) {
-        return NextResponse.json({ error: "Categorie niet gevonden." }, { status: 404 })
+      // Bestaande data kan nog volgens het oude schema zijn opgeslagen
+      // waarbij lessen een `voertuig` en `categorie` veld hebben.
+      // Zoek daarom eerst lessen via het nieuwe schema, maar val terug
+      // op het oude schema wanneer er niets wordt gevonden.
+
+      let lessons: any[] = []
+
+      if (category && category._id) {
+        lessons = await Lesson.find({ categoryId: category._id })
+          .sort({ order: 1 })
+          .lean()
       }
 
-      const lessons = await Lesson.find({ categoryId: category._id }).sort({ order: 1 }).lean()
+      // Fallback naar oud schema wanneer er geen lessen zijn gevonden
+      if (lessons.length === 0) {
+        lessons = await Lesson.find({ voertuig, categorie }).sort({ volgorde: 1 }).lean()
+      }
+
+      if (lessons.length === 0) {
+        return NextResponse.json({ error: "Geen lessen gevonden." }, { status: 404 })
+      }
+
       return NextResponse.json(lessons)
     }
 
