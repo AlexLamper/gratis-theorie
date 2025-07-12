@@ -1,23 +1,20 @@
 import mongoose from "mongoose"
 
-const LessonSchema = new mongoose.Schema({
-  voertuig: { type: String, enum: ["auto", "motor", "scooter"], required: true },
-  categorie: { type: String, required: true },
-  titel: { type: String, required: true },
-  inhoud: [
-    {
-      type: { type: String, enum: ["paragraaf", "afbeelding", "lijst"], required: true },
-      tekst: String,
-      bron: String,
-      bijschrift: String,
-      items: [String],
-    }
-  ],
-  volgorde: { type: Number, default: 0 },
-  tags: [String],
-}, {
-  timestamps: true,
-  collection: "leerstof"
-})
+const schemaName = "Lesson"
 
-export default mongoose.models.Lesson || mongoose.model("Lesson", LessonSchema)
+const LessonSchema = new mongoose.Schema(
+  {
+    categoryId: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
+    slug: { type: String, required: true },
+    title: { type: String, required: true },
+    content: { type: String, required: true },
+    image: { type: String },
+    order: { type: Number, default: 0 },
+  },
+  {
+    timestamps: true,
+    collection: "lessons",
+  }
+)
+
+export default mongoose.models[schemaName] || mongoose.model(schemaName, LessonSchema)

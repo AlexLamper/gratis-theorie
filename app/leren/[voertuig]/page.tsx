@@ -15,10 +15,6 @@ import {
 import {
   Bike,
   BikeIcon as Scooter,
-} from "lucide-react"
-import { getVoortgang } from "@/lib/session"
-import { Input } from "@/components/ui/input"
-import {
   ParkingCircle,
   TrafficCone,
   User,
@@ -30,7 +26,9 @@ import {
   Users,
   Route,
   TrafficConeIcon,
-} from "lucide-react";
+} from "lucide-react"
+import { getVoortgang } from "@/lib/session"
+import { Input } from "@/components/ui/input"
 
 const categorieIconen: Record<string, JSX.Element> = {
   "milieu": <Leaf className="h-6 w-6 text-green-600" />,
@@ -44,12 +42,12 @@ const categorieIconen: Record<string, JSX.Element> = {
   "verkeersregelaar": <TrafficCone className="h-6 w-6 text-red-500" />,
   "kruispunten": <TrafficConeIcon className="h-6 w-6 text-teal-600" />,
   "default": <HelpCircle className="h-6 w-6 text-gray-500" />,
-};
+}
 
 interface CategorieInfo {
-  categorie: string
-  titel: string
-  tags: string[]
+  slug: string
+  title: string
+  order: number
 }
 
 export default function CategorieOverzichtPage() {
@@ -80,32 +78,34 @@ export default function CategorieOverzichtPage() {
 
   useEffect(() => {
     async function fetchData() {
-        const res = await fetch(`/api/leerstof?voertuig=${voertuig}`)
-        if (res.ok) {
+      const res = await fetch(`/api/leren?voertuig=${voertuig}`)
+      if (res.ok) {
         const data = await res.json()
-        const uniek = data.map((item: any) => ({
-            categorie: item.categorie,
-            titel: item.titel,
-            tags: item.tags || [],
+        const categorieen = data.map((cat: any) => ({
+          slug: cat.slug,
+          title: cat.title,
+          order: cat.order || 0,
         }))
-        setCategorieen(uniek)
-        console.log("[DEBUG] Gevonden lessen:", data)
-        } else {
-        console.error("Fout bij laden van lessen", await res.text())
-        }
+        setCategorieen(categorieen)
+        console.log("[DEBUG] Gevonden categorieën:", categorieen)
+      } else {
+        console.error("Fout bij laden van categorieën", await res.text())
+      }
     }
-    fetchData()
-    }, [voertuig])
 
+    if (voertuig) {
+      fetchData()
+    }
+  }, [voertuig])
 
-  const categorieNamen = categorieen.map((c) => c.categorie)
+  const categorieSlugs = categorieen.map((c) => c.slug)
   const voortgang = getVoortgang()
   const gelezen = voortgang?.gelezen || {}
 
   const filtered = useMemo(
     () =>
       categorieen.filter((c) =>
-        c.titel.toLowerCase().includes(zoek.toLowerCase())
+        c.title.toLowerCase().includes(zoek.toLowerCase())
       ),
     [categorieen, zoek]
   )
@@ -126,7 +126,9 @@ export default function CategorieOverzichtPage() {
             </BreadcrumbItem>
             <BreadcrumbSeparator />
             <BreadcrumbItem>
-              <BreadcrumbPage className="capitalize">{info.label}</BreadcrumbPage>
+              <BreadcrumbPage className="capitalize">
+                {info.label}
+              </BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
@@ -138,12 +140,10 @@ export default function CategorieOverzichtPage() {
           <h1 className="text-3xl font-bold text-gray-800 mb-2 capitalize">
             {info.label} Theorie
           </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            {info.beschrijving}
-          </p>
+          <p className="text-gray-600 max-w-2xl mx-auto">{info.beschrijving}</p>
         </div>
 
-        <ProgressTracker voertuig={voertuig as string} categorieen={categorieNamen} />
+        <ProgressTracker voertuig={voertuig as string} categorieen={categorieSlugs} />
 
         <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
           <Input
@@ -158,60 +158,34 @@ export default function CategorieOverzichtPage() {
         </div>
 
         <div className="mb-8">
-            <h2 className="text-2xl font-semibold text-gray-800 mb-1">{info.label} theorie hoofdstukken</h2>
-            <p className="text-sm text-gray-600 mb-6">
-                Alles wat je moet weten voor je {info.label.toLowerCase()} theorie examen opgesplitst in hoofdstukken en gratis te lezen
-            </p>
+          <h2 className="text-2xl font-semibold text-gray-800 mb-1">
+            {info.label} theorie hoofdstukken
+          </h2>
+          <p className="text-sm text-gray-600 mb-6">
+            Alles wat je moet weten voor je{" "}
+            {info.label.toLowerCase()} theorie examen opgesplitst in
+            hoofdstukken en gratis te lezen
+          </p>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {filtered.map((cat) => (
-                <Link
-                    key={cat.categorie}
-                    href={`/leren/${voertuig}/${cat.categorie}`}
-                    className="block rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm transition"
-                >
-                    <div className="flex items-center space-x-3">
-                    <div className="text-xl">
-                        {categorieIconen[cat.categorie] || categorieIconen["default"]}
-                    </div>
-                    <h3 className="text-sm font-medium text-gray-800 leading-snug">
-                        {cat.titel}
-                    </h3>
-                    </div>
-                </Link>
-                ))}
-            </div>
-            </div>
-
-        {/* <div className="grid md:grid-cols-2 gap-8 mt-12">
-          <Card className="border border-gray-300/70 hover:shadow-lg transition-all">
-            <CardHeader>
-              <div className="flex items-center space-x-2">
-                <Info className="h-5 w-5 text-blue-600" />
-                <CardTitle className="text-lg">Waarom deze categorieën?</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-2 text-gray-600 text-sm">
-              <p>• De leerstof is opgesplitst in behapbare onderdelen.</p>
-              <p>• Voltooi elke categorie om je voortgang bij te houden.</p>
-              <p>• Herhaal regelmatig voor het beste resultaat.</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-gray-300/70 hover:shadow-lg transition-all">
-            <CardHeader>
-              <div className="flex items-center space-x-2">
-                <AlertTriangle className="h-5 w-5 text-yellow-600" />
-                <CardTitle className="text-lg">Tips voor het leren</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-2 text-gray-600 text-sm">
-              <p>• Bestudeer de uitleg aandachtig.</p>
-              <p>• Gebruik de zoekfunctie om snel onderwerpen te vinden.</p>
-              <p>• Lees de categorieën in de aangegeven volgorde.</p>
-            </CardContent>
-          </Card>
-        </div> */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+            {filtered.map((cat) => (
+              <Link
+                key={cat.slug}
+                href={`/leren/${voertuig}/${cat.slug}`}
+                className="block rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm transition"
+              >
+                <div className="flex items-center space-x-3">
+                  <div className="text-xl">
+                    {categorieIconen[cat.slug] || categorieIconen["default"]}
+                  </div>
+                  <h3 className="text-sm font-medium text-gray-800 leading-snug">
+                    {cat.title}
+                  </h3>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   )
