@@ -16,10 +16,11 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
+import parse from "html-react-parser"
 
 interface LesData {
   titel: string
-  inhoud: InhoudBlok[]
+  inhoud: InhoudBlok[] | string
   volgorde?: number
 }
 
@@ -145,7 +146,7 @@ export default function LesPagina() {
           titel: juisteLes.title,
           inhoud: Array.isArray(juisteLes.content)
             ? juisteLes.content
-            : [{ type: "paragraaf", tekst: juisteLes.content }],
+            : juisteLes.content,
           volgorde: juisteLes.order,
         })
 
@@ -188,7 +189,6 @@ export default function LesPagina() {
         </Breadcrumb>
 
         <div className="flex gap-6">
-          {/* Sidebar */}
           <aside className="w-[300px] bg-white rounded-2xl border border-gray-200 p-4">
             {groepen
               .sort((a, b) => a.titel.localeCompare(b.titel))
@@ -237,7 +237,6 @@ export default function LesPagina() {
               })}
           </aside>
 
-          {/* Lesinhoud */}
           <main className="flex-1">
             <Card className="rounded-2xl shadow-md border border-gray-200 overflow-hidden">
               <CardContent className="p-8">
@@ -245,7 +244,7 @@ export default function LesPagina() {
                   {actieveLes.titel}
                 </h1>
 
-                {actieveLes.inhoud[0]?.type === "afbeelding" && (
+                {Array.isArray(actieveLes.inhoud) && actieveLes.inhoud[0]?.type === "afbeelding" && (
                   <div className="rounded-xl overflow-hidden mb-6">
                     <img
                       src={actieveLes.inhoud[0].bron}
@@ -255,8 +254,12 @@ export default function LesPagina() {
                   </div>
                 )}
 
-                <div className="prose max-w-none">
-                  <LessonContent inhoud={actieveLes.inhoud} />
+                <div className="prose prose-blue prose-lg max-w-none">
+                  {Array.isArray(actieveLes.inhoud) ? (
+                    <LessonContent inhoud={actieveLes.inhoud} />
+                  ) : (
+                    parse(actieveLes.inhoud)
+                  )}
                 </div>
               </CardContent>
             </Card>
