@@ -53,6 +53,7 @@ interface CategorieInfo {
 export default function CategorieOverzichtPage() {
   const { voertuig } = useParams()
   const [categorieen, setCategorieen] = useState<CategorieInfo[]>([])
+  const [loading, setLoading] = useState(true)
   const [zoek, setZoek] = useState("")
 
   const voertuigInfo = {
@@ -78,18 +79,23 @@ export default function CategorieOverzichtPage() {
 
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch(`/api/leren?voertuig=${voertuig}`)
-      if (res.ok) {
-        const data = await res.json()
-        const categorieen = data.map((cat: any) => ({
-          slug: cat.slug,
-          title: cat.title,
-          order: cat.order || 0,
-        }))
-        setCategorieen(categorieen)
-        console.log("[DEBUG] Gevonden categorieën:", categorieen)
-      } else {
-        console.error("Fout bij laden van categorieën", await res.text())
+      try {
+        const res = await fetch(`/api/leren?voertuig=${voertuig}`)
+        if (res.ok) {
+          const data = await res.json()
+          const categorieen = data.map((cat: any) => ({
+            slug: cat.slug,
+            title: cat.title,
+            order: cat.order || 0,
+          }))
+          setCategorieen(categorieen)
+        } else {
+          console.error("Fout bij laden van categorieën", await res.text())
+        }
+      } catch (err) {
+        console.error("Fout tijdens ophalen:", err)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -143,49 +149,57 @@ export default function CategorieOverzichtPage() {
           <p className="text-gray-600 max-w-2xl mx-auto">{info.beschrijving}</p>
         </div>
 
-        <ProgressTracker voertuig={voertuig as string} categorieen={categorieSlugs} />
-
-        <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
-          <Input
-            placeholder="Zoek een categorie..."
-            value={zoek}
-            onChange={(e) => setZoek(e.target.value)}
-            className="max-w-xs"
-          />
-          <span className="text-sm text-gray-600">
-            {filtered.length} van {categorieen.length} categorieën
-          </span>
-        </div>
-
-        <div className="mb-8">
-          <h2 className="text-2xl font-semibold text-gray-800 mb-1">
-            {info.label} theorie hoofdstukken
-          </h2>
-          <p className="text-sm text-gray-600 mb-6">
-            Alles wat je moet weten voor je{" "}
-            {info.label.toLowerCase()} theorie examen opgesplitst in
-            hoofdstukken en gratis te lezen
-          </p>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {filtered.map((cat) => (
-              <Link
-                key={cat.slug}
-                href={`/leren/${voertuig}/${cat.slug}`}
-                className="block rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm transition"
-              >
-                <div className="flex items-center space-x-3">
-                  <div className="text-xl">
-                    {categorieIconen[cat.slug] || categorieIconen["default"]}
-                  </div>
-                  <h3 className="text-sm font-medium text-gray-800 leading-snug">
-                    {cat.title}
-                  </h3>
-                </div>
-              </Link>
-            ))}
+        {loading ? (
+          <div className="flex justify-center items-center h-40">
+            <div className="h-10 w-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" />
           </div>
-        </div>
+        ) : (
+          <>
+            <ProgressTracker voertuig={voertuig as string} categorieen={categorieSlugs} />
+
+            <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
+              <Input
+                placeholder="Zoek een categorie..."
+                value={zoek}
+                onChange={(e) => setZoek(e.target.value)}
+                className="max-w-xs"
+              />
+              <span className="text-sm text-gray-600">
+                {filtered.length} van {categorieen.length} categorieën
+              </span>
+            </div>
+
+            <div className="mb-8">
+              <h2 className="text-2xl font-semibold text-gray-800 mb-1">
+                {info.label} theorie hoofdstukken
+              </h2>
+              <p className="text-sm text-gray-600 mb-6">
+                Alles wat je moet weten voor je{" "}
+                {info.label.toLowerCase()} theorie examen opgesplitst in
+                hoofdstukken en gratis te lezen
+              </p>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {filtered.map((cat) => (
+                  <Link
+                    key={cat.slug}
+                    href={`/leren/${voertuig}/${cat.slug}`}
+                    className="block rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm transition"
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="text-xl">
+                        {categorieIconen[cat.slug] || categorieIconen["default"]}
+                      </div>
+                      <h3 className="text-sm font-medium text-gray-800 leading-snug">
+                        {cat.title}
+                      </h3>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   )

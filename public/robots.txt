@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://gratis-theorie.com
+
+# Sitemaps
+Sitemap: https://gratis-theorie.com/sitemap.xml
