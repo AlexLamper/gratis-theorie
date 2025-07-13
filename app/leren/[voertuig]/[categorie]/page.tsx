@@ -50,6 +50,7 @@ export default function LesPagina() {
   const [actieveGroep, setActieveGroep] = useState<string | null>(categorie as string)
   const [actieveLes, setActieveLes] = useState<LesData | null>(null)
   const [voertuigData, setVoertuigData] = useState<VehicleData | null>(null)
+  const [loading, setLoading] = useState(true)
 
   const lesIndexParam = searchParams.get("les")
   const lesVolgorde = parseInt(lesIndexParam || "1", 10)
@@ -59,43 +60,27 @@ export default function LesPagina() {
   }
 
   useEffect(() => {
-    async function fetchVoertuigData() {
+    async function fetchAllData() {
       try {
-        const res = await fetch("/api/voertuigen")
-        const data: VehicleData[] = await res.json()
-        const gevonden = data.find((v) => v.name === voertuig)
-        setVoertuigData(gevonden || null)
-      } catch (err) {
-        console.error("Fout bij laden voertuiginfo:", err)
-      }
-    }
-    fetchVoertuigData()
-  }, [voertuig])
+        // Voertuiggegevens ophalen
+        const voertuigRes = await fetch("/api/voertuigen")
+        const voertuigen: VehicleData[] = await voertuigRes.json()
+        const voertuigInfo = voertuigen.find((v) => v.name === voertuig)
+        setVoertuigData(voertuigInfo || null)
 
-  useEffect(() => {
-    async function fetchCategorieenEnSublessen() {
-      log("Fetching categorieën en sublessen voor voertuig:", voertuig)
-      const res = await fetch(`/api/leren?voertuig=${voertuig}`)
-      if (!res.ok) {
-        console.error("FOUT: Kon categorieën niet ophalen:", res.status)
-        return
-      }
+        // Categorieën en sublessen ophalen
+        const catRes = await fetch(`/api/leren?voertuig=${voertuig}`)
+        const categorieen = await catRes.json()
+        const groepen: CategorieGroep[] = []
 
-      const categorieen = await res.json()
-      const gegroepeerd: CategorieGroep[] = []
-
-      await Promise.all(
-        categorieen.map(async (cat: any) => {
+        for (const cat of categorieen) {
           const slug = cat.slug
           const lesRes = await fetch(`/api/leren?voertuig=${voertuig}&categorie=${slug}`)
-          if (!lesRes.ok) {
-            console.warn(`Lesgroep "${slug}" kon niet geladen worden.`)
-            return
-          }
+          if (!lesRes.ok) continue
 
           const lessen = await lesRes.json()
 
-          gegroepeerd.push({
+          groepen.push({
             categorie: slug,
             titel: cat.title,
             sublessen: lessen.map((l: any) => ({
@@ -103,63 +88,68 @@ export default function LesPagina() {
               volgorde: typeof l.order === "number" ? l.order : parseInt(l.order ?? "1", 10),
             })),
           })
+        }
 
-          log(`✅ Categorie '${slug}' → ${lessen.length} lessen geladen`)
-        })
-      )
-
-      gegroepeerd.forEach((groep) =>
-        groep.sublessen.sort((a, b) => a.volgorde - b.volgorde)
-      )
-
-      setGroepen(gegroepeerd)
+        groepen.forEach((groep) => groep.sublessen.sort((a, b) => a.volgorde - b.volgorde))
+        setGroepen(groepen)
+      } catch (err) {
+        console.error("Fout bij laden van data:", err)
+      }
     }
 
-    fetchCategorieenEnSublessen()
+    if (voertuig) {
+      fetchAllData()
+    }
   }, [voertuig])
 
   useEffect(() => {
     async function fetchLes() {
       if (!categorie || !lesVolgorde) return
 
-      log(`Fetching les voor voertuig=${voertuig}, categorie=${categorie}, volgorde=${lesVolgorde}`)
+      try {
+        const res = await fetch(`/api/leren?voertuig=${voertuig}&categorie=${categorie}`)
+        if (!res.ok) {
+          console.error("FOUT: Kan lessen niet ophalen voor categorie:", categorie)
+          return
+        }
 
-      const res = await fetch(`/api/leren?voertuig=${voertuig}&categorie=${categorie}`)
-      if (!res.ok) {
-        console.error("FOUT: Kan lessen niet ophalen voor categorie:", categorie)
-        return
-      }
-
-      const lessen = await res.json()
-
-      log("Gevonden lessen in categorie:", lessen.length)
-      log("Alle lessen:", lessen.map((l: any) => ({ title: l.title, order: l.order })))
-
-      const juisteLes = lessen.find((l: any) => {
-        const order = typeof l.order === "number" ? l.order : parseInt(l.order ?? "1", 10)
-        return order === lesVolgorde
-      })
-
-      if (juisteLes) {
-        log("✅ Juiste les gevonden:", juisteLes.title)
-        setActieveLes({
-          titel: juisteLes.title,
-          inhoud: Array.isArray(juisteLes.content)
-            ? juisteLes.content
-            : juisteLes.content,
-          volgorde: juisteLes.order,
+        const lessen = await res.json()
+        const juisteLes = lessen.find((l: any) => {
+          const order = typeof l.order === "number" ? l.order : parseInt(l.order ?? "1", 10)
+          return order === lesVolgorde
         })
 
-        markeerCategorieGelezen(voertuig as string, categorie as string)
-      } else {
-        log("❌ Geen overeenkomende les gevonden voor volgorde =", lesVolgorde)
+        if (juisteLes) {
+          setActieveLes({
+            titel: juisteLes.title,
+            inhoud: Array.isArray(juisteLes.content)
+              ? juisteLes.content
+              : juisteLes.content,
+            volgorde: juisteLes.order,
+          })
+          markeerCategorieGelezen(voertuig as string, categorie as string)
+        } else {
+          console.warn("❌ Geen les gevonden met volgorde:", lesVolgorde)
+        }
+      } catch (err) {
+        console.error("Fout bij laden van les:", err)
+      } finally {
+        setLoading(false)
       }
     }
 
-    fetchLes()
+    if (voertuig && categorie && lesVolgorde) {
+      fetchLes()
+    }
   }, [voertuig, categorie, lesVolgorde])
 
-  if (!actieveLes) return <p className="text-center py-8">Laden...</p>
+  if (loading || !actieveLes) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 px-4 py-6">
@@ -244,15 +234,16 @@ export default function LesPagina() {
                   {actieveLes.titel}
                 </h1>
 
-                {Array.isArray(actieveLes.inhoud) && actieveLes.inhoud[0]?.type === "afbeelding" && (
-                  <div className="rounded-xl overflow-hidden mb-6">
-                    <img
-                      src={actieveLes.inhoud[0].bron}
-                      alt={actieveLes.inhoud[0].bijschrift || "Inleidende afbeelding"}
-                      className="w-full object-cover max-h-[360px] mx-auto rounded-xl"
-                    />
-                  </div>
-                )}
+                {Array.isArray(actieveLes.inhoud) &&
+                  actieveLes.inhoud[0]?.type === "afbeelding" && (
+                    <div className="rounded-xl overflow-hidden mb-6">
+                      <img
+                        src={actieveLes.inhoud[0].bron}
+                        alt={actieveLes.inhoud[0].bijschrift || "Inleidende afbeelding"}
+                        className="w-full object-cover max-h-[360px] mx-auto rounded-xl"
+                      />
+                    </div>
+                  )}
 
                 <div className="prose prose-blue prose-lg max-w-none">
                   {Array.isArray(actieveLes.inhoud) ? (

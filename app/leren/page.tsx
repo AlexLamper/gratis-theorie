@@ -21,11 +21,12 @@ const iconMap: Record<string, any> = {
 type Vehicle = {
   name: string
   displayName: string
-  icon?: string // emoji of pad
+  icon?: string
 }
 
 export default function LerenStartPage() {
   const [voertuigen, setVoertuigen] = useState<Vehicle[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     async function fetchVoertuigen() {
@@ -35,6 +36,8 @@ export default function LerenStartPage() {
         setVoertuigen(data)
       } catch (error) {
         console.error("Fout bij ophalen voertuigen:", error)
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -62,37 +65,43 @@ export default function LerenStartPage() {
         Kies een van de onderstaande voertuigen:
       </p>
 
-      <div className="grid md:grid-cols-3 gap-6">
-        {voertuigen.map(({ name, displayName }) => {
-          const Icon = iconMap[name] ?? Car // fallback voor onbekend voertuigtype
-          const colorClass =
-            name === "auto"
-              ? "text-blue-600"
-              : name === "motor"
-              ? "text-red-600"
-              : "text-green-600"
+      {loading ? (
+        <div className="flex justify-center items-center h-40">
+          <div className="h-10 w-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" />
+        </div>
+      ) : (
+        <div className="grid md:grid-cols-3 gap-6">
+          {voertuigen.map(({ name, displayName }) => {
+            const Icon = iconMap[name] ?? Car
+            const colorClass =
+              name === "auto"
+                ? "text-blue-600"
+                : name === "motor"
+                ? "text-red-600"
+                : "text-green-600"
 
-          return (
-            <Link
-              key={name}
-              href={`/leren/${name}`}
-              className="group border border-gray-200 rounded-xl p-6 hover:shadow-lg transition"
-            >
-              <div className="flex flex-col items-center text-center">
-                <div className={`p-4 rounded-full bg-gray-100 mb-4`}>
-                  <Icon className={`h-8 w-8 ${colorClass}`} />
+            return (
+              <Link
+                key={name}
+                href={`/leren/${name}`}
+                className="group border border-gray-200 rounded-xl p-6 hover:shadow-lg transition"
+              >
+                <div className="flex flex-col items-center text-center">
+                  <div className="p-4 rounded-full bg-gray-100 mb-4">
+                    <Icon className={`h-8 w-8 ${colorClass}`} />
+                  </div>
+                  <h2 className="text-xl font-semibold text-gray-800 group-hover:underline">
+                    {displayName}
+                  </h2>
+                  <p className="text-sm text-gray-600 mt-2">
+                    Theorie leren voor {displayName.toLowerCase()}
+                  </p>
                 </div>
-                <h2 className="text-xl font-semibold text-gray-800 group-hover:underline">
-                  {displayName}
-                </h2>
-                <p className="text-sm text-gray-600 mt-2">
-                  Theorie leren voor {displayName.toLowerCase()}
-                </p>
-              </div>
-            </Link>
-          )
-        })}
-      </div>
+              </Link>
+            )
+          })}
+        </div>
+      )}
     </div>
   )
 }
