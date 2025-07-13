@@ -57,9 +57,9 @@ export default function HomePage() {
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-4 h-auto border border-blue-700/80"
             >
-              <Link href="/practice">
+              <Link href="/leren">
                 <BookOpen className="mr-2 h-6 w-6" />
-                Start met Oefenen
+                Start met Leren
               </Link>
             </Button>
             <Button
@@ -108,7 +108,7 @@ export default function HomePage() {
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
             <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
-              <Link href="/practice?category=auto" className="block h-full">
+              <Link href="/leren/auto" className="block h-full">
                 <div className="bg-gradient-to-b from-blue-50 to-blue-100">
                   <CardHeader className="text-center pb-4 pt-0 m-0">
                     <div className="flex flex-col items-center justify-center min-h-0 mt-6">
@@ -129,15 +129,15 @@ export default function HomePage() {
                       <div>• 8 passagiers</div>
                     </div>
                   </div>
-                  <Button className="w-full bg-blue-600 text-white group-hover:bg-blue-700 border border-blue-700/80 mb-6">
-                    Begin Oefenen
+                  <Button className="w-full bg-blue-600 text-white group-hover:bg-blue-700 border border-blue-700/80 mb-6 hover:cursor-pointer">
+                    Begin met Leren
                   </Button>
                 </CardContent>
               </Link>
             </Card>
 
             <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
-              <Link href="/practice?category=scooter" className="block h-full">
+              <Link href="/leren/scooter" className="block h-full">
                 <div className="bg-gradient-to-b from-green-50 to-green-100">
                   <CardHeader className="text-center pb-4 pt-0 m-0">
                     <div className="flex flex-col items-center justify-center min-h-0 mt-6">
@@ -158,15 +158,15 @@ export default function HomePage() {
                       <div>• Max 50cc</div>
                     </div>
                   </div>
-                  <Button className="w-full bg-green-600 text-white hover:bg-green-700 border border-green-700/80 mb-6">
-                    Begin Oefenen
+                  <Button className="w-full bg-green-600 text-white hover:bg-green-700 border border-green-700/80 mb-6 hover:cursor-pointer">
+                    Begin met Leren
                   </Button>
                 </CardContent>
               </Link>
             </Card>
 
             <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
-              <Link href="/practice?category=motor" className="block h-full">
+              <Link href="/leren/motor" className="block h-full">
                 <div className="bg-gradient-to-b from-red-50 to-red-100">
                   <CardHeader className="text-center pb-4 pt-0 m-0">
                     <div className="flex flex-col items-center justify-center min-h-0 mt-6">
@@ -187,8 +187,8 @@ export default function HomePage() {
                       <div>• Progressief</div>
                     </div>
                   </div>
-                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 border border-red-700/80 mb-6">
-                    Begin Oefenen
+                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 border border-red-700/80 mb-6 hover:cursor-pointer">
+                    Begin met Leren
                   </Button>
                 </CardContent>
               </Link>
@@ -375,7 +375,7 @@ export default function HomePage() {
               size="lg"
               className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-4 h-auto border border-blue-700/80"
             >
-              <Link href="/practice">
+              <Link href="/leren">
                 <Zap className="mr-2 h-5 w-5" />
                 Begin Nu Gratis
               </Link>

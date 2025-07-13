@@ -155,9 +155,9 @@ export default function CategoriesPage() {
                       asChild
                       className="w-full border border-blue-700/80 transition-colors duration-200 hover:bg-blue-700/90 hover:text-white"
                     >
-                      <Link href={`/practice?category=${category.id}`} className="flex items-center justify-center">
+                      <Link href={`/leren/${category.id}`} className="flex items-center justify-center">
                         <BookOpen className="h-4 w-4 mr-2" />
-                        Start Oefenen
+                        Start met Leren
                       </Link>
                     </Button>
 
@@ -166,7 +166,7 @@ export default function CategoriesPage() {
                       variant="outline"
                       className="w-full bg-transparent border border-gray-300/80 transition-colors duration-200 hover:bg-gray-100"
                     >
-                      <Link href={`/exams?category=${category.id}`} className="flex items-center justify-center">
+                      <Link href={`/exams`} className="flex items-center justify-center">
                         <Trophy className="h-4 w-4 mr-2" />
                         Doe Proefexamen
                       </Link>
