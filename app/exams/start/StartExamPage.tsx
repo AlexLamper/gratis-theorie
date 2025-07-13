@@ -173,7 +173,13 @@ export default function StartExamPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-white">
       <div className="container max-w-3xl mx-auto px-4 py-10 sm:py-16">
-        <h2 className="text-center text-2xl font-bold mb-6">{exam.title}</h2>
+        <div className="flex items-center justify-between mb-6">
+          <Button asChild variant="outline" className="text-sm sm:text-base">
+            <a href="/exams">← Terug</a>
+          </Button>
+          <h2 className="text-2xl font-bold text-center flex-1">{exam.title}</h2>
+          <div className="w-[80px] hidden sm:block" />
+        </div>
         {/* Voortgang & Timer */}
         <div className="mb-8 flex items-center gap-4">
           <Progress
