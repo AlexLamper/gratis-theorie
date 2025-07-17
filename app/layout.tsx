@@ -3,6 +3,7 @@ import type { Metadata } from "next"
 import { Inter } from "next/font/google"
 import "./globals.css"
 import Navbar from "@/components/navbar"
+import Script from "next/script"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -84,12 +85,16 @@ export default function RootLayout({
   return (
     <html lang="nl">
       <head>
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-5158083181827933"
+     crossOrigin="anonymous"></script>
         <link rel="canonical" href="https://gratis-theorie.com" />
         <meta name="geo.region" content="NL" />
         <meta name="geo.country" content="Netherlands" />
         <meta name="language" content="Dutch" />
         <meta name="distribution" content="global" />
         <meta name="rating" content="general" />
+
+        {/* Schema.org Structured Data */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
