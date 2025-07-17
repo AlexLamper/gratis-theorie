@@ -260,8 +260,8 @@ export default function LesPagina() {
           </main>
         </div>
       </div>
+      <DonationPrompt />
     </div>
-    <DonationPrompt />
     <Footer />
     </>
   )
