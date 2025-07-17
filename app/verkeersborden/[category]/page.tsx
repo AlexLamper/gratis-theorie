@@ -136,8 +136,10 @@ export default function CategoryTrafficSignsPage() {
       const filtered = category === "alle"
         ? trafficSigns
         : trafficSigns.filter((sign: TrafficSign) =>
-            sign.category?.toLowerCase() === category.toLowerCase()
+            Array.isArray(sign.category) &&
+            sign.category.map((c) => c.toLowerCase()).includes(category.toLowerCase())
           )
+
 
       console.log(`[Filter] After filtering for category '${category}': ${filtered.length} signs.`)
 
