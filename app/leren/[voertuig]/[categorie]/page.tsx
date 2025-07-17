@@ -17,6 +17,8 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import parse from "html-react-parser"
+import Footer from "@/components/footer"
+import DonationPrompt from "@/components/DonationPrompt"
 
 interface LesData {
   titel: string
@@ -152,6 +154,7 @@ export default function LesPagina() {
   }
 
   return (
+    <>
     <div className="min-h-screen bg-gray-50 px-4 py-6">
       <div className="max-w-6xl mx-auto">
         <Breadcrumb className="mb-6">
@@ -258,5 +261,8 @@ export default function LesPagina() {
         </div>
       </div>
     </div>
+    <DonationPrompt />
+    <Footer />
+    </>
   )
 }

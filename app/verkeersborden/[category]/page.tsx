@@ -8,8 +8,9 @@ import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
 import { Search, Filter, Car, Bike, BikeIcon as Motorcycle, AlertTriangle, RefreshCw } from "lucide-react"
 import Link from "next/link"
-import { useParams, usePathname } from "next/navigation"
+import { useParams, usePathname, useRouter } from "next/navigation"
 import Footer from "@/components/footer"
+import DonationPrompt from "@/components/DonationPrompt"
 
 interface TrafficSign {
   _id: string
@@ -42,6 +43,7 @@ export default function CategoryTrafficSignsPage() {
   const params = useParams()
   const category = params.category as string
   const pathname = usePathname()
+  const router = useRouter()
 
   const [signs, setSigns] = useState<TrafficSign[]>([])
   const [filteredSigns, setFilteredSigns] = useState<TrafficSign[]>([])
@@ -54,6 +56,7 @@ export default function CategoryTrafficSignsPage() {
 
   useEffect(() => {
     setMounted(true)
+    window.scrollTo({ top: 0, left: 0, behavior: "instant" })
   }, [])
 
   const categoryInfo = {
@@ -136,8 +139,10 @@ export default function CategoryTrafficSignsPage() {
       const filtered = category === "alle"
         ? trafficSigns
         : trafficSigns.filter((sign: TrafficSign) =>
-            sign.category?.toLowerCase() === category.toLowerCase()
+            Array.isArray(sign.category) &&
+            sign.category.map((c) => c.toLowerCase()).includes(category.toLowerCase())
           )
+
 
       console.log(`[Filter] After filtering for category '${category}': ${filtered.length} signs.`)
 
@@ -248,17 +253,38 @@ export default function CategoryTrafficSignsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 pt-8">
+
         {/* Page Header */}
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 mb-8">
-          <div className="flex items-center space-x-6">
-            <div className={`${currentCategory.bgColor} p-4 rounded-full`}>
-              <IconComponent className={`h-8 w-8 ${currentCategory.color}`} />
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            {/* Left: Icon + Title */}
+            <div className="flex items-center space-x-6">
+              <div className={`${currentCategory.bgColor} p-4 rounded-full`}>
+                <IconComponent className={`h-8 w-8 ${currentCategory.color}`} />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900">{currentCategory.name}</h1>
+                <p className="text-gray-600 text-sm">{currentCategory.description}</p>
+              </div>
             </div>
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900">{currentCategory.name}</h1>
-              <p className="text-gray-600">{currentCategory.description}</p>
-            </div>
+
+            {/* Right: Back Link */}
+            <Link
+              href="/verkeersborden"
+              className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors"
+            >
+              <svg
+                className="w-4 h-4 mr-1.5"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                viewBox="0 0 24 24"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+              </svg>
+              Terug naar overzicht
+            </Link>
           </div>
         </div>
 
@@ -456,6 +482,7 @@ export default function CategoryTrafficSignsPage() {
           </CardContent>
         </Card>
       </div>
+      <DonationPrompt />
       <Footer />
     </div>
   )
