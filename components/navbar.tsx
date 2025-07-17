@@ -36,7 +36,7 @@ export default function Navbar() {
     { href: "/exams", label: "Proefexamens" },
     { href: "/verkeersborden", label: "Verkeersborden" },
     { href: "/categories", label: "Categorieën" },
-    { href: "/hulpmiddelen", label: "Hulpmiddelen" },
+    // { href: "/hulpmiddelen", label: "Hulpmiddelen" },
   ]
 
   return (
