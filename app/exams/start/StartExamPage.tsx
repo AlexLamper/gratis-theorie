@@ -33,6 +33,7 @@ export default function StartExamPage() {
   const [timeLeft, setTimeLeft] = useState(0)
   const [duration, setDuration] = useState(0)
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
+   const STRIPE_DONATE_LINK = "https://donate.stripe.com/14A14m9Au14e8xNcBMffy00"
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "instant" })
@@ -148,6 +149,28 @@ export default function StartExamPage() {
                     </DropdownMenu>
                   )
                 })}
+              </div>
+
+              {/* Donatie prompt */}
+              <div className="text-center border-t pt-6 mt-6">
+                <p className="text-lg font-semibold mb-4">
+                  Je hebt de oefentest afgerond! 🙌
+                </p>
+                <p className="mb-4">
+                  Wil je iets terugdoen? Vanaf €1 help je ons om de vragen en dit leerplatform gratis te houden voor iedereen.
+                </p>
+                <Button
+                  asChild
+                  className="bg-yellow-600 hover:bg-yellow-700 text-black font-semibold px-6 py-3 rounded-lg shadow"
+                >
+                  <a
+                    href={STRIPE_DONATE_LINK}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow sponsored"
+                  >
+                    Steun vanaf €1
+                  </a>
+                </Button>
               </div>
 
               {/* Actions */}
