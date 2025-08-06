@@ -27,17 +27,17 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-lg">Categorieën</h4>
             <ul className="space-y-3 text-gray-400">
               <li>
-                <Link href="/practice?category=auto" className="hover:text-white transition-colors">
+                <Link href="/leren/auto" className="hover:text-white transition-colors">
                   Auto (B) Theorie
                 </Link>
               </li>
               <li>
-                <Link href="/practice?category=scooter" className="hover:text-white transition-colors">
+                <Link href="/leren/scooter" className="hover:text-white transition-colors">
                   Scooter (AM) Theorie
                 </Link>
               </li>
               <li>
-                <Link href="/practice?category=motor" className="hover:text-white transition-colors">
+                <Link href="/leren/motor" className="hover:text-white transition-colors">
                   Motor (A) Theorie
                 </Link>
               </li>
@@ -46,11 +46,6 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4 text-lg">Platform</h4>
             <ul className="space-y-3 text-gray-400">
-              <li>
-                <Link href="/over-ons" className="hover:text-white transition-colors">
-                  Over Ons
-                </Link>
-              </li>
               <li>
                 <Link href="/contact" className="hover:text-white transition-colors">
                   Contact
