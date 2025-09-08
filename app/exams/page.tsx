@@ -221,7 +221,7 @@ export default async function ExamsPage() {
               Begin eerst met oefenen met losse vragen om je kennis op te bouwen
             </p>
             <Button asChild size="lg" variant="secondary" className="border border-white/80">
-              <Link href="/practice">
+              <Link href="/leren">
                 <Target className="h-4 w-4 mr-2" />
                 Start met Oefenen
               </Link>

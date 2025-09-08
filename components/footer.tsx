@@ -27,17 +27,17 @@ export default function Footer() {
             <h4 className="font-semibold mb-4 text-lg">Categorieën</h4>
             <ul className="space-y-3 text-gray-400">
               <li>
-                <Link href="/practice?category=auto" className="hover:text-white transition-colors">
+                <Link href="/categories" className="hover:text-white transition-colors">
                   Auto (B) Theorie
                 </Link>
               </li>
               <li>
-                <Link href="/practice?category=scooter" className="hover:text-white transition-colors">
+                <Link href="/categories" className="hover:text-white transition-colors">
                   Scooter (AM) Theorie
                 </Link>
               </li>
               <li>
-                <Link href="/practice?category=motor" className="hover:text-white transition-colors">
+                <Link href="/categories" className="hover:text-white transition-colors">
                   Motor (A) Theorie
                 </Link>
               </li>
@@ -46,11 +46,6 @@ export default function Footer() {
           <div>
             <h4 className="font-semibold mb-4 text-lg">Platform</h4>
             <ul className="space-y-3 text-gray-400">
-              <li>
-                <Link href="/over-ons" className="hover:text-white transition-colors">
-                  Over Ons
-                </Link>
-              </li>
               <li>
                 <Link href="/contact" className="hover:text-white transition-colors">
                   Contact
@@ -64,6 +59,36 @@ export default function Footer() {
               <li>
                 <Link href="/terms-of-service" className="hover:text-white transition-colors">
                   Algemene Voorwaarden
+                </Link>
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-semibold mb-4 text-lg">Pagina's</h4>
+            <ul className="space-y-3 text-gray-400">
+              <li>
+                <Link href="/" className="hover:text-white transition-colors">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/leren" className="hover:text-white transition-colors">
+                  Leren
+                </Link>
+              </li>
+              <li>
+                <Link href="/exams" className="hover:text-white transition-colors">
+                  Proefexamens
+                </Link>
+              </li>
+              <li>
+                <Link href="/verkeersborden" className="hover:text-white transition-colors">
+                  Verkeersborden
+                </Link>
+              </li>
+              <li>
+                <Link href="/categories" className="hover:text-white transition-colors">
+                  Categorieën
                 </Link>
               </li>
             </ul>
