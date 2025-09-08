@@ -80,23 +80,44 @@ export default function LerenStartPage() {
                 ? "text-red-600"
                 : "text-green-600"
 
-            return (
+            const isDisabled = name === "motor" || name === "scooter"
+
+            const cardContent = (
+              <div
+                className={`flex flex-col items-center text-center ${
+                  isDisabled ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                <div className="p-4 rounded-full bg-gray-100 mb-4">
+                  <Icon className={`h-8 w-8 ${colorClass}`} />
+                </div>
+                <h2
+                  className={`text-xl font-semibold text-gray-800 ${
+                    isDisabled ? "" : "group-hover:underline"
+                  }`}
+                >
+                  {displayName}
+                </h2>
+                <p className="text-sm text-gray-600 mt-2">
+                  Theorie leren voor {displayName.toLowerCase()}
+                </p>
+              </div>
+            )
+
+            return isDisabled ? (
+              <div
+                key={name}
+                className="border border-gray-200 rounded-xl p-6 bg-gray-50"
+              >
+                {cardContent}
+              </div>
+            ) : (
               <Link
                 key={name}
                 href={`/leren/${name}`}
                 className="group border border-gray-200 rounded-xl p-6 hover:shadow-lg transition"
               >
-                <div className="flex flex-col items-center text-center">
-                  <div className="p-4 rounded-full bg-gray-100 mb-4">
-                    <Icon className={`h-8 w-8 ${colorClass}`} />
-                  </div>
-                  <h2 className="text-xl font-semibold text-gray-800 group-hover:underline">
-                    {displayName}
-                  </h2>
-                  <p className="text-sm text-gray-600 mt-2">
-                    Theorie leren voor {displayName.toLowerCase()}
-                  </p>
-                </div>
+                {cardContent}
               </Link>
             )
           })}

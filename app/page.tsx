@@ -107,6 +107,7 @@ export default function HomePage() {
             </p>
           </div>
           <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {/* Auto card (enabled) */}
             <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
               <Link href="/leren/auto" className="block h-full">
                 <div className="bg-gradient-to-b from-blue-50 to-blue-100">
@@ -136,62 +137,60 @@ export default function HomePage() {
               </Link>
             </Card>
 
-            <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
-              <Link href="/leren/scooter" className="block h-full">
-                <div className="bg-gradient-to-b from-green-50 to-green-100">
-                  <CardHeader className="text-center pb-4 pt-0 m-0">
-                    <div className="flex flex-col items-center justify-center min-h-0 mt-6">
-                      <Bike className="h-16 w-16 text-green-600 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                      <CardTitle className="text-2xl text-gray-900">Scooter (AM)</CardTitle>
-                      <CardDescription className="text-gray-600">Theorie-examen voor bromfietsen</CardDescription>
-                    </div>
-                  </CardHeader>
-                </div>
-                <CardContent className="text-center pt-6">
-                  <div className="space-y-3 mb-6">
-                    <Badge variant="secondary" className="text-sm">
-                      300+ Vragen
-                    </Badge>
-                    <div className="text-sm text-gray-600">
-                      <div>• Vanaf 16 jaar</div>
-                      <div>• Max 45 km/h</div>
-                      <div>• Max 50cc</div>
-                    </div>
+            {/* Scooter card (disabled) */}
+            <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm opacity-50 cursor-not-allowed p-0">
+              <div className="bg-gradient-to-b from-gray-50 to-gray-100">
+                <CardHeader className="text-center pb-4 pt-0 m-0">
+                  <div className="flex flex-col items-center justify-center min-h-0 mt-6">
+                    <Bike className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <CardTitle className="text-2xl text-gray-500">Scooter (AM)</CardTitle>
+                    <CardDescription className="text-gray-400">Theorie-examen voor bromfietsen</CardDescription>
                   </div>
-                  <Button className="w-full bg-green-600 text-white hover:bg-green-700 border border-green-700/80 mb-6 hover:cursor-pointer">
-                    Begin met Leren
-                  </Button>
-                </CardContent>
-              </Link>
+                </CardHeader>
+              </div>
+              <CardContent className="text-center pt-6">
+                <div className="space-y-3 mb-6">
+                  <Badge variant="secondary" className="text-sm">
+                    300+ Vragen
+                  </Badge>
+                  <div className="text-sm text-gray-400">
+                    <div>• Vanaf 16 jaar</div>
+                    <div>• Max 45 km/h</div>
+                    <div>• Max 50cc</div>
+                  </div>
+                </div>
+                <Button disabled className="w-full bg-gray-400 text-white border border-gray-400 mb-6 cursor-not-allowed">
+                  Niet beschikbaar
+                </Button>
+              </CardContent>
             </Card>
 
-            <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer group hover:-translate-y-1 p-0">
-              <Link href="/leren/motor" className="block h-full">
-                <div className="bg-gradient-to-b from-red-50 to-red-100">
-                  <CardHeader className="text-center pb-4 pt-0 m-0">
-                    <div className="flex flex-col items-center justify-center min-h-0 mt-6">
-                      <Motorcycle className="h-16 w-16 text-red-600 mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                      <CardTitle className="text-2xl text-gray-900">Motor (A)</CardTitle>
-                      <CardDescription className="text-gray-600">Theorie-examen voor motorfietsen</CardDescription>
-                    </div>
-                  </CardHeader>
-                </div>
-                <CardContent className="text-center pt-6">
-                  <div className="space-y-3 mb-6">
-                    <Badge variant="secondary" className="text-sm">
-                      400+ Vragen
-                    </Badge>
-                    <div className="text-sm text-gray-600">
-                      <div>• Vanaf 18 jaar</div>
-                      <div>• A1, A2, A</div>
-                      <div>• Progressief</div>
-                    </div>
+            {/* Motor card (disabled) */}
+            <Card className="rounded-xl overflow-hidden border-gray-600/30 shadow-sm opacity-50 cursor-not-allowed p-0">
+              <div className="bg-gradient-to-b from-gray-50 to-gray-100">
+                <CardHeader className="text-center pb-4 pt-0 m-0">
+                  <div className="flex flex-col items-center justify-center min-h-0 mt-6">
+                    <Motorcycle className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+                    <CardTitle className="text-2xl text-gray-500">Motor (A)</CardTitle>
+                    <CardDescription className="text-gray-400">Theorie-examen voor motorfietsen</CardDescription>
                   </div>
-                  <Button className="w-full bg-red-600 text-white hover:bg-red-700 border border-red-700/80 mb-6 hover:cursor-pointer">
-                    Begin met Leren
-                  </Button>
-                </CardContent>
-              </Link>
+                </CardHeader>
+              </div>
+              <CardContent className="text-center pt-6">
+                <div className="space-y-3 mb-6">
+                  <Badge variant="secondary" className="text-sm">
+                    400+ Vragen
+                  </Badge>
+                  <div className="text-sm text-gray-400">
+                    <div>• Vanaf 18 jaar</div>
+                    <div>• A1, A2, A</div>
+                    <div>• Progressief</div>
+                  </div>
+                </div>
+                <Button disabled className="w-full bg-gray-400 text-white border border-gray-400 mb-6 cursor-not-allowed">
+                  Niet beschikbaar
+                </Button>
+              </CardContent>
             </Card>
           </div>
         </div>
