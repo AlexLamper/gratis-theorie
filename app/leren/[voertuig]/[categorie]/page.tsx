@@ -6,7 +6,7 @@ import Link from "next/link"
 import LessonContent, { InhoudBlok } from "@/components/LessonContent"
 import { markeerCategorieGelezen } from "@/lib/session"
 import { Card, CardContent } from "@/components/ui/card"
-import { ChevronDown, ChevronRight } from "lucide-react"
+import { ChevronDown, ChevronRight, Menu, X } from "lucide-react"
 import clsx from "clsx"
 import {
   Breadcrumb,
@@ -53,6 +53,7 @@ export default function LesPagina() {
   const [actieveLes, setActieveLes] = useState<LesData | null>(null)
   const [voertuigData, setVoertuigData] = useState<VehicleData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   const lesIndexParam = searchParams.get("les")
   const lesVolgorde = parseInt(lesIndexParam || "1", 10)
@@ -166,52 +167,130 @@ export default function LesPagina() {
             </BreadcrumbList>
           </Breadcrumb>
 
-          <div className="flex gap-6">
-            <aside className="w-[300px] bg-white rounded-2xl border border-gray-200 p-4">
-              {groepen.sort((a, b) => a.titel.localeCompare(b.titel)).map((groep) => {
-                const isActiveGroup = groep.categorie === categorie
-                return (
-                  <div key={groep.categorie} className="mb-4">
-                    <Link
-                      href={`/leren/${voertuig}/${groep.categorie}?les=1`}
-                      className={clsx(
-                        "w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium text-sm text-left cursor-pointer",
-                        isActiveGroup ? "bg-gray-100" : "hover:bg-gray-50"
-                      )}
-                      onClick={() => setActieveGroep(groep.categorie)}
-                    >
-                      <span>{groep.titel}</span>
-                      {isActiveGroup ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                    </Link>
-                    {isActiveGroup && (
-                      <ul className="pl-3 mt-2 text-sm space-y-1 transition-all duration-300">
-                        {groep.sublessen.map((les, index) => {
-                          const isActiefLes = groep.categorie === categorie && les.volgorde === lesVolgorde
-                          return (
-                            <li key={index}>
-                              <Link
-                                href={`/leren/${voertuig}/${groep.categorie}?les=${les.volgorde}`}
-                                className={clsx(
-                                  "block px-2 py-1 rounded-md transition",
-                                  isActiefLes
-                                    ? "text-gray-900 font-medium border-l-4 border-blue-500 bg-gray-100"
-                                    : "text-gray-700 hover:bg-gray-50"
-                                )}
-                              >
-                                {index + 1}. {les.titel}
-                              </Link>
-                            </li>
-                          )
-                        })}
-                      </ul>
-                    )}
+          <div className="flex gap-6 flex-col lg:flex-row">
+            {/* Mobile Menu Button */}
+            <div className="lg:hidden flex items-center justify-between bg-white rounded-lg border border-gray-200 p-4 mb-2">
+              <h3 className="font-semibold text-gray-900">Navigatie</h3>
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition"
+              >
+                {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+              </button>
+            </div>
+
+            {/* Mobile Sidebar - Collapsible */}
+            {mobileMenuOpen && (
+              <aside className="lg:hidden w-full bg-white rounded-2xl border border-gray-200 p-4 mb-2">
+                {loading ? (
+                  <div className="flex justify-center items-center h-40">
+                    <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
                   </div>
-                )
-              })}
+                ) : groepen.length === 0 ? (
+                  <div className="text-center text-gray-400 py-10">Geen categorieën gevonden.</div>
+                ) : (
+                  groepen.sort((a, b) => a.titel.localeCompare(b.titel)).map((groep) => {
+                    const isActiveGroup = groep.categorie === categorie
+                    return (
+                      <div key={groep.categorie} className="mb-4">
+                        <Link
+                          href={`/leren/${voertuig}/${groep.categorie}?les=1`}
+                          className={clsx(
+                            "w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium text-sm text-left cursor-pointer",
+                            isActiveGroup ? "bg-gray-100" : "hover:bg-gray-50"
+                          )}
+                          onClick={() => {
+                            setActieveGroep(groep.categorie)
+                            setMobileMenuOpen(false)
+                          }}
+                        >
+                          <span>{groep.titel}</span>
+                          {isActiveGroup ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                        </Link>
+                        {isActiveGroup && (
+                          <ul className="pl-3 mt-2 text-sm space-y-1 transition-all duration-300">
+                            {groep.sublessen.map((les, index) => {
+                              const isActiefLes = groep.categorie === categorie && les.volgorde === lesVolgorde
+                              return (
+                                <li key={index}>
+                                  <Link
+                                    href={`/leren/${voertuig}/${groep.categorie}?les=${les.volgorde}`}
+                                    className={clsx(
+                                      "block px-2 py-1 rounded-md transition",
+                                      isActiefLes
+                                        ? "text-gray-900 font-medium border-l-4 border-blue-500 bg-gray-100"
+                                        : "text-gray-700 hover:bg-gray-50"
+                                    )}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                  >
+                                    {index + 1}. {les.titel}
+                                  </Link>
+                                </li>
+                              )
+                            })}
+                          </ul>
+                        )}
+                      </div>
+                    )
+                  })
+                )}
+              </aside>
+            )}
+
+            {/* Desktop Sidebar - Always Visible */}
+            <aside className="hidden lg:block w-[300px] bg-white rounded-2xl border border-gray-200 p-4">
+              {loading ? (
+                <div className="flex justify-center items-center h-40">
+                  <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                </div>
+              ) : groepen.length === 0 ? (
+                <div className="text-center text-gray-400 py-10">Categorieën aan het laden...</div>
+              ) : (
+                groepen.sort((a, b) => a.titel.localeCompare(b.titel)).map((groep) => {
+                  const isActiveGroup = groep.categorie === categorie
+                  return (
+                    <div key={groep.categorie} className="mb-4">
+                      <Link
+                        href={`/leren/${voertuig}/${groep.categorie}?les=1`}
+                        className={clsx(
+                          "w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium text-sm text-left cursor-pointer",
+                          isActiveGroup ? "bg-gray-100" : "hover:bg-gray-50"
+                        )}
+                        onClick={() => setActieveGroep(groep.categorie)}
+                      >
+                        <span>{groep.titel}</span>
+                        {isActiveGroup ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
+                      </Link>
+                      {isActiveGroup && (
+                        <ul className="pl-3 mt-2 text-sm space-y-1 transition-all duration-300">
+                          {groep.sublessen.map((les, index) => {
+                            const isActiefLes = groep.categorie === categorie && les.volgorde === lesVolgorde
+                            return (
+                              <li key={index}>
+                                <Link
+                                  href={`/leren/${voertuig}/${groep.categorie}?les=${les.volgorde}`}
+                                  className={clsx(
+                                    "block px-2 py-1 rounded-md transition",
+                                    isActiefLes
+                                      ? "text-gray-900 font-medium border-l-4 border-blue-500 bg-gray-100"
+                                      : "text-gray-700 hover:bg-gray-50"
+                                  )}
+                                >
+                                  {index + 1}. {les.titel}
+                                </Link>
+                              </li>
+                            )
+                          })}
+                        </ul>
+                      )}
+                    </div>
+                  )
+                })
+              )}
             </aside>
 
-            <main className="flex-1 bg-white rounded-xl p-6 border border-gray-200">
-              <h1 className="text-3xl font-bold text-gray-900 mb-6">{actieveLes.titel}</h1>
+            <main className="flex-1 bg-white rounded-xl p-4 lg:p-6 border border-gray-200">
+              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">{actieveLes.titel}</h1>
 
               {Array.isArray(actieveLes.inhoud) && actieveLes.inhoud[0]?.type === "afbeelding" && (
                 <div className="rounded-xl overflow-hidden mb-6">

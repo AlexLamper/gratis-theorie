@@ -39,7 +39,7 @@ export default function HomePage() {
       <section className="py-20 px-4 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
         <div className="container mx-auto text-center">
           <Badge className="mb-6 bg-green-100 text-green-800 hover:bg-green-100 text-xs sm:text-sm px-3 sm:px-4 py-2 max-w-full text-center break-words">
-            ✨ 100% Gratis • Geen Registratie Vereist • Altijd Up-to-date
+            ✨ Volledig Gratis • Geen Registratie • Actueel
           </Badge>
           <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
             Slaag voor je{" "}
@@ -55,22 +55,21 @@ export default function HomePage() {
             <Button
               asChild
               size="lg"
-              className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-4 h-auto border border-blue-700/80"
+              className="bg-blue-600 hover:bg-blue-700 text-white text-lg px-8 py-4 h-auto rounded-lg font-semibold shadow-lg hover:shadow-xl transition-all"
             >
               <Link href="/leren">
-                <BookOpen className="mr-2 h-6 w-6" />
+                <BookOpen className="mr-2 h-5 w-5" />
                 Start met Leren
               </Link>
             </Button>
             <Button
               asChild
-              variant="outline"
               size="lg"
-              className="text-lg px-8 py-4 h-auto border-2 bg-transparent border-gray-300/80"
+              className="text-lg px-8 py-4 h-auto rounded-lg font-semibold border-2 border-blue-600 text-blue-600 hover:bg-blue-50 transition-all"
             >
               <Link href="/exams">
-                <Trophy className="mr-2 h-6 w-6" />
-                Doe een Proefexamen
+                <Trophy className="mr-2 h-5 w-5" />
+                Proefexamen
               </Link>
             </Button>
           </div>
