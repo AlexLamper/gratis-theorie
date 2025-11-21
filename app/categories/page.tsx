@@ -75,15 +75,18 @@ export default function CategoriesPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-slate-50 py-12">
       <LearningUnavailableAlert />
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4">
         {/* Page Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 mb-6">
+            <BookOpen className="h-8 w-8 text-blue-600" />
+          </div>
+          <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">
             Kies je Rijbewijscategorie
           </h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
             Elke categorie heeft zijn eigen theorie-examen met specifieke
             vragen en regels. Kies de categorie die bij jouw gewenste rijbewijs
             hoort.
@@ -91,179 +94,93 @@ export default function CategoriesPage() {
         </div>
 
         {/* Categories Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {categories.map((category) => {
             const IconComponent = category.icon
             const isDisabled =
               category.id === "motor" || category.id === "scooter"
 
             return (
-              <Card
+              <div
                 key={category.id}
-                className={`group relative overflow-hidden bg-white border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 p-0
-                  ${category.popular ? "scale-[1.03] z-10 md:row-start-1 md:col-start-2" : ""}
-                `}
+                className={`group relative bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden transition-all duration-300 ${
+                  isDisabled ? "opacity-75" : "hover:shadow-xl hover:-translate-y-1"
+                }`}
               >
-                {/* Header block with background flush to top */}
-                <div className="relative w-full" style={{ height: "12rem" }}>
-                  {/* Colored full background span */}
-                  <div
-                    className={`absolute top-0 left-0 w-full h-full ${category.bgColor} opacity-90`}
-                    style={{
-                      borderTopLeftRadius: 0,
-                      borderTopRightRadius: 0,
-                    }}
-                  ></div>
-
-                  {/* Decorative blurry elements */}
-                  <div className="absolute top-4 right-4 w-20 h-20 bg-white/20 rounded-full blur-xl"></div>
-                  <div className="absolute bottom-4 left-4 w-16 h-16 bg-white/10 rounded-full blur-lg"></div>
-
-                  {/* Icon + title in foreground */}
-                  <div className="relative h-full flex flex-col items-center justify-center text-center p-6">
-                    <div className="mb-4 relative">
-                      <div className="absolute inset-0 bg-white/30 rounded-full blur-md scale-110"></div>
-                      <IconComponent
-                        className={`relative h-14 w-14 ${category.color} group-hover:scale-125 transition-transform duration-500 drop-shadow-lg`}
-                      />
-                    </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-gray-800 transition-colors">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm text-gray-700">
-                      {category.description}
-                    </p>
+                {category.popular && (
+                  <div className="absolute top-0 right-0 bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-bl-xl z-10">
+                    POPULAIR
                   </div>
-                </div>
+                )}
+                
+                {isDisabled && (
+                  <div className="absolute top-4 right-4 z-10">
+                    <span className="bg-slate-100 text-slate-600 text-xs font-medium px-2.5 py-0.5 rounded-full">
+                      Binnenkort
+                    </span>
+                  </div>
+                )}
 
-                {/* Body content below */}
-                <CardContent className="p-6 space-y-4">
-                  <ul className="space-y-1">
+                <div className={`h-2 w-full ${category.bgColor.replace('bg-', 'bg-gradient-to-r from-').replace('50', '500').replace('to-', 'to-white').split(' ')[0]}`} />
+                
+                <div className="p-8">
+                  <div className={`w-14 h-14 rounded-xl ${category.bgColor} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                    <IconComponent className={`h-7 w-7 ${category.color}`} />
+                  </div>
+
+                  <h3 className="text-2xl font-bold text-slate-900 mb-2">
+                    {category.name}
+                  </h3>
+                  <p className="text-slate-600 mb-6 min-h-[3rem]">
+                    {category.description}
+                  </p>
+
+                  <div className="space-y-4 mb-8">
                     {category.details.map((detail, index) => (
-                      <li
-                        key={index}
-                        className="flex items-start space-x-2 text-sm text-gray-600"
-                      >
-                        <span className="w-2 h-2 bg-blue-600 rounded-full mt-1 flex-shrink-0" />
-                        <span>{detail}</span>
-                      </li>
+                      <div key={index} className="flex items-start text-sm text-slate-600">
+                        <div className={`w-1.5 h-1.5 rounded-full mt-1.5 mr-2 flex-shrink-0 ${category.color.replace('text-', 'bg-')}`} />
+                        {detail}
+                      </div>
                     ))}
-                  </ul>
-
-                  <div className="grid grid-cols-3 gap-2 text-center text-sm">
-                    <div>
-                      <span className="font-semibold">
-                        {category.stats.questions}+
-                      </span>
-                      <div className="text-gray-600">Vragen</div>
-                    </div>
-                    <div>
-                      <span className="font-semibold">
-                        {category.stats.topics}
-                      </span>
-                      <div className="text-gray-600">Onderwerpen</div>
-                    </div>
-                    <div>
-                      <span className="font-semibold">
-                        {category.stats.difficulty}
-                      </span>
-                      <div className="text-gray-600">Niveau</div>
-                    </div>
                   </div>
 
-                  <div className="space-y-2 pt-2">
+                  <div className="pt-6 border-t border-slate-100">
+                    <div className="grid grid-cols-3 gap-4 mb-6">
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-slate-900">{category.stats.questions}</div>
+                        <div className="text-xs text-slate-500">Vragen</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-slate-900">{category.stats.topics}</div>
+                        <div className="text-xs text-slate-500">Onderwerpen</div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-lg font-bold text-slate-900">{category.stats.difficulty}</div>
+                        <div className="text-xs text-slate-500">Niveau</div>
+                      </div>
+                    </div>
+
                     {isDisabled ? (
-                      <Button
-                        disabled
-                        className="w-full border border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed"
-                      >
-                        <BookOpen className="h-4 w-4 mr-2" />
-                        Binnenkort Beschikbaar
+                      <Button disabled className="w-full bg-slate-100 text-slate-400 cursor-not-allowed">
+                        Niet beschikbaar
                       </Button>
                     ) : (
-                      <Button
-                        asChild
-                        className="w-full border border-blue-700/80 transition-colors duration-200 hover:bg-blue-700/90 hover:text-white"
-                      >
-                        <Link
-                          href={`/leren/${category.id}`}
-                          className="flex items-center justify-center"
-                        >
-                          <BookOpen className="h-4 w-4 mr-2" />
+                      <Button className="w-full bg-slate-900 hover:bg-blue-600 text-white transition-colors" asChild>
+                        <Link href={`/leren/${category.id}`}>
                           Start met Leren
                         </Link>
                       </Button>
                     )}
-
-                    <Button
-                      asChild
-                      variant="outline"
-                      className="w-full bg-transparent border border-gray-300/80 transition-colors duration-200 hover:bg-gray-100"
-                    >
-                      <Link
-                        href={`/exams`}
-                        className="flex items-center justify-center"
-                      >
-                        <Trophy className="h-4 w-4 mr-2" />
-                        Doe Proefexamen
-                      </Link>
-                    </Button>
                   </div>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
             )
           })}
         </div>
-
-        {/* Additional Info */}
-        <Card className="group relative overflow-hidden mt-12 border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 p-0">
-          {/* Header - flush background to top */}
-          <div className="relative w-full" style={{ height: "8rem" }}>
-            <div
-              className="absolute top-0 left-0 w-full h-full bg-blue-100 opacity-90"
-              style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
-            ></div>
-
-            <div className="absolute top-4 right-4 w-20 h-20 bg-white/20 rounded-full blur-xl"></div>
-            <div className="absolute bottom-4 left-4 w-16 h-16 bg-white/10 rounded-full blur-lg"></div>
-
-            <div className="relative h-full flex items-center justify-center text-center px-6">
-              <h2 className="text-2xl font-bold text-blue-900 group-hover:text-blue-800 transition-colors">
-                Belangrijk om te Weten
-              </h2>
-            </div>
-          </div>
-
-          {/* Body Content */}
-          <CardContent className="pb-12 pt-6">
-            <div className="grid md:grid-cols-2 gap-8 text-gray-700 text-sm">
-              <div>
-                <h4 className="text-lg font-semibold mb-3 text-gray-900">
-                  Over de Theorie-examens
-                </h4>
-                <ul className="space-y-2 list-disc list-inside">
-                  <li>Alle examens worden afgenomen door het CBR</li>
-                  <li>Je hebt minimaal 70% nodig om te slagen</li>
-                  <li>Vragen gebaseerd op de officiële lesstof</li>
-                  <li>Regelmatig oefenen verhoogt je slagingskans</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="text-lg font-semibold mb-3 text-gray-900">
-                  Tips voor Succes
-                </h4>
-                <ul className="space-y-2 list-disc list-inside">
-                  <li>Oefen regelmatig met verschillende vraagtypen</li>
-                  <li>Doe meerdere proefexamens voor het echte examen</li>
-                  <li>Bestudeer de uitleg bij verkeerde antwoorden</li>
-                  <li>Zorg dat je alle onderwerpen beheerst</li>
-                </ul>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
-      <Footer />
+      <div className="mt-20">
+        <Footer />
+      </div>
     </div>
   )
 }

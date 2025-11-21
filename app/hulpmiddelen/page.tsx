@@ -76,63 +76,66 @@ export default async function HulpmiddelenPage() {
   }
 
   return (
-    <>
-    <div className="min-h-screen container mx-auto py-16 px-4">
-      <h1 className="text-4xl font-bold mb-8">Hulpmiddelen</h1>
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {fetched.map((p) => {
-          const params = new URLSearchParams({
-            t: "url",
-            s: SITE_ID,
-            url: p.url,
-            f: "txl",
-            subid: p.subid,
-            name: p.title,
-          })
-          const trackingUrl = `https://partner.bol.com/click/click?&${params}`
+    <div className="min-h-screen bg-slate-50 py-12">
+      <div className="container mx-auto px-4">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 mb-6">
+            <BookOpen className="h-8 w-8 text-blue-600" />
+          </div>
+          <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Hulpmiddelen</h1>
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
+            Aanbevolen theorieboeken en leermiddelen om je voor te bereiden op het examen.
+          </p>
+        </div>
 
-          return (
-            <Card key={p.subid} className="border shadow-sm hover:shadow-md">
-              {p.imageUrl && (
-                <Image
-                  src={p.imageUrl}
-                  alt={p.title}
-                  width={300}
-                  height={300}
-                  className="w-full h-48 object-cover rounded-t"
-                />
-              )}
-              <CardHeader>
-                <CardTitle>{p.title}</CardTitle>
-                <CardDescription>
-                  {p.description.substring(0, 100)}...
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <Button
-                  asChild
-                  className="bg-blue-600 text-white hover:bg-blue-700"
-                >
-                  <a
-                    href={trackingUrl}
-                    target="_blank"
-                    rel="noopener noreferrer nofollow sponsored"
-                  >
-                    <BookOpen className="inline-block mr-2 align-middle" />
-                    Bekijk op bol.com
-                  </a>
-                </Button>
-              </CardContent>
-            </Card>
-          )
-        })}
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          {fetched.map((p) => {
+            const params = new URLSearchParams({
+              t: "url",
+              s: SITE_ID,
+              url: p.url,
+              f: "txl",
+              subid: p.subid,
+              name: p.title,
+            })
+            const trackingUrl = `https://partner.bol.com/click/click?&${params}`
+
+            return (
+              <Card key={p.subid} className="border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden flex flex-col h-full group bg-white">
+                {p.imageUrl && (
+                  <div className="relative aspect-[4/3] bg-slate-50 p-6 flex items-center justify-center overflow-hidden">
+                    <Image
+                      src={p.imageUrl}
+                      alt={p.title}
+                      width={300}
+                      height={300}
+                      className="object-contain max-h-full group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+                )}
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-lg font-bold text-slate-900 line-clamp-2 min-h-[3.5rem]">
+                    {p.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col">
+                  <CardDescription className="text-slate-600 line-clamp-3 mb-6 flex-1">
+                    {p.description}
+                  </CardDescription>
+                  <Button asChild className="w-full bg-slate-900 hover:bg-blue-600 text-white transition-colors mt-auto">
+                    <a href={trackingUrl} target="_blank" rel="noopener noreferrer">
+                      Bekijk op Bol.com
+                    </a>
+                  </Button>
+                </CardContent>
+              </Card>
+            )
+          })}
+        </div>
       </div>
-      <p className="mt-12 text-gray-600">
-        We ontvangen een kleine commissie als je via onze link koopt. Jij betaalt hetzelfde – en ons zou je er enorm mee helpen!{" "}
-        <Star className="inline-block align-text-bottom text-yellow-500" />
-      </p>
+      <div className="mt-20">
+        <Footer />
+      </div>
     </div>
-    <Footer />
-    </>
   )
 }

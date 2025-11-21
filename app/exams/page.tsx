@@ -80,156 +80,100 @@ export default async function ExamsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen bg-slate-50 py-12">
+      <div className="container mx-auto px-4">
         {/* Page Header */}
         <div className="text-center mb-16">
-          <Trophy className="h-16 w-16 text-yellow-600 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Theorie Proefexamens</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
-            Test je kennis met volledige proefexamens die identiek zijn aan het echte CBR theorie-examen. 40 vragen, 30
-            minuten tijd, en je hebt 70% nodig om te slagen.
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-yellow-100 mb-6">
+            <Trophy className="h-8 w-8 text-yellow-600" />
+          </div>
+          <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Theorie Proefexamens</h1>
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-12">
+            Test je kennis met volledige proefexamens die identiek zijn aan het echte CBR theorie-examen. 
+            40 vragen, 30 minuten tijd, en je hebt 70% nodig om te slagen.
           </p>
 
           {/* Key Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <div className="text-2xl font-bold text-blue-600">40</div>
-              <div className="text-sm text-gray-600">Vragen</div>
-            </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <div className="text-2xl font-bold text-green-600">30</div>
-              <div className="text-sm text-gray-600">Minuten</div>
-            </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <div className="text-2xl font-bold text-purple-600">70%</div>
-              <div className="text-sm text-gray-600">Om te slagen</div>
-            </div>
-            <div className="bg-white rounded-lg p-4 shadow-sm">
-              <div className="text-2xl font-bold text-orange-600">100%</div>
-              <div className="text-sm text-gray-600">Gratis</div>
-            </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            {[
+              { label: "Vragen", value: "40", icon: CheckCircle, color: "text-blue-600", bg: "bg-blue-50" },
+              { label: "Tijd", value: "30 min", icon: Clock, color: "text-orange-600", bg: "bg-orange-50" },
+              { label: "Slagen", value: "70%", icon: Target, color: "text-green-600", bg: "bg-green-50" },
+              { label: "Kosten", value: "€0", icon: Users, color: "text-purple-600", bg: "bg-purple-50" },
+            ].map((stat, i) => (
+              <div key={i} className="bg-white rounded-xl p-6 shadow-sm border border-slate-100 flex flex-col items-center">
+                <div className={`w-10 h-10 rounded-full ${stat.bg} flex items-center justify-center mb-3`}>
+                  <stat.icon className={`h-5 w-5 ${stat.color}`} />
+                </div>
+                <div className="text-2xl font-bold text-slate-900">{stat.value}</div>
+                <div className="text-sm text-slate-500">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Categories */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+        {/* Exam Categories */}
+        <div className="grid lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
           {categories.map((category) => {
-            const IconComponent = category.icon;
-            const exams = examsByCategory[category.id] || [];
-
-            const getButtonClass = () => {
-              if (category.color === "text-blue-600") {
-                return "bg-blue-600 hover:bg-blue-700 border border-blue-700/80 text-white";
-              }
-              if (category.color === "text-green-600") {
-                return "bg-green-600 hover:bg-green-700 border border-green-700/80 text-white";
-              }
-              return "bg-red-600 hover:bg-red-700 border border-red-700/80 text-white";
-            };
+            const exams = examsByCategory[category.id] || []
+            const Icon = category.icon
 
             return (
-              <Card
-                key={category.id}
-                className="group relative overflow-hidden bg-white border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 p-0"
-              >
-                {/* Top background + Icon */}
-                <div className="relative w-full" style={{ height: "12rem" }}>
-                  {/* Colored background span */}
-                  <div
-                    className={`absolute top-0 left-0 w-full h-full ${category.bgColor} opacity-90`}
-                    style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
-                  ></div>
-
-                  {/* Blurred decorations */}
-                  <div className="absolute top-4 right-4 w-20 h-20 bg-white/20 rounded-full blur-xl"></div>
-                  <div className="absolute bottom-4 left-4 w-16 h-16 bg-white/10 rounded-full blur-lg"></div>
-
-                  {/* Content area */}
-                  <div className="relative h-full flex flex-col items-center justify-center text-center p-6">
-                    <div className="mb-4 relative">
-                      <div className="absolute inset-0 bg-white/30 rounded-full blur-md scale-110"></div>
-                      <IconComponent
-                        className={`relative h-14 w-14 ${category.color} group-hover:scale-125 transition-transform duration-500 drop-shadow-lg`}
-                      />
+              <Card key={category.id} className="border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col overflow-hidden rounded-2xl group">
+                <div className={`h-2 w-full ${category.bgColor.replace('bg-', 'bg-gradient-to-r from-').replace('50', '500').replace('to-', 'to-white').split(' ')[0]}`} />
+                <CardHeader className="pb-4">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className={`p-3 rounded-xl ${category.bgColor}`}>
+                      <Icon className={`h-8 w-8 ${category.color}`} />
                     </div>
-                    <h3 className="text-xl font-bold text-gray-900 mb-1 group-hover:text-gray-800 transition-colors">
-                      {category.name}
-                    </h3>
-                    <p className="text-sm text-gray-700">{category.description}</p>
+                    <div className="text-sm font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
+                      {exams.length} Examens
+                    </div>
                   </div>
-                </div>
+                  <CardTitle className="text-2xl font-bold text-slate-900">{category.name}</CardTitle>
+                  <CardDescription className="text-slate-600 text-base mt-2">
+                    {category.description}
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="flex-1 flex flex-col">
+                  <div className="space-y-3 mb-8 flex-1">
+                    {category.features.map((feature, i) => (
+                      <div key={i} className="flex items-start text-sm text-slate-600">
+                        <CheckCircle className="h-4 w-4 text-green-500 mr-2 mt-0.5 flex-shrink-0" />
+                        {feature}
+                      </div>
+                    ))}
+                  </div>
 
-                {/* Content Section */}
-                <CardContent className="p-6 bg-white">
-                  {/* Exams if available */}
-                  {exams.length > 0 ? (
-                    <div className="mb-6 space-y-2">
-                      {exams.map((exam) => (
+                  <div className="space-y-3">
+                    {exams.length > 0 ? (
+                      exams.map((exam: any) => (
                         <Button
+                          key={exam._id}
                           asChild
-                          key={exam.slug}
-                          size="sm"
-                          className={`group w-full flex items-center justify-between px-4 py-2 border-none font-medium transition-colors duration-200 ${getButtonClass()} hover:shadow-md`}
+                          className="w-full bg-slate-900 hover:bg-blue-600 text-white transition-colors h-12 text-base"
                         >
-                          <Link
-                            href={`/exams/start?exam=${exam.slug}`}
-                            className="flex items-center w-full justify-between border-none"
-                          >
-                            <span className="flex items-center">
-                              <Trophy className="h-4 w-4 mr-2" />
-                              {exam.title}
-                            </span>
-                            <span className="text-xs font-semibold transition-all duration-200">
-                              Begin nu →
-                            </span>
+                          <Link href={`/exams/start?examId=${exam._id}`}>
+                            Start {exam.title}
                           </Link>
                         </Button>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-gray-500 mb-4 text-center">Geen examens beschikbaar</p>
-                  )}
-
-                  {/* Features Section (optional) */}
-                  <div className="text-sm text-gray-700 space-y-1">
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4 text-gray-500" />
-                      <span>{category.timeLimit} minuten</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Target className="h-4 w-4 text-gray-500" />
-                      <span>{category.questions} vragen</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <Trophy className="h-4 w-4 text-gray-500" />
-                      <span>{category.passRate}% vereist</span>
-                    </div>
+                      ))
+                    ) : (
+                      <div className="text-center py-6 bg-slate-50 rounded-xl border border-slate-100 border-dashed">
+                        <AlertCircle className="h-8 w-8 text-slate-400 mx-auto mb-2" />
+                        <p className="text-slate-500 font-medium">Binnenkort beschikbaar</p>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
-            );
+            )
           })}
         </div>
-
-        {/* Call to Action */}
-        <Card className="mt-12 bg-gradient-to-r from-blue-600/80 to-indigo-700/80 text-white">
-          <CardContent className="p-8 text-center">
-            <Users className="h-12 w-12 mx-auto mb-4 opacity-90" />
-            <h3 className="text-2xl font-bold mb-4">Nog niet klaar voor een proefexamen?</h3>
-            <p className="text-lg mb-6 opacity-90">
-              Begin eerst met oefenen met losse vragen om je kennis op te bouwen
-            </p>
-            <Button asChild size="lg" variant="secondary" className="border border-white/80">
-              <Link href="/leren">
-                <Target className="h-4 w-4 mr-2" />
-                Start met Oefenen
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
       </div>
-      <Footer />
+      <div className="mt-20">
+        <Footer />
+      </div>
     </div>
   )
 }

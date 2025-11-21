@@ -116,89 +116,101 @@ export default function CategorieOverzichtPage() {
     [categorieen, zoek]
   )
 
-  const info = voertuigInfo[voertuig as keyof typeof voertuigInfo]
+  const info = voertuigInfo[voertuig as keyof typeof voertuigInfo] || voertuigInfo.auto
+  const Icon = info.icon
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-10">
-        <Breadcrumb className="mb-6">
+    <div className="min-h-screen bg-slate-50 py-12">
+      <div className="container mx-auto px-4 max-w-6xl">
+        <Breadcrumb className="mb-8">
           <BreadcrumbList>
             <BreadcrumbItem>
-              <BreadcrumbLink href="/">Home</BreadcrumbLink>
+              <BreadcrumbLink href="/" className="text-slate-500 hover:text-blue-600">Home</BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
+            <BreadcrumbSeparator className="text-slate-400" />
             <BreadcrumbItem>
-              <BreadcrumbLink href="/leren">Leren</BreadcrumbLink>
+              <BreadcrumbLink href="/leren" className="text-slate-500 hover:text-blue-600">Leren</BreadcrumbLink>
             </BreadcrumbItem>
-            <BreadcrumbSeparator />
+            <BreadcrumbSeparator className="text-slate-400" />
             <BreadcrumbItem>
-              <BreadcrumbPage className="capitalize">
-                {info.label}
-              </BreadcrumbPage>
+              <BreadcrumbPage className="text-slate-900 font-medium capitalize">{info.label}</BreadcrumbPage>
             </BreadcrumbItem>
           </BreadcrumbList>
         </Breadcrumb>
 
-        <div className="text-center mb-6">
-          {info && (
-            <info.icon className={`h-12 w-12 mx-auto mb-4 ${info.color}`} />
-          )}
-          <h1 className="text-3xl font-bold text-gray-800 mb-2 capitalize">
-            {info.label} Theorie
-          </h1>
-          <p className="text-gray-600 max-w-2xl mx-auto">{info.beschrijving}</p>
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+          <div>
+            <div className="flex items-center gap-4 mb-2">
+              <div className={`p-3 rounded-xl bg-white shadow-sm border border-slate-100`}>
+                <Icon className={`h-8 w-8 ${info.color}`} />
+              </div>
+              <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">
+                {info.label} Theorie
+              </h1>
+            </div>
+            <p className="text-slate-600 text-lg ml-[4.5rem]">
+              {info.beschrijving}
+            </p>
+          </div>
+
+          <div className="w-full md:w-72">
+            <Input
+              type="text"
+              placeholder="Zoek categorie..."
+              value={zoek}
+              onChange={(e) => setZoek(e.target.value)}
+              className="bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500 h-12 rounded-xl shadow-sm"
+            />
+          </div>
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center h-40">
-            <div className="h-10 w-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin" />
+          <div className="flex justify-center items-center h-64">
+            <div className="h-12 w-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
           </div>
         ) : (
-          <>
-            <ProgressTracker voertuig={voertuig as string} categorieen={categorieSlugs} />
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filtered.map((cat) => {
+              const iconKey = Object.keys(categorieIconen).find((k) =>
+                cat.slug.toLowerCase().includes(k)
+              ) || "default"
+              const CatIcon = categorieIconen[iconKey]
+              const isCompleted = gelezen[cat.slug]
 
-            <div className="flex items-center justify-between mb-6 gap-2 flex-wrap">
-              <Input
-                placeholder="Zoek een categorie..."
-                value={zoek}
-                onChange={(e) => setZoek(e.target.value)}
-                className="max-w-xs"
-              />
-              <span className="text-sm text-gray-600">
-                {filtered.length} van {categorieen.length} categorieën
-              </span>
-            </div>
-
-            <div className="mb-8">
-              <h2 className="text-2xl font-semibold text-gray-800 mb-1">
-                {info.label} theorie hoofdstukken
-              </h2>
-              <p className="text-sm text-gray-600 mb-6">
-                Alles wat je moet weten voor je{" "}
-                {info.label.toLowerCase()} theorie examen opgesplitst in
-                hoofdstukken en gratis te lezen
-              </p>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                {filtered.map((cat) => (
-                  <Link
-                    key={cat.slug}
-                    href={`/leren/${voertuig}/${cat.slug}`}
-                    className="block rounded-lg border border-gray-200 bg-white p-4 hover:shadow-sm transition"
-                  >
-                    <div className="flex items-center space-x-3">
-                      <div className="text-xl">
-                        {categorieIconen[cat.slug] || categorieIconen["default"]}
-                      </div>
-                      <h3 className="text-sm font-medium text-gray-800 leading-snug">
-                        {cat.title}
-                      </h3>
+              return (
+                <Link
+                  key={cat.slug}
+                  href={`/leren/${voertuig}/${cat.slug}`}
+                  className="group bg-white rounded-2xl p-6 shadow-sm border border-slate-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                >
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="p-3 rounded-xl bg-slate-50 group-hover:bg-blue-50 transition-colors">
+                      {CatIcon}
                     </div>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </>
+                    {isCompleted && (
+                      <span className="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full flex items-center">
+                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                        </svg>
+                        Voltooid
+                      </span>
+                    )}
+                  </div>
+                  
+                  <h2 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">
+                    {cat.title}
+                  </h2>
+                  
+                  <div className="mt-auto pt-4 flex items-center text-sm font-medium text-slate-500 group-hover:text-blue-600">
+                    Start lessen
+                    <svg className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                    </svg>
+                  </div>
+                </Link>
+              )
+            })}
+          </div>
         )}
       </div>
     </div>

@@ -222,11 +222,11 @@ export default function CategoryTrafficSignsPage() {
   // Don't render until mounted to prevent hydration mismatch
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-slate-50">
         <div className="container mx-auto px-4 py-8">
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Laden...</p>
+            <p className="text-slate-600">Laden...</p>
           </div>
         </div>
       </div>
@@ -235,14 +235,14 @@ export default function CategoryTrafficSignsPage() {
 
   if (!currentCategory) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <Card className="max-w-md">
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <Card className="max-w-md border-slate-100 shadow-sm">
           <CardHeader className="text-center">
-            <CardTitle>Categorie niet gevonden</CardTitle>
-            <CardDescription>De opgevraagde categorie bestaat niet.</CardDescription>
+            <CardTitle className="text-slate-900">Categorie niet gevonden</CardTitle>
+            <CardDescription className="text-slate-500">De opgevraagde categorie bestaat niet.</CardDescription>
           </CardHeader>
           <CardContent className="text-center">
-            <Button asChild className="border border-blue-700/80">
+            <Button asChild className="bg-blue-600 hover:bg-blue-700 text-white">
               <Link href="/verkeersborden">Terug naar Overzicht</Link>
             </Button>
           </CardContent>
@@ -252,27 +252,27 @@ export default function CategoryTrafficSignsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 pt-8">
+    <div className="min-h-screen bg-slate-50">
+      <div className="container mx-auto px-4 pt-8 max-w-7xl">
 
         {/* Page Header */}
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 mb-8">
+        <div className="bg-white rounded-2xl border border-slate-100 shadow-sm p-8 mb-8">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             {/* Left: Icon + Title */}
             <div className="flex items-center space-x-6">
-              <div className={`${currentCategory.bgColor} p-4 rounded-full`}>
+              <div className={`${currentCategory.bgColor} p-4 rounded-xl`}>
                 <IconComponent className={`h-8 w-8 ${currentCategory.color}`} />
               </div>
               <div>
-                <h1 className="text-2xl font-bold text-gray-900">{currentCategory.name}</h1>
-                <p className="text-gray-600 text-sm">{currentCategory.description}</p>
+                <h1 className="text-2xl font-bold text-slate-900">{currentCategory.name}</h1>
+                <p className="text-slate-600 text-sm">{currentCategory.description}</p>
               </div>
             </div>
 
             {/* Right: Back Link */}
             <Link
               href="/verkeersborden"
-              className="inline-flex items-center text-sm font-medium text-gray-500 hover:text-blue-600 transition-colors"
+              className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
             >
               <svg
                 className="w-4 h-4 mr-1.5"
@@ -291,17 +291,17 @@ export default function CategoryTrafficSignsPage() {
         {/* Search and Filter */}
         <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-400 h-4 w-4" />
             <Input
               placeholder="Zoek verkeersborden..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
+              className="pl-10 bg-white border-slate-200 focus:border-blue-500 focus:ring-blue-500 rounded-xl shadow-sm"
             />
           </div>
           <div className="flex items-center space-x-2">
-            <Filter className="h-4 w-4 text-gray-500" />
-            <span className="text-sm text-gray-600">Filter:</span>
+            <Filter className="h-4 w-4 text-slate-500" />
+            <span className="text-sm text-slate-600">Filter:</span>
           </div>
         </div>
 
@@ -311,10 +311,10 @@ export default function CategoryTrafficSignsPage() {
             <button
               key={type.id}
               onClick={() => setSelectedType(type.id)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
+              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all duration-200 ${
                 selectedType === type.id
-                  ? "bg-blue-600 text-white"
-                  : "bg-white text-gray-600 hover:bg-gray-50 border border-gray-300"
+                  ? "bg-blue-600 text-white shadow-md shadow-blue-200"
+                  : "bg-white text-slate-600 hover:bg-slate-50 border border-slate-200 hover:border-slate-300"
               }`}
             >
               {type.name} ({type.count})
@@ -350,22 +350,22 @@ export default function CategoryTrafficSignsPage() {
         {loading && (
           <div className="text-center py-12">
             <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-            <p className="text-gray-600">Verkeersborden laden...</p>
+            <p className="text-slate-600">Verkeersborden laden...</p>
           </div>
         )}
 
         {/* Traffic Signs Grid */}
         {!loading && (
           <>
-            <div className="mb-4 text-sm text-gray-600">
+            <div className="mb-4 text-sm text-slate-600 font-medium">
               {filteredSigns.length} van {signs.length} borden
             </div>
 
             {filteredSigns.length === 0 ? (
-              <Card className="text-center py-12">
+              <Card className="text-center py-12 border-slate-100 shadow-sm">
                 <CardContent>
                   <AlertTriangle className="h-12 w-12 text-yellow-500 mx-auto mb-4" />
-                  <p className="text-gray-600 mb-4">
+                  <p className="text-slate-600 mb-4">
                     {signs.length === 0
                       ? "Er zijn momenteel geen verkeersborden beschikbaar."
                       : "Geen verkeersborden gevonden voor je zoekopdracht."}
@@ -376,13 +376,13 @@ export default function CategoryTrafficSignsPage() {
                         setSearchTerm("")
                         setSelectedType("all")
                       }}
-                      className="border border-blue-700/80"
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
                     >
                       Filters Wissen
                     </Button>
                   )}
                   {signs.length === 0 && (
-                    <Button onClick={fetchSigns} className="border border-blue-700/80">
+                    <Button onClick={fetchSigns} className="bg-blue-600 hover:bg-blue-700 text-white">
                       <RefreshCw className="h-4 w-4 mr-2" />
                       Opnieuw laden
                     </Button>
@@ -390,19 +390,19 @@ export default function CategoryTrafficSignsPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {filteredSigns.map((sign) => (
                   <Card
                     key={sign._id}
-                    className="group bg-white border border-gray-200 hover:border-gray-300 hover:shadow-md transition-all duration-200"
+                    className="group bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-2xl overflow-hidden"
                   >
-                    <CardContent className="p-4">
+                    <CardContent className="p-5">
                       {/* Sign Image */}
-                      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-4 text-center group-hover:bg-gray-100 transition-colors">
+                      <div className="bg-slate-50 border border-slate-100 rounded-xl p-6 mb-4 text-center group-hover:bg-white transition-colors">
                         <img
                           src={imageErrors.has(sign._id) ? createPlaceholderSVG(160, 160) : sign.image}
                           alt={sign.name}
-                          className="w-60 h-60 mx-auto object-contain"
+                          className="w-40 h-40 mx-auto object-contain drop-shadow-sm"
                           onError={(e) => handleImageError(sign._id, e)}
                           loading="lazy"
                         />
@@ -411,7 +411,7 @@ export default function CategoryTrafficSignsPage() {
                       {/* Sign Info */}
                       <div className="space-y-3">
                         <div className="flex items-start justify-between">
-                          <h3 className="font-semibold text-gray-900 text-sm leading-tight line-clamp-2 flex-1">
+                          <h3 className="font-bold text-slate-900 text-sm leading-tight line-clamp-2 flex-1">
                             {sign.name}
                           </h3>
                           <span className="text-lg ml-2 flex-shrink-0" title={`Vorm: ${sign.shape}`}>
@@ -419,29 +419,29 @@ export default function CategoryTrafficSignsPage() {
                           </span>
                         </div>
 
-                        <Badge className={`${getTypeColor(sign.type)} text-xs font-medium border`} variant="outline">
+                        <Badge className={`${getTypeColor(sign.type)} text-xs font-medium border px-2 py-0.5 rounded-md`} variant="outline">
                           {sign.type.charAt(0).toUpperCase() + sign.type.slice(1)}
                         </Badge>
 
-                        <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{sign.description}</p>
+                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{sign.description}</p>
 
-                        <div className="pt-2 border-t border-gray-100">
-                          <p className="text-xs font-medium text-gray-900 mb-1">Betekenis:</p>
-                          <p className="text-xs text-gray-600 line-clamp-2 leading-relaxed">{sign.meaning}</p>
+                        <div className="pt-3 border-t border-slate-100">
+                          <p className="text-xs font-bold text-slate-900 mb-1">Betekenis:</p>
+                          <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{sign.meaning}</p>
                         </div>
 
-                        <div className="flex flex-wrap gap-1">
+                        <div className="flex flex-wrap gap-1 pt-1">
                           {sign.applicableFor.slice(0, 2).map((vehicle, index) => (
                             <Badge
                               key={index}
                               variant="outline"
-                              className="text-xs bg-gray-50 text-gray-600 border-gray-200"
+                              className="text-[10px] bg-slate-50 text-slate-600 border-slate-200 px-1.5 py-0"
                             >
                               {vehicle}
                             </Badge>
                           ))}
                           {sign.applicableFor.length > 2 && (
-                            <Badge variant="outline" className="text-xs bg-gray-50 text-gray-600 border-gray-200">
+                            <Badge variant="outline" className="text-[10px] bg-slate-50 text-slate-600 border-slate-200 px-1.5 py-0">
                               +{sign.applicableFor.length - 2}
                             </Badge>
                           )}
@@ -456,27 +456,27 @@ export default function CategoryTrafficSignsPage() {
         )}
 
         {/* Study Tips */}
-        <Card className="mt-12 border border-gray-300/70">
+        <Card className="mt-12 border border-slate-200 bg-white shadow-sm rounded-2xl">
           <CardHeader>
-            <CardTitle>Studietips voor Verkeersborden</CardTitle>
+            <CardTitle className="text-slate-900">Studietips voor Verkeersborden</CardTitle>
           </CardHeader>
-          <CardContent className="grid md:grid-cols-2 gap-6">
+          <CardContent className="grid md:grid-cols-2 gap-8">
             <div>
-              <h4 className="font-semibold mb-3">Herkenning Tips:</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Let op de vorm: rond (gebod), driehoek (waarschuwing), achthoek (stop)</li>
-                <li>• Kleur is belangrijk: rood (verbod), blauw (gebod), geel (waarschuwing)</li>
-                <li>• Symbolen zijn universeel en logisch ontworpen</li>
-                <li>• Oefen regelmatig met verschillende combinaties</li>
+              <h4 className="font-bold text-slate-900 mb-3">Herkenning Tips:</h4>
+              <ul className="space-y-2 text-sm text-slate-600">
+                <li className="flex items-start"><span className="mr-2 text-blue-500">•</span> Let op de vorm: rond (gebod), driehoek (waarschuwing), achthoek (stop)</li>
+                <li className="flex items-start"><span className="mr-2 text-blue-500">•</span> Kleur is belangrijk: rood (verbod), blauw (gebod), geel (waarschuwing)</li>
+                <li className="flex items-start"><span className="mr-2 text-blue-500">•</span> Symbolen zijn universeel en logisch ontworpen</li>
+                <li className="flex items-start"><span className="mr-2 text-blue-500">•</span> Oefen regelmatig met verschillende combinaties</li>
               </ul>
             </div>
             <div>
-              <h4 className="font-semibold mb-3">Examen Tips:</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li>• Verkeersborden vormen 20-30% van het theorie-examen</li>
-                <li>• Let goed op details in de vraagstelling</li>
-                <li>• Sommige borden gelden alleen voor specifieke voertuigen</li>
-                <li>• Begrijp de betekenis, niet alleen de vorm</li>
+              <h4 className="font-bold text-slate-900 mb-3">Examen Tips:</h4>
+              <ul className="space-y-2 text-sm text-slate-600">
+                <li className="flex items-start"><span className="mr-2 text-blue-500">•</span> Verkeersborden vormen 20-30% van het theorie-examen</li>
+                <li className="flex items-start"><span className="mr-2 text-blue-500">•</span> Let goed op details in de vraagstelling</li>
+                <li className="flex items-start"><span className="mr-2 text-blue-500">•</span> Sommige borden gelden alleen voor specifieke voertuigen</li>
+                <li className="flex items-start"><span className="mr-2 text-blue-500">•</span> Begrijp de betekenis, niet alleen de vorm</li>
               </ul>
             </div>
           </CardContent>

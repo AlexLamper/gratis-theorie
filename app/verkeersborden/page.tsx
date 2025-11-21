@@ -46,203 +46,125 @@ export default function VerkeersbordensPage() {
   ]
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="container mx-auto px-4 py-12">
+    <div className="min-h-screen bg-slate-50 py-12">
+      <div className="container mx-auto px-4">
         {/* Page Header */}
-        <div className="text-center mb-12">
-          <Shield className="h-16 w-16 text-blue-600 mx-auto mb-4" />
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Nederlandse Verkeersborden</h1>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-2xl bg-blue-50 mb-6">
+            <Shield className="h-8 w-8 text-blue-600" />
+          </div>
+          <h1 className="text-4xl font-extrabold text-slate-900 mb-4 tracking-tight">Nederlandse Verkeersborden</h1>
+          <p className="text-xl text-slate-600 max-w-3xl mx-auto">
             Leer alle verkeersborden die je moet kennen voor je theorie-examen. Georganiseerd per voertuigcategorie met
             duidelijke uitleg en betekenis.
           </p>
         </div>
 
-        <div className="mb-12">
-          <Card className="overflow-hidden shadow-md border-gray-300/70 hover:shadow-lg transition-all duration-500 border hover:border-gray-300 bg-gradient-to-br from-gray-100 via-white to-gray-50 text-gray-900 group">
-            <Link href="/verkeersborden/alle">
-              <div className="relative">
-                {/* Subtle Background Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-br from-gray-100/20 via-white/20 to-gray-50/20 pointer-events-none"></div>
+        <div className="mb-16 max-w-6xl mx-auto">
+          <Link href="/verkeersborden/alle" className="block group">
+            <div className="relative overflow-hidden rounded-3xl bg-white shadow-sm border border-slate-100 hover:shadow-xl transition-all duration-300">
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-50 to-transparent opacity-50" />
+              
+              <div className="relative p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
+                <div className="flex-1 text-center md:text-left">
+                  <div className="inline-flex items-center space-x-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full text-sm font-medium mb-6">
+                    <Sparkles className="w-4 h-4" />
+                    <span>Meest compleet</span>
+                  </div>
+                  
+                  <h2 className="text-3xl font-bold text-slate-900 mb-4">Alle Verkeersborden</h2>
+                  <p className="text-lg text-slate-600 mb-8 max-w-xl">
+                    Bekijk alle Nederlandse verkeersborden in één compleet overzicht. Perfect voor een
+                    totaaloverzicht van alle borden die je moet kennen.
+                  </p>
 
-                <CardContent className="relative p-8 lg:p-12">
-                  <div className="flex flex-col lg:flex-row items-center justify-between">
-                    {/* Left Content */}
-                    <div className="text-center lg:text-left lg:flex-1 mb-6 lg:mb-0">
-                      <div className="flex items-center justify-center lg:justify-start mb-4">
-                        <Shield className="h-12 w-12 mr-4 text-gray-700 group-hover:scale-110 transition-transform duration-300" />
-                        <Sparkles className="h-8 w-8 text-yellow-500 animate-pulse" />
+                  <div className="flex flex-wrap justify-center md:justify-start gap-3">
+                    { [
+                      "90+ Borden",
+                      "7 Categorieën",
+                      "Alle Voertuigen"
+                    ].map((badge, i) => (
+                      <span key={i} className="px-3 py-1 bg-slate-100 text-slate-600 rounded-lg text-sm font-medium border border-slate-200">
+                        {badge}
+                      </span>
+                    )) }
+                  </div>
+                </div>
+
+                <div className="relative w-full md:w-auto">
+                  <div className="bg-white p-6 rounded-2xl shadow-lg border border-slate-100 transform rotate-3 group-hover:rotate-0 transition-transform duration-300">
+                    <div className="grid grid-cols-3 gap-4 w-64">
+                      <div className="aspect-square bg-red-100 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-red-500 rounded-full" />
                       </div>
-                      <h2 className="text-3xl lg:text-4xl font-bold mb-4">Alle Verkeersborden</h2>
-                      <p className="text-xl text-gray-600 mb-6 max-w-2xl">
-                        Bekijk alle Nederlandse verkeersborden in één compleet overzicht. Perfect voor een
-                        totaaloverzicht van alle borden die je moet kennen.
-                      </p>
-
-                      <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-6">
-                        <Badge className="bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 transition-colors">
-                          90+ Borden
-                        </Badge>
-                        <Badge className="bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 transition-colors">
-                          7 Categorieën
-                        </Badge>
-                        <Badge className="bg-gray-200 text-gray-800 border border-gray-300 hover:bg-gray-300 transition-colors">
-                          Alle Voertuigen
-                        </Badge>
-                        <Badge className="bg-yellow-300 text-gray-800 font-semibold">
-                          Meest Compleet
-                        </Badge>
+                      <div className="aspect-square bg-blue-100 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-blue-500 rounded-md" />
                       </div>
-                    </div>
-
-                    {/* Right Content */}
-                    <div className="lg:flex-shrink-0">
-                      <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-6 border border-gray-200 shadow-sm">
-                        <div className="grid grid-cols-3 gap-4 mb-6">
-                          {/* Sample signs preview */}
-                          <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-md">
-                            <div className="w-12 h-12 bg-red-500 rounded-full flex items-center justify-center text-white font-bold text-xs">
-                              STOP
-                            </div>
-                          </div>
-                          <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-md">
-                            <div className="w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center text-white font-bold">
-                              P
-                            </div>
-                          </div>
-                          <div className="w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-md">
-                            <div className="w-12 h-12 bg-red-500 rounded-full border-4 border-white flex items-center justify-center text-white font-bold text-xs">
-                              50
-                            </div>
-                          </div>
-                        </div>
-
-                        <Button
-                          size="lg"
-                          className="w-full bg-gray-900 text-white hover:bg-gray-800 font-semibold group-hover:scale-105 transition-all duration-300"
-                        >
-                          <Shield className="mr-2 h-5 w-5" />
-                          Bekijk Alle Verkeersborden
-                        </Button>
+                      <div className="aspect-square bg-yellow-100 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-yellow-400 transform rotate-45 rounded-sm" />
+                      </div>
+                      <div className="aspect-square bg-slate-100 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 border-4 border-red-500 rounded-full" />
+                      </div>
+                      <div className="aspect-square bg-slate-100 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-blue-600 rounded-full" />
+                      </div>
+                      <div className="aspect-square bg-slate-100 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-white border-4 border-red-500 rounded-full" />
                       </div>
                     </div>
                   </div>
-                </CardContent>
+                </div>
               </div>
-            </Link>
-          </Card>
+            </div>
+          </Link>
         </div>
 
-        {/* Categories Grid - Completely Redesigned */}
-        <div className="grid lg:grid-cols-3 gap-8 mb-12">
+        <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
           {categories.map((category) => {
-            const IconComponent = category.icon
-
+            const Icon = category.icon
             return (
-              <Card
-                key={category.id}
-                className="group relative overflow-hidden bg-white border-0 shadow-lg hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 p-0"
-              >
-                <Link href={`/verkeersborden/${category.id}`}>
-                  {/* Modern Header Design */}
-                  <div className="relative w-full" style={{ height: "12rem" }}>
-                    {/* Gradient Background - now flush with top */}
-                    <div
-                      className={`absolute top-0 left-0 w-full h-full ${category.bgColor} opacity-90`}
-                      style={{ borderTopLeftRadius: 0, borderTopRightRadius: 0 }}
-                    ></div>
-
-                    {/* Decorative Elements */}
-                    <div className="absolute top-4 right-4 w-20 h-20 bg-white/20 rounded-full blur-xl"></div>
-                    <div className="absolute bottom-4 left-4 w-16 h-16 bg-white/10 rounded-full blur-lg"></div>
-
-                    {/* Content */}
-                    <div className="relative h-full flex flex-col items-center justify-center text-center p-6">
-                      <div className="mb-4 relative">
-                        <div className="absolute inset-0 bg-white/30 rounded-full blur-md scale-110"></div>
-                        <IconComponent
-                          className={`relative h-16 w-16 ${category.color} group-hover:scale-125 transition-transform duration-500 drop-shadow-lg`}
+              <Link key={category.id} href={`/verkeersborden/${category.id}`} className="group">
+                <Card className="h-full border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 rounded-2xl overflow-hidden bg-white">
+                  <div className={`h-2 w-full ${category.bgColor.replace('bg-gradient-to-br', 'bg-gradient-to-r').replace('50', '500').replace('to-', 'to-white').split(' ')[0]}`} />
+                  <CardHeader>
+                    <div className={`w-14 h-14 rounded-xl ${category.bgColor.split(' ')[0]} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className={`h-7 w-7 ${category.color}`} />
+                    </div>
+                    <CardTitle className="text-xl font-bold text-slate-900">{category.name}</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-slate-600 mb-6 min-h-[3rem]">
+                      {category.description}
+                    </p>
+                    
+                    <div className="space-y-3">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-slate-500">Aantal borden</span>
+                        <span className="font-semibold text-slate-900">{category.count}</span>
+                      </div>
+                      <div className="w-full bg-slate-100 rounded-full h-2">
+                        <div 
+                          className={`h-2 rounded-full ${category.color.replace('text-', 'bg-')}`} 
+                          style={{ width: `${(category.count / 90) * 100}%` }}
                         />
                       </div>
-                      <h3 className="text-xl font-bold text-gray-900 mb-2 group-hover:text-gray-800 transition-colors">
-                        {category.name}
-                      </h3>
-                      <Badge variant="secondary" className="bg-white/80 text-gray-700 border-0 font-semibold px-3 py-1">
-                        {category.count}+ borden
-                      </Badge>
-                    </div>
-                  </div>
-
-                  {/* Content Section */}
-                  <CardContent className="p-6">
-                    <p className="text-gray-600 text-sm mb-6 leading-relaxed">{category.description}</p>
-
-                    {/* Feature Tags */}
-                    <div className="space-y-3 mb-6">
-                      <h4 className="text-sm font-semibold text-gray-900">Categorieën:</h4>
-                      <div className="flex flex-wrap gap-2">
-                        {category.sections.slice(0, 3).map((section, index) => (
-                          <span
-                            key={index}
-                            className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700"
-                          >
-                            {section}
-                          </span>
-                        ))}
-                        {category.sections.length > 3 && (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
-                            +{category.sections.length - 3} meer
-                          </span>
-                        )}
-                      </div>
                     </div>
 
-                    {/* Action Button */}
-                    <Button className="w-full bg-gray-900 hover:bg-gray-800 text-white border-0 font-semibold py-3 group-hover:bg-blue-600 transition-all duration-300">
-                      <span>Bekijk Alle Borden</span>
-                      <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform duration-300" />
-                    </Button>
+                    <div className="mt-6 flex items-center text-blue-600 font-medium group-hover:translate-x-1 transition-transform">
+                      Bekijk borden
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </div>
                   </CardContent>
-                </Link>
-              </Card>
+                </Card>
+              </Link>
             )
           })}
         </div>
-
-        {/* Info Section */}
-        <div className="grid md:grid-cols-2 gap-8">
-          <Card className="border border-gray-300/70 hover:shadow-lg transition-all">
-            <CardHeader>
-              <div className="flex items-center space-x-2">
-                <Info className="h-5 w-5 text-blue-600" />
-                <CardTitle className="text-lg">Waarom Verkeersborden Leren?</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3 text-gray-600">
-              <p>• Verkeersborden vormen een groot deel van het theorie-examen</p>
-              <p>• Kennis van borden is essentieel voor veilig verkeer</p>
-              <p>• Verschillende categorieën hebben specifieke borden</p>
-              <p>• Regelmatige herhaling verbetert je slagingskans</p>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-gray-300/70 hover:shadow-lg transition-all">
-            <CardHeader>
-              <div className="flex items-center space-x-2">
-                <AlertTriangle className="h-5 w-5 text-yellow-600" />
-                <CardTitle className="text-lg">Tips voor het Leren</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3 text-gray-600">
-              <p>• Begin met de meest voorkomende borden</p>
-              <p>• Let op de vorm en kleur van elk bord</p>
-              <p>• Oefen regelmatig met verschillende categorieën</p>
-              <p>• Begrijp de betekenis, niet alleen de vorm</p>
-            </CardContent>
-          </Card>
-        </div>
       </div>
-      <Footer />
+      <div className="mt-20">
+        <Footer />
+      </div>
     </div>
   )
 }

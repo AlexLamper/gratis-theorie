@@ -143,37 +143,37 @@ export default function LesPagina() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50 px-4 py-6">
-        <div className="max-w-6xl mx-auto">
-          <Breadcrumb className="mb-6">
+      <div className="min-h-screen bg-slate-50 px-4 py-8">
+        <div className="max-w-7xl mx-auto">
+          <Breadcrumb className="mb-8">
             <BreadcrumbList>
               <BreadcrumbItem>
-                <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                <BreadcrumbLink href="/" className="text-slate-500 hover:text-blue-600">Home</BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator />
+              <BreadcrumbSeparator className="text-slate-400" />
               <BreadcrumbItem>
-                <BreadcrumbLink href="/leren">Leren</BreadcrumbLink>
+                <BreadcrumbLink href="/leren" className="text-slate-500 hover:text-blue-600">Leren</BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator />
+              <BreadcrumbSeparator className="text-slate-400" />
               <BreadcrumbItem>
-                <BreadcrumbLink href={`/leren/${voertuig}`}>{voertuigData?.displayName || voertuig}</BreadcrumbLink>
+                <BreadcrumbLink href={`/leren/${voertuig}`} className="text-slate-500 hover:text-blue-600">{voertuigData?.displayName || voertuig}</BreadcrumbLink>
               </BreadcrumbItem>
-              <BreadcrumbSeparator />
+              <BreadcrumbSeparator className="text-slate-400" />
               <BreadcrumbItem>
-                <BreadcrumbPage className="capitalize text-blue-600 font-semibold">
+                <BreadcrumbPage className="capitalize text-slate-900 font-medium">
                   {groepen.find((g) => g.categorie === categorie)?.titel || categorie}
                 </BreadcrumbPage>
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
 
-          <div className="flex gap-6 flex-col lg:flex-row">
+          <div className="flex gap-8 flex-col lg:flex-row">
             {/* Mobile Menu Button */}
-            <div className="lg:hidden flex items-center justify-between bg-white rounded-lg border border-gray-200 p-4 mb-2">
-              <h3 className="font-semibold text-gray-900">Navigatie</h3>
+            <div className="lg:hidden flex items-center justify-between bg-white rounded-xl border border-slate-100 shadow-sm p-4 mb-2">
+              <h3 className="font-semibold text-slate-900">Navigatie</h3>
               <button
                 onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition"
+                className="p-2 hover:bg-slate-50 rounded-lg transition text-slate-600"
               >
                 {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
               </button>
@@ -181,23 +181,23 @@ export default function LesPagina() {
 
             {/* Mobile Sidebar - Collapsible */}
             {mobileMenuOpen && (
-              <aside className="lg:hidden w-full bg-white rounded-2xl border border-gray-200 p-4 mb-2">
+              <aside className="lg:hidden w-full bg-white rounded-2xl border border-slate-100 shadow-sm p-4 mb-4">
                 {loading ? (
                   <div className="flex justify-center items-center h-40">
-                    <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                    <div className="h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
                   </div>
                 ) : groepen.length === 0 ? (
-                  <div className="text-center text-gray-400 py-10">Geen categorieën gevonden.</div>
+                  <div className="text-center text-slate-400 py-10">Geen categorieën gevonden.</div>
                 ) : (
                   groepen.sort((a, b) => a.titel.localeCompare(b.titel)).map((groep) => {
                     const isActiveGroup = groep.categorie === categorie
                     return (
-                      <div key={groep.categorie} className="mb-4">
+                      <div key={groep.categorie} className="mb-2">
                         <Link
                           href={`/leren/${voertuig}/${groep.categorie}?les=1`}
                           className={clsx(
-                            "w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium text-sm text-left cursor-pointer",
-                            isActiveGroup ? "bg-gray-100" : "hover:bg-gray-50"
+                            "w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium text-sm text-left cursor-pointer transition-colors",
+                            isActiveGroup ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50"
                           )}
                           onClick={() => {
                             setActieveGroep(groep.categorie)
@@ -208,7 +208,7 @@ export default function LesPagina() {
                           {isActiveGroup ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                         </Link>
                         {isActiveGroup && (
-                          <ul className="pl-3 mt-2 text-sm space-y-1 transition-all duration-300">
+                          <ul className="pl-4 mt-2 text-sm space-y-1 transition-all duration-300 border-l-2 border-slate-100 ml-4">
                             {groep.sublessen.map((les, index) => {
                               const isActiefLes = groep.categorie === categorie && les.volgorde === lesVolgorde
                               return (
@@ -216,10 +216,10 @@ export default function LesPagina() {
                                   <Link
                                     href={`/leren/${voertuig}/${groep.categorie}?les=${les.volgorde}`}
                                     className={clsx(
-                                      "block px-2 py-1 rounded-md transition",
+                                      "block px-3 py-2 rounded-lg transition",
                                       isActiefLes
-                                        ? "text-gray-900 font-medium border-l-4 border-blue-500 bg-gray-100"
-                                        : "text-gray-700 hover:bg-gray-50"
+                                        ? "text-blue-700 font-medium bg-blue-50"
+                                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                                     )}
                                     onClick={() => setMobileMenuOpen(false)}
                                   >
@@ -238,23 +238,25 @@ export default function LesPagina() {
             )}
 
             {/* Desktop Sidebar - Always Visible */}
-            <aside className="hidden lg:block w-[300px] bg-white rounded-2xl border border-gray-200 p-4">
+            <aside className="hidden lg:block w-[320px] shrink-0 bg-white rounded-2xl border border-slate-100 shadow-sm p-6 h-fit sticky top-6">
+              <h3 className="font-bold text-slate-900 mb-4 px-2">Inhoudsopgave</h3>
               {loading ? (
                 <div className="flex justify-center items-center h-40">
-                  <div className="h-10 w-10 border-4 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="h-10 w-10 border-4 border-blue-600 border-t-transparent rounded-full animate-spin" />
                 </div>
               ) : groepen.length === 0 ? (
-                <div className="text-center text-gray-400 py-10">Categorieën aan het laden...</div>
+                <div className="text-center text-slate-400 py-10">Categorieën aan het laden...</div>
               ) : (
-                groepen.sort((a, b) => a.titel.localeCompare(b.titel)).map((groep) => {
+                <div className="space-y-1">
+                {groepen.sort((a, b) => a.titel.localeCompare(b.titel)).map((groep) => {
                   const isActiveGroup = groep.categorie === categorie
                   return (
-                    <div key={groep.categorie} className="mb-4">
+                    <div key={groep.categorie}>
                       <Link
                         href={`/leren/${voertuig}/${groep.categorie}?les=1`}
                         className={clsx(
-                          "w-full flex items-center justify-between px-3 py-2 rounded-lg font-medium text-sm text-left cursor-pointer",
-                          isActiveGroup ? "bg-gray-100" : "hover:bg-gray-50"
+                          "w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium text-sm text-left cursor-pointer transition-colors",
+                          isActiveGroup ? "bg-blue-50 text-blue-700" : "text-slate-700 hover:bg-slate-50"
                         )}
                         onClick={() => setActieveGroep(groep.categorie)}
                       >
@@ -262,7 +264,7 @@ export default function LesPagina() {
                         {isActiveGroup ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
                       </Link>
                       {isActiveGroup && (
-                        <ul className="pl-3 mt-2 text-sm space-y-1 transition-all duration-300">
+                        <ul className="mt-2 mb-2 space-y-1 transition-all duration-300 ml-4 pl-4 border-l-2 border-slate-100">
                           {groep.sublessen.map((les, index) => {
                             const isActiefLes = groep.categorie === categorie && les.volgorde === lesVolgorde
                             return (
@@ -270,10 +272,10 @@ export default function LesPagina() {
                                 <Link
                                   href={`/leren/${voertuig}/${groep.categorie}?les=${les.volgorde}`}
                                   className={clsx(
-                                    "block px-2 py-1 rounded-md transition",
+                                    "block px-3 py-2 rounded-lg transition text-sm",
                                     isActiefLes
-                                      ? "text-gray-900 font-medium border-l-4 border-blue-500 bg-gray-100"
-                                      : "text-gray-700 hover:bg-gray-50"
+                                      ? "text-blue-700 font-medium bg-blue-50"
+                                      : "text-slate-600 hover:text-slate-900 hover:bg-slate-50"
                                   )}
                                 >
                                   {index + 1}. {les.titel}
@@ -285,24 +287,25 @@ export default function LesPagina() {
                       )}
                     </div>
                   )
-                })
+                })}
+                </div>
               )}
             </aside>
 
-            <main className="flex-1 bg-white rounded-xl p-4 lg:p-6 border border-gray-200">
-              <h1 className="text-2xl lg:text-3xl font-bold text-gray-900 mb-6">{actieveLes.titel}</h1>
+            <main className="flex-1 bg-white rounded-2xl p-6 lg:p-10 border border-slate-100 shadow-sm">
+              <h1 className="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-8 tracking-tight">{actieveLes.titel}</h1>
 
               {Array.isArray(actieveLes.inhoud) && actieveLes.inhoud[0]?.type === "afbeelding" && (
-                <div className="rounded-xl overflow-hidden mb-6">
+                <div className="rounded-2xl overflow-hidden mb-8 shadow-sm border border-slate-100">
                   <img
                     src={actieveLes.inhoud[0].bron}
                     alt={actieveLes.inhoud[0].bijschrift || "Inleidende afbeelding"}
-                    className="w-full object-cover max-h-[360px] mx-auto rounded-xl"
+                    className="w-full object-cover max-h-[400px] mx-auto"
                   />
                 </div>
               )}
 
-              <div className="prose prose-blue prose-base max-w-none">
+              <div className="prose prose-slate prose-lg max-w-none prose-headings:font-bold prose-headings:text-slate-900 prose-p:text-slate-600 prose-a:text-blue-600 hover:prose-a:text-blue-700 prose-img:rounded-xl">
                 <style jsx>{`
                   h3 {
                     font-weight: bold;
@@ -311,7 +314,7 @@ export default function LesPagina() {
                 {Array.isArray(actieveLes.inhoud) ? (
                   <LessonContent inhoud={actieveLes.inhoud} />
                 ) : (
-                  <div className="space-y-6 leading-relaxed text-gray-800 text-base">
+                  <div className="space-y-6 leading-relaxed text-slate-600 text-lg">
                     {parse(actieveLes.inhoud)}
                   </div>
                 )}
