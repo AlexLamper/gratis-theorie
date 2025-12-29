@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/progress"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
+import { track } from "@vercel/analytics"
 
 interface Question {
   _id: string
@@ -47,6 +48,7 @@ export default function StartExamPage() {
       setExam(data.exam)
       setAnswers(Array(data.exam.questions.length).fill(-1))
       setTimeLeft(data.exam.timeLimit * 60)
+      track("Exam Started", { slug, category: data.exam.category })
     }
     fetchExam()
   }, [slug])
@@ -85,7 +87,14 @@ export default function StartExamPage() {
       0
     )
     const score = (correct / exam.questions.length) * 100
-    setResult({ score, passed: score >= exam.passRate, duration })
+    const passed = score >= exam.passRate
+    setResult({ score, passed, duration })
+    track("Exam Completed", { 
+      slug, 
+      category: exam.category, 
+      score: Math.round(score), 
+      passed 
+    })
   }
 
   if (!exam) {
@@ -193,6 +202,7 @@ export default function StartExamPage() {
                       href={STRIPE_DONATE_LINK}
                       target="_blank"
                       rel="noopener noreferrer nofollow sponsored"
+                      onClick={() => track("Donation Clicked", { location: "exam-result" })}
                     >
                       Steun ons met €1
                     </a>
