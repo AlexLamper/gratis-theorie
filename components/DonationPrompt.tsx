@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Sparkles } from "lucide-react"
-import { track } from "@vercel/analytics"
+import { sendGAEvent } from "@next/third-parties/google"
 
 export default function DonationPrompt() {
   return (
@@ -28,7 +28,7 @@ export default function DonationPrompt() {
               href="https://donate.stripe.com/14A14m9Au14e8xNcBMffy00"
               target="_blank"
               rel="noopener noreferrer nofollow sponsored"
-              onClick={() => track("Donation Clicked", { location: "donation-prompt" })}
+              onClick={() => sendGAEvent("event", "donation_clicked", { location: "donation-prompt" })}
             >
               Steun ons
             </a>

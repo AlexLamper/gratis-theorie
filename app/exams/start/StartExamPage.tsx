@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/progress"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { track } from "@vercel/analytics"
+import { sendGAEvent } from "@next/third-parties/google"
 
 interface Question {
   _id: string
@@ -48,7 +48,7 @@ export default function StartExamPage() {
       setExam(data.exam)
       setAnswers(Array(data.exam.questions.length).fill(-1))
       setTimeLeft(data.exam.timeLimit * 60)
-      track("Exam Started", { slug, category: data.exam.category })
+      sendGAEvent("event", "exam_started", { slug, category: data.exam.category })
     }
     fetchExam()
   }, [slug])
@@ -89,7 +89,7 @@ export default function StartExamPage() {
     const score = (correct / exam.questions.length) * 100
     const passed = score >= exam.passRate
     setResult({ score, passed, duration })
-    track("Exam Completed", { 
+    sendGAEvent("event", "exam_completed", { 
       slug, 
       category: exam.category, 
       score: Math.round(score), 
@@ -202,7 +202,7 @@ export default function StartExamPage() {
                       href={STRIPE_DONATE_LINK}
                       target="_blank"
                       rel="noopener noreferrer nofollow sponsored"
-                      onClick={() => track("Donation Clicked", { location: "exam-result" })}
+                      onClick={() => sendGAEvent("event", "donation_clicked", { location: "exam-result" })}
                     >
                       Steun ons met €1
                     </a>
