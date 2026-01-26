@@ -4,9 +4,11 @@ import { useEffect, useState } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
 import LessonContent, { InhoudBlok } from "@/components/LessonContent"
+import { TextToSpeechButton } from "@/components/TextToSpeechButton"
 import { markeerCategorieGelezen } from "@/lib/session"
-import { Card, CardContent } from "@/components/ui/card"
+import { stripHtml, cleanForSpeech, htmlToBlocks } from "@/lib/utils"
 import { ChevronDown, ChevronRight, Menu, X } from "lucide-react"
+import { HighlightableText } from "@/components/HighlightableText"
 import clsx from "clsx"
 import {
   Breadcrumb,
@@ -293,7 +295,26 @@ export default function LesPagina() {
             </aside>
 
             <main className="flex-1 bg-white rounded-2xl p-6 lg:p-10 border border-slate-100 shadow-sm">
-              <h1 className="text-3xl lg:text-4xl font-extrabold text-slate-900 mb-8 tracking-tight">{actieveLes.titel}</h1>
+              <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+                <h1 className="text-3xl lg:text-4xl font-extrabold text-slate-900 tracking-tight">{actieveLes.titel}</h1>
+                <div className="flex flex-col items-end gap-1">
+                  <TextToSpeechButton 
+                    text={(() => {
+                      const blocks = Array.isArray(actieveLes.inhoud) 
+                        ? actieveLes.inhoud 
+                        : htmlToBlocks(actieveLes.inhoud);
+                      return blocks
+                        .map(b => {
+                          if (b.type === 'paragraaf') return b.tekst || '';
+                          if (b.type === 'lijst') return b.items?.join('. ') || '';
+                          return '';
+                        })
+                        .filter(t => t.length > 0)
+                        .join(' ');
+                    })()} 
+                  />
+                </div>
+              </div>
 
               {Array.isArray(actieveLes.inhoud) && actieveLes.inhoud[0]?.type === "afbeelding" && (
                 <div className="rounded-2xl overflow-hidden mb-8 shadow-sm border border-slate-100">
@@ -311,13 +332,12 @@ export default function LesPagina() {
                     font-weight: bold;
                   }
                 `}</style>
-                {Array.isArray(actieveLes.inhoud) ? (
-                  <LessonContent inhoud={actieveLes.inhoud} />
-                ) : (
-                  <div className="space-y-6 leading-relaxed text-slate-600 text-lg">
-                    {parse(actieveLes.inhoud)}
-                  </div>
-                )}
+                {(() => {
+                  const contentBlocks = Array.isArray(actieveLes.inhoud) 
+                    ? actieveLes.inhoud 
+                    : htmlToBlocks(actieveLes.inhoud);
+                  return <LessonContent inhoud={contentBlocks} />;
+                })()}
               </div>
             </main>
           </div>

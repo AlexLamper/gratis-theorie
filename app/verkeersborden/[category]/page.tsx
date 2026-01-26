@@ -6,6 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
+import { TextToSpeechButton } from "@/components/TextToSpeechButton"
+import { HighlightableText } from "@/components/HighlightableText"
+import { cleanForSpeech } from "@/lib/utils"
 import { Search, Filter, Car, Bike, BikeIcon as Motorcycle, AlertTriangle, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { useParams, usePathname, useRouter } from "next/navigation"
@@ -391,65 +394,95 @@ export default function CategoryTrafficSignsPage() {
               </Card>
             ) : (
               <div className="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                {filteredSigns.map((sign) => (
-                  <Card
-                    key={sign._id}
-                    className="group bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-2xl overflow-hidden"
-                  >
-                    <CardContent className="p-5">
-                      {/* Sign Image */}
-                      <div className="bg-slate-50 border border-slate-100 rounded-xl p-6 mb-4 text-center group-hover:bg-white transition-colors">
-                        <img
-                          src={imageErrors.has(sign._id) ? createPlaceholderSVG(160, 160) : sign.image}
-                          alt={sign.name}
-                          className="w-40 h-40 mx-auto object-contain drop-shadow-sm"
-                          onError={(e) => handleImageError(sign._id, e)}
-                          loading="lazy"
-                        />
-                      </div>
+                {filteredSigns.map((sign) => {
+                  const cleanName = cleanForSpeech(sign.name || "")
+                  const cleanDesc = cleanForSpeech(sign.description || "")
+                  const cleanMeaning = cleanForSpeech(sign.meaning || "")
+                  
+                  // Construct full text exactly as it will be spoken
+                  const fullCardText = `${cleanName}. ${cleanDesc}. Betekenis: ${cleanMeaning}.`
+                  
+                  // Calculate offsets based on the exact structure above
+                  const nameOffset = 0
+                  // + 2 for the ". " joiner
+                  const descOffset = cleanName ? cleanName.length + 2 : (fullCardText.indexOf(cleanDesc) !== -1 ? fullCardText.indexOf(cleanDesc) : 0)
+                  
+                  // Find the start of the "Betekenis: " label
+                  const meaningLabelPrefix = "Betekenis: "
+                  const meaningLabelOffset = fullCardText.indexOf(meaningLabelPrefix)
+                  
+                  // The actual meaning text starts after the label
+                  const meaningTextOffset = meaningLabelOffset !== -1 ? meaningLabelOffset + meaningLabelPrefix.length : -1
 
-                      {/* Sign Info */}
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between">
-                          <h3 className="font-bold text-slate-900 text-sm leading-tight line-clamp-2 flex-1">
-                            {sign.name}
-                          </h3>
-                          <span className="text-lg ml-2 flex-shrink-0" title={`Vorm: ${sign.shape}`}>
-                            {getShapeIcon(sign.shape)}
-                          </span>
+                  return (
+                    <Card
+                      key={sign._id}
+                      className="group bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 rounded-2xl overflow-hidden"
+                    >
+                      <CardContent className="p-5">
+                        {/* Sign Image */}
+                        <div className="bg-slate-50 border border-slate-100 rounded-xl p-6 mb-4 text-center group-hover:bg-white transition-colors">
+                          <img
+                            src={imageErrors.has(sign._id) ? createPlaceholderSVG(160, 160) : sign.image}
+                            alt={sign.name}
+                            className="w-40 h-40 mx-auto object-contain drop-shadow-sm"
+                            onError={(e) => handleImageError(sign._id, e)}
+                            loading="lazy"
+                          />
                         </div>
 
-                        <Badge className={`${getTypeColor(sign.type)} text-xs font-medium border px-2 py-0.5 rounded-md`} variant="outline">
-                          {sign.type.charAt(0).toUpperCase() + sign.type.slice(1)}
-                        </Badge>
+                        {/* Sign Info */}
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between">
+                            <h3 className="font-bold text-slate-900 text-sm leading-tight line-clamp-2 flex-1">
+                              <HighlightableText text={sign.name} offset={nameOffset} />
+                            </h3>
+                            <span className="text-lg ml-2 flex-shrink-0" title={`Vorm: ${sign.shape}`}>
+                              {getShapeIcon(sign.shape)}
+                            </span>
+                          </div>
 
-                        <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{sign.description}</p>
+                          <Badge className={`${getTypeColor(sign.type)} text-xs font-medium border px-2 py-0.5 rounded-md`} variant="outline">
+                            {sign.type.charAt(0).toUpperCase() + sign.type.slice(1)}
+                          </Badge>
 
-                        <div className="pt-3 border-t border-slate-100">
-                          <p className="text-xs font-bold text-slate-900 mb-1">Betekenis:</p>
-                          <p className="text-xs text-slate-600 line-clamp-2 leading-relaxed">{sign.meaning}</p>
+                          <div className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                            <HighlightableText text={sign.description} offset={descOffset} />
+                          </div>
+
+                          <div className="pt-3 border-t border-slate-100 flex justify-between items-start gap-2">
+                            <div className="flex-1">
+                              <p className="text-xs font-bold text-slate-900 mb-1">
+                                <HighlightableText text="Betekenis:" offset={meaningLabelOffset} />
+                              </p>
+                              <div className="text-xs text-slate-600 line-clamp-2 leading-relaxed">
+                                <HighlightableText text={sign.meaning} offset={meaningTextOffset} />
+                              </div>
+                            </div>
+                            <TextToSpeechButton text={fullCardText} minimal />
+                          </div>
+
+                          <div className="flex flex-wrap gap-1 pt-1">
+                            {sign.applicableFor.slice(0, 2).map((vehicle, index) => (
+                              <Badge
+                                key={index}
+                                variant="outline"
+                                className="text-[10px] bg-slate-50 text-slate-600 border-slate-200 px-1.5 py-0"
+                              >
+                                {vehicle}
+                              </Badge>
+                            ))}
+                            {sign.applicableFor.length > 2 && (
+                              <Badge variant="outline" className="text-[10px] bg-slate-50 text-slate-600 border-slate-200 px-1.5 py-0">
+                                +{sign.applicableFor.length - 2}
+                              </Badge>
+                            )}
+                          </div>
                         </div>
-
-                        <div className="flex flex-wrap gap-1 pt-1">
-                          {sign.applicableFor.slice(0, 2).map((vehicle, index) => (
-                            <Badge
-                              key={index}
-                              variant="outline"
-                              className="text-[10px] bg-slate-50 text-slate-600 border-slate-200 px-1.5 py-0"
-                            >
-                              {vehicle}
-                            </Badge>
-                          ))}
-                          {sign.applicableFor.length > 2 && (
-                            <Badge variant="outline" className="text-[10px] bg-slate-50 text-slate-600 border-slate-200 px-1.5 py-0">
-                              +{sign.applicableFor.length - 2}
-                            </Badge>
-                          )}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
+                      </CardContent>
+                    </Card>
+                  )
+                })}
               </div>
             )}
           </>

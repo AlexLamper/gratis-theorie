@@ -5,6 +5,8 @@ import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/progress"
+import { TextToSpeechButton } from "@/components/TextToSpeechButton"
+import { HighlightableText } from "@/components/HighlightableText"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { sendGAEvent } from "@next/third-parties/google"
 
@@ -263,12 +265,17 @@ export default function StartExamPage() {
         {/* Vraag */}
         <Card className="mb-8 shadow-sm border-slate-100 rounded-2xl overflow-hidden bg-white">
           <CardHeader className="bg-slate-50/50 border-b border-slate-100 px-6 py-4">
-            <div className="inline-flex items-center justify-center bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full mb-2">
-              Vraag {current + 1}
+            <div className="flex justify-between items-start gap-4">
+              <div className="flex-1">
+                <div className="inline-flex items-center justify-center bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-0.5 rounded-full mb-2">
+                  Vraag {current + 1}
+                </div>
+                <CardTitle className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
+                  <HighlightableText text={q.question} />
+                </CardTitle>
+              </div>
+              <TextToSpeechButton text={`${q.question}. ${q.options.join(". ")}`} />
             </div>
-            <CardTitle className="text-xl sm:text-2xl font-bold text-slate-900 leading-tight">
-              {q.question}
-            </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4 px-6 py-8">
             {/* Antwoorden */}
@@ -293,7 +300,7 @@ export default function StartExamPage() {
                   <span className={`text-base sm:text-lg font-medium ${
                     answers[current] === idx ? "text-blue-900" : "text-slate-700"
                   }`}>
-                    {opt}
+                    <HighlightableText text={opt} />
                   </span>
                 </button>
               ))}

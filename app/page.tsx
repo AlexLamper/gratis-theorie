@@ -38,9 +38,11 @@ export default function HomePage() {
       <section className="relative py-20 lg:py-32 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-blue-50 via-white to-white -z-10" />
         <div className="container mx-auto px-4 text-center">
-          <div className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-800 mb-8">
-            <span className="flex h-2 w-2 rounded-full bg-blue-600 mr-2"></span>
-            Volledig Gratis • Geen Registratie • Actueel
+          <div className="flex flex-wrap justify-center gap-3 mb-8">
+            <div className="inline-flex items-center rounded-full border border-blue-100 bg-blue-50 px-3 py-1 text-sm font-medium text-blue-800">
+              <span className="flex h-2 w-2 rounded-full bg-blue-600 mr-2"></span>
+              Volledig Gratis • Geen Registratie • Actueel
+            </div>
           </div>
           
           <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-8 max-w-4xl mx-auto leading-[1.1]">

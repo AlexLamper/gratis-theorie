@@ -5,6 +5,7 @@ import "./globals.css"
 import Navbar from "@/components/navbar"
 import Script from "next/script"
 import { GoogleAnalytics } from "@next/third-parties/google"
+import { SpeechProvider } from "@/lib/SpeechContext"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -118,8 +119,10 @@ export default function RootLayout({
         />
       </head>
       <body className={inter.className}>
-        <Navbar />
-        <main>{children}</main>
+        <SpeechProvider>
+          <Navbar />
+          <main>{children}</main>
+        </SpeechProvider>
         <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GA_ID || "G-XXXXXXXXXX"} />
       </body>
     </html>
